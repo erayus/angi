@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "postinstall": "lerna bootstrap && npm run bootstrap-environment",
+    "bootstrap-environment": "lerna run bootstrap-environment --stream",
+    "build": "lerna run --stream build",
+    "lint": "lerna run --stream lint",
+    "test": "lerna run --stream test",
+    "clean": "lerna run --stream clean && lerna clean",
+    "update": "ncu -u && lerna run --concurrency 1 --stream update",
+    "cdk": "lerna run --stream cdk -- --"
+  },
+  "devDependencies": {
+    "husky": "^5.0.9",
+    "lerna": "^4.0.0",
+    "npm-check-updates": "^11.1.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lerna run --concurrency 1 --stream precommit"
+    }
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.4"
+  }
+}
