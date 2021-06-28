@@ -8,10 +8,11 @@ const MenuList = (props) => {
           props.menuItems.map(menuItem => {
             return (
               <MenuItem
-                key={menuItem.itemName} 
-                itemImg={menuItem.itemImg}
-                itemName={menuItem.itemName}
-                itemIngredients={menuItem.itemIngredients}
+                key={menuItem.id}
+                id={menuItem.id}
+                name={menuItem.name}
+                imgUrl={menuItem.imgUrl}
+                ingredients={menuItem.ingredients}
               />
             )
           })
@@ -22,10 +23,11 @@ const MenuList = (props) => {
 
 MenuList.propTypes = {
   menuItems: PropTypes.arrayOf(
-    PropTypes.shape({ 
-      itemImg: PropTypes.string.isRequired,
-      itemName: PropTypes.string.isRequired,
-      itemIngredients: PropTypes.arrayOf(PropTypes.string).isRequired
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      imgUrl: PropTypes.string.isRequired,
+      ingredients: PropTypes.arrayOf(PropTypes.string).isRequired
     })
   )
 }
