@@ -4,6 +4,7 @@ import FoodThisWeek from '../food-this-week/foodThisWeek';
 import { useStore } from '../../store/rootStore';
 import FoodDetail from '../food-detail/foodDetail';
 import './home.styles.scss';
+import { FoodDirectory } from '../../shared/foodDirectory';
 type IProps = {
 
 } & RouteComponentProps;
@@ -15,10 +16,9 @@ const Home: React.FC<IProps> = ({location}) => {
 
     useEffect(()=> {
         loadFood();
-    }, [loadFood]);
+    }, [loadFood, FoodDirectory]);
     
     useEffect(()=> {
-        console.log(location);
         if (location.pathname.includes('food-list/')) {
             setTitle('Food Detail')
         } else if (location.pathname.includes('food-this-week')) {

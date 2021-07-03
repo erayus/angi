@@ -1,27 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {observer} from 'mobx-react-lite';
-import { IFood } from '../../models/food';
+import { FoodCategory, IFood } from '../../models/food';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
+import './foodThisWeek.styles.scss';
 
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodList} = foodStore;
     const noOfFoodPerWeek = 3;
+    const availableCategories = foodStore.getAvailableCategories(); 
+    
     const foodForThisWeek: IFood[] = [];
-
-    while(foodForThisWeek.length < noOfFoodPerWeek && foodList.length > 0) {
-        const food = foodList[Math.floor(Math.random() * foodList.length)];
-        
-        if (foodForThisWeek.some(existingFood => existingFood.id == food.id)) {
-            continue
-        }
+    availableCategories.forEach(foodCategory => {
+        const food = foodStore.getFoodForCategory(foodCategory);
         foodForThisWeek.push(food);
-    }
+    });   
 
     return (
-        <div>
-            <FoodList foodList={foodForThisWeek}/>
+        <div className="food-list-container">
+            {
+                availableCategories.map(category =>  (
+                    <div>
+                        <h3>{category}</h3>
+                        {<FoodList foodList={foodForThisWeek.filter(food => food.category === category)}/>}
+                    </div>
+                
+                ))
+            }
         </div>
     )
 }

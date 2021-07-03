@@ -31,9 +31,16 @@ export const FoodDirectory: IFood[] = [
       },
       {
         id: 5, 
-        name: 'Pork and Egg steamed cake/loaf ',
+        name: 'Pork and Egg steamed cake/loafnnn',
         category: FoodCategory.Main,
         imgUrl: '',
         ingredients: ['Mince pork', 'Eggs', 'Mushroom', 'Onion'],
-      }
+      },
+      {
+        id: 6, 
+        name: 'Canh bí đỏ tôm',
+        category: FoodCategory.Soup,
+        imgUrl: '',
+        ingredients: ['Tôm', 'Bí đỏ'],
+      },
 ]

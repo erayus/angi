@@ -7,15 +7,16 @@ export type IFood = {
     ingredients: string[]
 }
 
-//TODO: considering this in future
-export type IIngredients = {
+//TODO: use if necessary
+export type IIngredient = {
     name: string,
-    quantity: number
+    quantityUnit: string //TODO: may split into two properties if necessary
 }
 
 export enum FoodCategory {
-    Main,
-    Soup
+    Main = 'Main',
+    Soup = 'Soup',
+    Dessert = 'Desert'
 }
 
 

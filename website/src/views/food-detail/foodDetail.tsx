@@ -15,7 +15,6 @@ type Params = {
 }
 
 const FoodDetail : React.FC<RouteComponentProps<Params>> = ({match}) => {
-    // const itemList = useContext(menuContext);
     const {foodStore} = useStore();
     const targetFoodId = +match.params.foodId;
     const targetFood = foodStore.getFoodForId(targetFoodId);
