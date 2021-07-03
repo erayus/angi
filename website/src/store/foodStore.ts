@@ -12,6 +12,10 @@ export default class FoodStore {
        this.foodList = FoodDirectory;
     };
 
+    getFoodForId = (id: number) : IFood | undefined => {
+        return this.foodList.find(item => item.id === id);
+    }
+
     addSchool = async (newFood: IFood) => {
     }
     removeFood = async (key: string) => {

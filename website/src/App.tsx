@@ -10,7 +10,6 @@ function App() {
       <div>
          <Switch>
             <Route path="/" component={Home}/>
-            {/* <Route path="/menu-items/:itemId" component={ItemDetail}/> */}
           </Switch>
       </div>
     </div>

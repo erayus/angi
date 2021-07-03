@@ -7,9 +7,7 @@ type IProps = {
 }
 
 const FoodList: React.FC<IProps> = (props) => {
-    const foodSelectHandler = (id: number) => {
-      console.log('hello')
-    }
+
 
     return (
       <div>
@@ -23,7 +21,6 @@ const FoodList: React.FC<IProps> = (props) => {
                 category={food.category}
                 imgUrl={food.imgUrl}
                 ingredients={food.ingredients}
-                onFoodSelected={(id: number ) => foodSelectHandler(id)}
               />
             )
           })
