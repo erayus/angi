@@ -1,9 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol } from 'mdb-react-ui-kit';
-import img from '../../assets/spaghetti.jpg';
+// import img from '../../assets/spaghetti.jpg';
+import { IFood } from '../../models/food';
 
-const MenuItem = ({id, name, imgUrl, ingredients}) => {
+type IProps = {
+  onFoodSelected: (id: number) => void;
+} & IFood;
+
+const FoodItem: React.FC<IProps> = ({id, name, imgUrl, ingredients, onFoodSelected}) => {
     const noOfDisplayingIngredientItems  = 2;
     const noOfMoreThanTwo = ingredients.length > noOfDisplayingIngredientItems ? ingredients.length - 2 : 0; //TODO: better name?
     
@@ -11,7 +15,7 @@ const MenuItem = ({id, name, imgUrl, ingredients}) => {
      ? (<MDBBtn className="m-1" size="sm"  rounded style={{fontSize: '10px', padding:'4px 8px'}}>+ {noOfMoreThanTwo}</MDBBtn>)
      : null;
     return (
-        <MDBCard className="m-2">
+      <MDBCard className="m-2" onClick={() => onFoodSelected(id)}>
           <MDBRow className='g-0'>
             <MDBCol size="4" style={{ 
               backgroundImage: `url(${imgUrl})`, 
@@ -40,15 +44,8 @@ const MenuItem = ({id, name, imgUrl, ingredients}) => {
               </MDBCardBody>
             </MDBCol>
           </MDBRow>
-      </MDBCard>
+      </MDBCard>        
     )
 }
 
-MenuItem.propTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  imgUrl: PropTypes.string.isRequired,
-  ingredients: PropTypes.arrayOf(PropTypes.string).isRequired
-}
-
-export default MenuItem
+export default FoodItem;
