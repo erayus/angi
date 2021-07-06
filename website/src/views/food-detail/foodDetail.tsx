@@ -1,5 +1,4 @@
 import React from 'react'
-import { useContext } from 'react';
 import { withRouter } from 'react-router'
 import { MDBBadge, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { RouteComponentProps } from 'react-router-dom';
@@ -34,7 +33,6 @@ const FoodDetail : React.FC<RouteComponentProps<Params>> = ({match}) => {
                 
                 }
             </MDBListGroup>
-           
         </div>
     )
 }

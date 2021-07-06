@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import {Redirect, Route, RouteComponentProps, Switch} from 'react-router-dom';
+import {Route, RouteComponentProps, Switch} from 'react-router-dom';
 import FoodThisWeek from '../food-this-week/foodThisWeek';
 import { useStore } from '../../store/rootStore';
 import FoodDetail from '../food-detail/foodDetail';
 import './home.styles.scss';
-import { FoodDirectory } from '../../shared/foodDirectory';
 type IProps = {
 
 } & RouteComponentProps;
@@ -16,12 +15,12 @@ const Home: React.FC<IProps> = ({location}) => {
 
     useEffect(()=> {
         loadFood();
-    }, [loadFood, FoodDirectory]);
+    });
     
     useEffect(()=> {
         if (location.pathname.includes('food-list/')) {
             setTitle('Food Detail')
-        } else if (location.pathname.includes('food-this-week')) {
+        } else if (location.pathname.includes('/')) {
             setTitle('Food This Week')
         }
     }, [location.pathname]);
@@ -33,10 +32,10 @@ const Home: React.FC<IProps> = ({location}) => {
             <header className="header">
                 <h1>{headerTitle}</h1>
             </header>
+            
             <Switch>
-                <Route exact path="/food-this-week" component={FoodThisWeek} />
-                  <Route path="/food-list/:foodId" component={FoodDetail}/>
-                <Redirect from="/" to="food-this-week"/>
+                <Route exact path="/" component={FoodThisWeek} />
+                <Route path="/food-list/:foodId" component={FoodDetail}/>
             </Switch>
         </React.Fragment>
     )
