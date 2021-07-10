@@ -57,4 +57,11 @@ export const FoodDirectory: IFood[] = [
         imgUrl: '',
         ingredients: ['Brocoli', 'Thit vien'],
       },
+      {
+        id: 8, 
+        name: 'Canh cải thảo',
+        category: FoodCategory.Soup,
+        imgUrl: '',
+        ingredients: ['Cải thảo'],
+      },
 ]

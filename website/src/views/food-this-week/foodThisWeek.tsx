@@ -7,7 +7,7 @@ import './foodThisWeek.styles.scss';
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {loadFood, availableCategories} = foodStore;
-    const [noOfFoodPerWeek] = useState(3);
+    const [noOfFoodPerWeek] = useState(4);
     
     const {foodThisWeek} = foodStore;
 

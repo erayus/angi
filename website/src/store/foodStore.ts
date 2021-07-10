@@ -42,8 +42,6 @@ export default class FoodStore {
         });
     }
 
-    addSchool = async (newFood: IFood) => {
-    }
     removeFood = async (key: string) => {
     }
 }
