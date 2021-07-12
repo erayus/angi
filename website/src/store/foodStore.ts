@@ -4,13 +4,12 @@ import { FoodDirectory } from '../shared/foodDirectory';
 
 export default class FoodStore {
     foodList: IFood[] = [];
-    foodThisWeek: IFood[] = [];
     availableCategories: FoodCategory[] = [];
     constructor(){
         makeAutoObservable(this)
     }
 
-    loadFood =  () => {
+    loadFood = async () => {
        this.foodList = FoodDirectory;
        this.loadAvailableCategories();
     };
@@ -24,22 +23,28 @@ export default class FoodStore {
         this.availableCategories = copyFood.map(food => food.category).filter((category, index, self) => self.indexOf(category) === index);
     };
 
-    loadRandomFoodThisWeek = (quantityToShow: number): void => {
-        this.availableCategories.forEach(foodCategory => {
+    getRandomFoodForCategory = (quantityToShow: number, category: FoodCategory, currentFoodThisWeekUnderTheSameCategory: IFood[]): IFood[] => {
             const copyFood = this.foodList.slice();
-            let foodUnderGivenCategory = copyFood.filter(food=> food.category === foodCategory);
+            let foodUnderGivenCategory = copyFood.filter(food=> food.category === category);
 
-            // if (this.foodThisWeek.length > 0) {
-            //     foodUnderGivenCategory = foodUnderGivenCategory.filter(food => !this.foodThisWeek
-            //         .some((eachFoodThisWeek) => eachFoodThisWeek.id === food.id));
-            // }
+            if (currentFoodThisWeekUnderTheSameCategory.length > 0) {
+                foodUnderGivenCategory = foodUnderGivenCategory.filter(food => !currentFoodThisWeekUnderTheSameCategory
+                    .some((eachFoodThisWeek) => eachFoodThisWeek.id === food.id));
+            }
             
+            if (quantityToShow > foodUnderGivenCategory.length) {
+                console.log('Number of food required to show is larger than the number of food in the database.');
+                quantityToShow = quantityToShow - foodUnderGivenCategory.length;
+            }
+
+            const foodToReturn: IFood[] = [];
             for (let i = 0; i < quantityToShow; i++) {
                 const randomIndex = Math.floor(Math.random() * foodUnderGivenCategory.length);
                 const randomFood = foodUnderGivenCategory.splice(randomIndex, 1)[0];
-                this.foodThisWeek.push(randomFood);
+                foodToReturn.push(randomFood);
             }
-        });
+
+            return foodToReturn;
     }
 
     removeFood = async (key: string) => {
