@@ -10,34 +10,33 @@ import { MDBInput } from 'mdb-react-ui-kit';
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {loadFood, availableFoodCategories: availableCategories} = foodStore;
-    const [noOfFoodPerWeek] = useState(4);
     
     const [foodThisWeek, setFoodThisWeek] = useState<IFood[]>([]);
 
     useEffect(()=> {
         if (foodThisWeek.length === 0) {
-            loadFood();
-            availableCategories.forEach(foodCategory => {
-                const foodThisWeekUnderCategory = foodThisWeek.filter(food => food.category === foodCategory.category);
+             loadFood();
+        };
+        availableCategories.forEach(foodCategory => {
+            //TODO: better way to customize quantity to show for the Dessert category
+            if (foodCategory.category === Category.Dessert) {
+                const newFood = foodStore.getRandomFoodForCategory(1, foodCategory.category);
+                setFoodThisWeek((currentFood) => {
+                    const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== foodCategory.category)
+                    return [...foodWithoutOldFood, ...newFood]
+                });
+                return;
+            }
 
-                if (foodCategory.category === Category.Dessert) {
-                    const food = foodStore.getRandomFoodForCategory(4, foodCategory, foodThisWeekUnderCategory);
-                    setFoodThisWeek((prevState) => [...prevState, ...food]);
-                    return;
-                }
-
-                const food = foodStore.getRandomFoodForCategory(noOfFoodPerWeek, foodCategory, foodThisWeekUnderCategory);
-                setFoodThisWeek((prevState) => [...prevState, ...food]);  
-            })
-        } 
-    }, [foodStore,
-        availableCategories,
-        availableCategories.length,
-        foodThisWeek,
-        foodThisWeek.length,
-        loadFood,
-        noOfFoodPerWeek,
-        ]);
+            const newFood = foodStore.getRandomFoodForCategory(foodCategory.quantity, foodCategory.category);
+            setFoodThisWeek((currentFood) => {
+                const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== foodCategory.category)
+                return [...foodWithoutOldFood, ...newFood]
+            }); 
+        })
+   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [foodStore, availableCategories]);
 
 
     const foodToDisplay = availableCategories.map(foodCategory =>  {

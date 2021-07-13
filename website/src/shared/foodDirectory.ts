@@ -78,4 +78,32 @@ export const FoodDirectory: IFood[] = [
         imgUrl: '',
         ingredients: ['bim bim 2'],
       },
+      {
+        id: 12, 
+        name: 'Snack 3',
+        category: Category.Dessert,
+        imgUrl: '',
+        ingredients: ['bim bim 3'],
+      },
+      {
+        id: 13, 
+        name: 'Snack 4',
+        category: Category.Dessert,
+        imgUrl: '',
+        ingredients: ['bim bim 4'],
+      },
+      {
+        id: 14, 
+        name: 'Snack 5',
+        category: Category.Dessert,
+        imgUrl: '',
+        ingredients: ['bim bim 5'],
+      },
+      {
+        id: 15, 
+        name: 'Snack 6',
+        category: Category.Dessert,
+        imgUrl: '',
+        ingredients: ['bim bim 6'],
+      },
 ]

@@ -1,5 +1,5 @@
 import {makeAutoObservable} from 'mobx';
-import { IFoodCategory, IFood } from "../models/food";
+import { IFoodCategory, IFood, Category } from "../models/food";
 import { FoodDirectory } from '../shared/foodDirectory';
 
 export default class FoodStore {
@@ -22,11 +22,15 @@ export default class FoodStore {
         const copyFood = this.foodList.slice();
         const category = copyFood.map(food => food.category).filter((category, index, self) => self.indexOf(category) === index);
 
-        const defaultQuantity = 5; //TODO
+      
         this.availableFoodCategories = category.map(category => {
-            const quantity: number = localStorage.getItem(`${category}-quantity`) 
-                                     ? +localStorage.getItem(`${category}-quantity`)! 
-                                     : defaultQuantity;
+            let quantity: number;
+            const defaultQuantity = 5; //TODO
+            if (!this.getFoodCategoryQuantityForCategory(category)){
+                quantity = this.setQuantityForCategory(category, defaultQuantity);
+            } else {
+                quantity = this.getFoodCategoryQuantityForCategory(category)!;
+            };
 
             return {
                 category: category,
@@ -35,18 +39,13 @@ export default class FoodStore {
         })
     };
 
-    getRandomFoodForCategory = (quantityToShow: number, foodCategory: IFoodCategory, currentFoodThisWeekUnderTheSameCategory: IFood[]): IFood[] => {
+    getRandomFoodForCategory = (quantityToShow: number, category: Category): IFood[] => {
             const copyFood = this.foodList.slice();
-            let foodUnderGivenCategory = copyFood.filter(food=> food.category === foodCategory.category);
+            let foodUnderGivenCategory = copyFood.filter(food=> food.category === category);
 
-            if (currentFoodThisWeekUnderTheSameCategory.length > 0) {
-                foodUnderGivenCategory = foodUnderGivenCategory.filter(food => !currentFoodThisWeekUnderTheSameCategory
-                    .some((eachFoodThisWeek) => eachFoodThisWeek.id === food.id));
-            }
-            
             if (quantityToShow > foodUnderGivenCategory.length) {
                 console.log('Number of food required to show is larger than the number of food in the database.');
-                quantityToShow = quantityToShow - foodUnderGivenCategory.length;
+                quantityToShow = foodUnderGivenCategory.length;
             }
 
             const foodToReturn: IFood[] = [];
@@ -58,6 +57,20 @@ export default class FoodStore {
 
             return foodToReturn;
     }
+
+    setQuantityForCategory(category: Category, quantityToShow: number) : number {
+        console.log('Heyya');
+        localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
+        return quantityToShow;
+    }
+    
+    getFoodCategoryQuantityForCategory(category: Category): number | null {
+        
+        return localStorage.getItem(`${category}-quantity`) 
+               ? +localStorage.getItem(`${category}-quantity`)! 
+               : null;
+    }
+    
 
     removeFood = async (key: string) => {
     }
