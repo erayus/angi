@@ -2,7 +2,7 @@
 export type IFood = {
     id: number,
     name: string,
-    category: FoodCategory,
+    category: Category,
     imgUrl: string,
     ingredients: string[]
 }
@@ -13,10 +13,15 @@ export type IIngredient = {
     quantityUnit: string //TODO: may split into two properties if necessary
 }
 
-export enum FoodCategory {
+export enum Category {
     Main = 'Main',
     Soup = 'Soup',
     Dessert = 'Desert'
+}
+
+export type IFoodCategory = {
+    category: Category;
+    quantity: number;
 }
 
 
