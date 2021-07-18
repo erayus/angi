@@ -58,15 +58,24 @@ export default class FoodStore {
     };
 
     loadNewFoodThisWeek = async () => {
-        this.availableFoodCategories.forEach(foodCategory => {
-            const newFood = this.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
-            this.updateFoodThisWeek(newFood, foodCategory.category);
-        })
-        localStorage.setItem('foodThisWeek', JSON.stringify(this.foodThisWeek));
+        if (this.foodThisWeek.length === 0 && this.availableFoodCategories.length > 0) {
+            this.availableFoodCategories.forEach(foodCategory => {
+                const newFood = this.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
+                this.updateFoodThisWeek(newFood, foodCategory.category);
+            })
+        }
+        this.saveFoodThisWeek();
     }
 
     loadExistingFoodThisWeek = () => {
-        this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
+        if (this.foodThisWeek.length === 0) {
+            console.log('Getting food this from the database');
+            this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
+        }
+    }
+
+    saveFoodThisWeek() {
+        localStorage.setItem('foodThisWeek', JSON.stringify(this.foodThisWeek));
     }
 
     updateFoodThisWeek = (newFood: IFood[], category: Category) => {
@@ -80,8 +89,6 @@ export default class FoodStore {
         }
         localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
     }
-
-    
 
     getFoodForId = (id: number) : IFood | undefined => {
         return this.foodList.find(item => item.id === id);

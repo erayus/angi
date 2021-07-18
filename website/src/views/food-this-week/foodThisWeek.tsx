@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
 import './foodThisWeek.styles.scss';
-import { Category, IFood } from '../../models/food';
+import { Category } from '../../models/food';
 import { MDBInput } from 'mdb-react-ui-kit';
 
 
@@ -17,14 +17,15 @@ const FoodThisWeek = () => {
              loadFood();
         };
         if (foodStore.isTimeToRenewFood()) {
-            if (foodThisWeek.length === 0 && foodStore.availableFoodCategories.length > 0) {
-                foodStore.loadNewFoodThisWeek();
-            }   
+            foodStore.loadNewFoodThisWeek();
         } else {
             foodStore.loadExistingFoodThisWeek();
         }
+        return () => {
+            foodStore.saveFoodThisWeek();
+        };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [foodStore]);
+    }, [foodStore, foodThisWeek]);
 
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
         const newQuantity = +e.target.value;
