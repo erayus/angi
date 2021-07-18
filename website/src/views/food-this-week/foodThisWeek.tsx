@@ -9,7 +9,7 @@ import { MDBInput } from 'mdb-react-ui-kit';
 
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
-    const {loadFood, availableFoodCategories: availableCategories} = foodStore;
+    const {loadFood} = foodStore;
     
     const [foodThisWeek, setFoodThisWeek] = useState<IFood[]>([]);
 
@@ -17,42 +17,56 @@ const FoodThisWeek = () => {
         if (foodThisWeek.length === 0) {
              loadFood();
         };
-        availableCategories.forEach(foodCategory => {
-            //TODO: better way to customize quantity to show for the Dessert category
-            if (foodCategory.category === Category.Dessert) {
-                const newFood = foodStore.getRandomFoodForCategory(1, foodCategory.category);
-                setFoodThisWeek((currentFood) => {
-                    const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== foodCategory.category)
-                    return [...foodWithoutOldFood, ...newFood]
-                });
-                return;
-            }
-
-            const newFood = foodStore.getRandomFoodForCategory(foodCategory.quantity, foodCategory.category);
-            setFoodThisWeek((currentFood) => {
-                const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== foodCategory.category)
-                return [...foodWithoutOldFood, ...newFood]
-            }); 
-        })
+        // if (foodStore.isTimeToRenewFood()) {
+            foodStore.availableFoodCategories.forEach(foodCategory => {
+                const newFood = foodStore.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
+                updateFood(newFood, foodCategory.category);
+            })
+            console.log('food this week: ', foodThisWeek.toString());
+        // } else {
+        //     setFoodThisWeek(foodStore.getFoodThisWeek());
+        // }
    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [foodStore, availableCategories]);
+    }, [foodStore, foodStore.availableFoodCategories ]);
+
+    const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
+        const newQuantity = +e.target.value;
+        const minQuantityAllowed = +e.target.min;
+        const maxQuantityAllowed = +e.target.max;
+        if (newQuantity > maxQuantityAllowed || newQuantity < minQuantityAllowed) {
+            //TODO: prevent the user from typing out-of-range value.
+            e.preventDefault();
+            return;
+        };
+        console.log("heyy");
+        foodStore.setQuantityForCategory(category, newQuantity);
+        const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
+        updateFood(newFood, category);
+    }
+
+    const updateFood = (newFood: IFood[], category: Category) => {
+        setFoodThisWeek((currentFood) => {
+            const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== category)
+            return [...foodWithoutOldFood, ...newFood]
+        }); 
+    } 
 
 
-    const foodToDisplay = availableCategories.map(foodCategory =>  {
-        console.log('Food this week: ', foodThisWeek);
+    const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
         const foodThisWeekUnderCategory = foodThisWeek.filter(food => food.category === foodCategory.category);
 
         return (
             <div key={foodCategory.category}>
                 <div style={{display: "flex", }}>
                     <h3 className="me-3 my-auto">{foodCategory.category}</h3>
-                    <MDBInput label='Form control sm' id='formControlSm' type='number' size='sm' />
+                    <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)}/>
                 </div>
                 
                 {
                     foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory !== undefined 
-                    ? <FoodList key={foodCategory.category} foodList={foodThisWeek.filter(food => food.category === foodCategory.category)}/>
+                    ? <FoodList key={foodCategory.category} foodList={foodThisWeekUnderCategory}/>
                     : "Loading"
                 }
             </div>
