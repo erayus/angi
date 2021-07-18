@@ -6,9 +6,10 @@ type DateFormat = `${number}${number} ${string}${string}${string}${string} ${num
 
 export default class FoodStore {
     foodList: IFood[] = [];
+    foodThisWeek: IFood[] = [];
     availableFoodCategories: IFoodCategory[] = [];
-    dateToRenew: Date | null = null;
-    renewPeriod: number = 7;
+    // dateToRenew: Date | null = null;
+    private renewPeriod: number = 7;
 
     constructor(){
         makeAutoObservable(this)
@@ -18,6 +19,20 @@ export default class FoodStore {
         return localStorage.getItem(`${category}-quantity`) 
                ? +localStorage.getItem(`${category}-quantity`)! 
                : null;
+    }
+
+    private getRenewDate = () : DateFormat | null => {
+        if(!localStorage.getItem('renewDate')) {
+           return null;
+        }
+        return localStorage.getItem('renewDate')! as DateFormat;
+    }
+
+    private setRenewDate = (renewDate: Date) => {
+       const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' } ;
+       const todayDateFormat = renewDate.toLocaleDateString('en-AU', options);
+       
+       localStorage.setItem('renewDate', todayDateFormat);   
     }
 
     isTimeToRenewFood = () => {
@@ -37,18 +52,26 @@ export default class FoodStore {
         }
     };
 
-    private getRenewDate = () : DateFormat | null => {
-         if(!localStorage.getItem('renewDate')) {
-            return null;
-         }
-         return localStorage.getItem('renewDate')! as DateFormat;
+    loadFood = async () => {
+        this.foodList = FoodDirectory;
+        this.loadAvailableCategories();
+    };
+
+    loadNewFoodThisWeek = async () => {
+        this.availableFoodCategories.forEach(foodCategory => {
+            const newFood = this.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
+            this.updateFoodThisWeek(newFood, foodCategory.category);
+        })
+        localStorage.setItem('foodThisWeek', JSON.stringify(this.foodThisWeek));
     }
 
-    private setRenewDate = (renewDate: Date) => {
-        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' } ;
-        const todayDateFormat = renewDate.toLocaleDateString('en-AU', options);
-        
-        localStorage.setItem('renewDate', todayDateFormat);   
+    loadExistingFoodThisWeek = () => {
+        this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
+    }
+
+    updateFoodThisWeek = (newFood: IFood[], category: Category) => {
+        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek.filter(curFood => curFood.category !== category)
+        this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood]
     }
 
     setQuantityForCategory = (category: Category, quantityToShow: number)  => {
@@ -58,10 +81,7 @@ export default class FoodStore {
         localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
     }
 
-    loadFood = async () => {
-       this.foodList = FoodDirectory;
-       this.loadAvailableCategories();
-    };
+    
 
     getFoodForId = (id: number) : IFood | undefined => {
         return this.foodList.find(item => item.id === id);

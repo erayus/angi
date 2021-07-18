@@ -10,25 +10,21 @@ import { MDBInput } from 'mdb-react-ui-kit';
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {loadFood} = foodStore;
-    
-    const [foodThisWeek, setFoodThisWeek] = useState<IFood[]>([]);
+    const {foodThisWeek} = foodStore;
 
     useEffect(()=> {
-        if (foodThisWeek.length === 0) {
+        if (foodStore.foodList.length === 0) {
              loadFood();
         };
-        // if (foodStore.isTimeToRenewFood()) {
-            foodStore.availableFoodCategories.forEach(foodCategory => {
-                const newFood = foodStore.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
-                updateFood(newFood, foodCategory.category);
-            })
-            console.log('food this week: ', foodThisWeek.toString());
-        // } else {
-        //     setFoodThisWeek(foodStore.getFoodThisWeek());
-        // }
-   
+        if (foodStore.isTimeToRenewFood()) {
+            if (foodThisWeek.length === 0 && foodStore.availableFoodCategories.length > 0) {
+                foodStore.loadNewFoodThisWeek();
+            }   
+        } else {
+            foodStore.loadExistingFoodThisWeek();
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [foodStore, foodStore.availableFoodCategories ]);
+    }, [foodStore]);
 
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
         const newQuantity = +e.target.value;
@@ -39,23 +35,21 @@ const FoodThisWeek = () => {
             e.preventDefault();
             return;
         };
-        console.log("heyy");
         foodStore.setQuantityForCategory(category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
-        updateFood(newFood, category);
+        foodStore.updateFoodThisWeek(newFood, category);
     }
 
-    const updateFood = (newFood: IFood[], category: Category) => {
-        setFoodThisWeek((currentFood) => {
-            const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== category)
-            return [...foodWithoutOldFood, ...newFood]
-        }); 
-    } 
+    // const updateFood = (newFood: IFood[], category: Category) => {
+    //     setFoodThisWeek((currentFood) => {
+    //         const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== category)
+    //         return [...foodWithoutOldFood, ...newFood]
+    //     }); 
+    // } 
 
 
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
         const foodThisWeekUnderCategory = foodThisWeek.filter(food => food.category === foodCategory.category);
-
         return (
             <div key={foodCategory.category}>
                 <div style={{display: "flex", }}>
