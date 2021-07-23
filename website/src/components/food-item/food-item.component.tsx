@@ -29,12 +29,13 @@ const FoodItem: React.FC<IProps> = ({id, name, imgUrl, ingredients, history}) =>
                   {
                       ingredients.slice().splice(0,2).map(itemIngredient => {
                           return (
-                              <MDBBtn key={itemIngredient} 
+                              <MDBBtn key={itemIngredient.name} 
                                 className="m-1" 
                                 size="sm" outline 
                                 rounded 
                                 style={{fontSize: '8px', padding:'4px 8px'}}
-                                >{itemIngredient}
+                                >
+                                  {itemIngredient.name}
                               </MDBBtn>
                           )}
                   )}

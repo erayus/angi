@@ -1,16 +1,17 @@
 
 export type IFood = {
     id: number,
-    name: string,
-    category: Category,
-    imgUrl: string,
-    ingredients: string[]
+    name: string
+    category: Category
+    imgUrl: string
+    ingredients: IIngredient[]
 }
 
 //TODO: use if necessary
 export type IIngredient = {
-    name: string,
-    quantityUnit: string //TODO: may split into two properties if necessary
+    name: string
+    quantity: number //TODO: may split into two properties if necessary
+    unit: 'gram' | 'cu' | 'lon' | 'trai' | 'bo' | 'goi' | null 
 }
 
 export enum Category {
@@ -20,8 +21,8 @@ export enum Category {
 }
 
 export type IFoodCategory = {
-    category: Category;
-    quantity: number;
+    category: Category
+    quantity: number
 }
 
 

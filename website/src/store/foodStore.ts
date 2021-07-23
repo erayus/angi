@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import { IFoodCategory, IFood, Category } from "../models/food";
 import { FoodDirectory } from '../shared/foodDirectory';
+const clone = require("rfdc/default")
 
 type DateFormat = `${number}${number} ${string}${string}${string}${string} ${number}${number}${number}${number}`;
 
@@ -72,6 +73,17 @@ export default class FoodStore {
             console.log('Getting food this from the database');
             this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
         }
+    }
+
+    IsFoodThisWeekLoaded = () => {
+        if (localStorage.getItem('foodThisWeek')) {
+            return true;
+        }
+        return false;
+    }
+
+    getFoodThisWeek = () : IFood[] => {
+        return clone(this.foodThisWeek);
     }
 
     saveFoodThisWeek() {

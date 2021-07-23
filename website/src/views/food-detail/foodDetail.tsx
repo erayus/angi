@@ -25,8 +25,8 @@ const FoodDetail : React.FC<RouteComponentProps<Params>> = ({match}) => {
             <MDBListGroup style={{ minWidth: '22rem' }}>
                 {targetFood ? targetFood.ingredients.map(ing => (
                     
-                    <MDBListGroupItem key={ing} className='d-flex justify-content-between align-items-center'>
-                        {ing}
+                    <MDBListGroupItem key={ing.name} className='d-flex justify-content-between align-items-center'>
+                        {ing.name}
                         <MDBBadge pill>1</MDBBadge>
                     </MDBListGroupItem>
                     )) : "No ingredients found for this food."

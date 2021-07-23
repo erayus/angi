@@ -9,24 +9,13 @@ import { MDBInput } from 'mdb-react-ui-kit';
 
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
-    const {loadFood} = foodStore;
     const {foodThisWeek} = foodStore;
+    const {appStore} = useStore();
 
-    useEffect(()=> {
-        if (foodStore.foodList.length === 0) {
-             loadFood();
-        };
-        if (foodStore.isTimeToRenewFood()) {
-            foodStore.loadNewFoodThisWeek();
-        } else {
-            foodStore.loadExistingFoodThisWeek();
-        }
-        return () => {
-            foodStore.saveFoodThisWeek();
-        };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [foodStore, foodThisWeek]);
-
+    useEffect(() => {
+        appStore.headerTitle = "Food This Week"
+    });
+    
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
         const newQuantity = +e.target.value;
         const minQuantityAllowed = +e.target.min;
@@ -41,13 +30,9 @@ const FoodThisWeek = () => {
         foodStore.updateFoodThisWeek(newFood, category);
     }
 
-    // const updateFood = (newFood: IFood[], category: Category) => {
-    //     setFoodThisWeek((currentFood) => {
-    //         const foodWithoutOldFood = currentFood.filter(curFood => curFood.category !== category)
-    //         return [...foodWithoutOldFood, ...newFood]
-    //     }); 
-    // } 
-
+    window.onbeforeunload = (event) => {
+        foodStore.saveFoodThisWeek(); //TODOL await?
+    };
 
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
         const foodThisWeekUnderCategory = foodThisWeek.filter(food => food.category === foodCategory.category);
