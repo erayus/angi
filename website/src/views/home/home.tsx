@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {Route, RouteComponentProps, Switch, useHistory} from 'react-router-dom';
 import FoodThisWeek from '../food-this-week/foodThisWeek';
 import { useStore } from '../../store/rootStore';
@@ -16,8 +16,6 @@ const Home: React.FC<IProps> = ({location}) => {
     const {appStore} = useStore();
     const {loadFood} = foodStore;
     const {foodThisWeek} = foodStore;
-    const [isOnToBuyListView, setIsOnToBuyListView] = useState<boolean>(false);
-    const [headerTitle, setTitle] = useState('RJ Menu');
     const history = useHistory();
 
     useEffect(()=> {

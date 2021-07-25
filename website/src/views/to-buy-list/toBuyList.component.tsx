@@ -19,7 +19,7 @@ const ToBuyList: React.FC<IProps> = () => {
         appStore.setupHeader("To Buy List", false);
         const clonedFoodThisWeek = foodStore.getFoodThisWeek();
 
-        if (clonedFoodThisWeek.length > 0 ) {
+        if (clonedFoodThisWeek !== null ) {
             if (toBuyListStore.aggregateIngredients == null && !toBuyListStore.checkIfToBuyListExistInTheDb() 
                 || foodStore.isFoodThisWeekUpdated) {
                 toBuyListStore.generateNewToBuyList(clonedFoodThisWeek);

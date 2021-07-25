@@ -7,11 +7,10 @@ type DateFormat = `${number}${number} ${string}${string}${string}${string} ${num
 
 export default class FoodStore {
     foodList: IFood[] = [];
-    foodThisWeek: IFood[] = [];
+    foodThisWeek: IFood[] | null = null;
     availableFoodCategories: IFoodCategory[] = [];
     isFoodThisWeekUpdated = false;
-
-    // dateToRenew: Date | null = null;
+    renewDate: string | null = null;
     private renewPeriod: number = 7;
 
     constructor(){
@@ -24,11 +23,15 @@ export default class FoodStore {
                : null;
     }
 
-    private getRenewDate = () : DateFormat | null => {
+    private getRenewDate = () : string | null => {
+        if (this.renewDate !== null) {
+            return this.renewDate;
+        }
+
         if(!localStorage.getItem('renewDate')) {
            return null;
         }
-        return localStorage.getItem('renewDate')! as DateFormat;
+        return localStorage.getItem('renewDate')!;
     }
 
     private setRenewDate = (renewDate: Date) => {
@@ -44,11 +47,11 @@ export default class FoodStore {
             this.setRenewDate(today);
             return true;
         }
-        const renewDate = new Date(this.getRenewDate()!);
+        const renewDateObj = new Date(this.getRenewDate()!);
 
-        if (today > renewDate) {
-            renewDate.setDate(today.getDate() + this.renewPeriod);// set renewDate to the next 7 day; 
-            this.setRenewDate(renewDate);
+        if (today > renewDateObj) {
+            renewDateObj.setDate(today.getDate() + this.renewPeriod);// set renewDate to the next 7 day; 
+            this.setRenewDate(renewDateObj);
             return true;
         } else {
             return false;
@@ -65,7 +68,7 @@ export default class FoodStore {
     };
 
     loadNewFoodThisWeek = async () => {
-        if (this.foodThisWeek.length === 0 && this.availableFoodCategories.length > 0) {
+        if (this.foodThisWeek === null && this.availableFoodCategories.length > 0) {
             this.availableFoodCategories.forEach(foodCategory => {
                 const newFood = this.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
                 this.updateFoodThisWeek(newFood, foodCategory.category);
@@ -75,7 +78,7 @@ export default class FoodStore {
     }
 
     loadExistingFoodThisWeek = () => {
-        if (this.foodThisWeek.length === 0) {
+        if (this.foodThisWeek === null) {
             this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
         }
     }
@@ -96,7 +99,7 @@ export default class FoodStore {
     }
 
     updateFoodThisWeek = (newFood: IFood[], category: Category) => {
-        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek.filter(curFood => curFood.category !== category)
+        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek!.filter(curFood => curFood.category !== category)
         this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
         this.isFoodThisWeekUpdated = true;
     }

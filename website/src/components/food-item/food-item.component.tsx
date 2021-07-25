@@ -4,6 +4,8 @@ import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol } from 'mdb-
 import { IFood } from '../../models/food';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
+
+
 type IProps = IFood & RouteComponentProps ;
 
 const FoodItem: React.FC<IProps> = ({id, name, imgUrl, ingredients, history}) => {

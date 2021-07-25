@@ -11,7 +11,6 @@ const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodThisWeek} = foodStore;
     const {appStore} = useStore();
-    const {toBuyListStore} = useStore();
 
     useEffect(() => {
         appStore.setupHeader("Food This Week");
@@ -29,14 +28,15 @@ const FoodThisWeek = () => {
         foodStore.setQuantityForCategory(category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
         foodStore.updateFoodThisWeek(newFood, category);
+
     }
 
     window.onbeforeunload = (event) => {
         foodStore.saveFoodThisWeek(); //TODOL await?
     };
-
+    
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
-        const foodThisWeekUnderCategory = foodThisWeek.filter(food => food.category === foodCategory.category);
+        const foodThisWeekUnderCategory = foodThisWeek!.filter(food => food.category === foodCategory.category);
         return (
             <div key={foodCategory.category}>
                 <div style={{display: "flex", }}>

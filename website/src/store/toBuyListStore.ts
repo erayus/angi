@@ -37,12 +37,10 @@ export default class ToBuyListStore {
                 } else {
                     accIngredients[index]['quantity'] += cur.quantity;
                 }
-                //if yes, increase the quantity
-                //if no, add object to the acc array.
+
                 return accIngredients
             }, []);
             this.aggregateIngredients = aggregateIngredients;
-            console.log('heyyyy: ', toJS(this.aggregateIngredients));
             this.saveToBuyList();
     }
 
@@ -69,7 +67,6 @@ export default class ToBuyListStore {
     loadToBuyList = () => {
         if (this.aggregateIngredients == null) {
             this.aggregateIngredients = JSON.parse(localStorage.getItem('toBuyList')!);
-            console.log('yess:' , this.aggregateIngredients);
         }
     }
 
