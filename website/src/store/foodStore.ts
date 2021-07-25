@@ -41,6 +41,22 @@ export default class FoodStore {
        localStorage.setItem('renewDate', todayDateFormat);   
     }
 
+    initializeFoodThisWeek = () => {
+        if (this.foodList == null) {
+            this.loadFood();
+       };
+
+       if (this.isTimeToRenewFood()) {
+        this.loadNewFoodThisWeek();
+       } else {
+           if (this.IsFoodThisWeekLoaded())  {
+                this.loadExistingFoodThisWeek();
+           } else {
+                this.loadNewFoodThisWeek();
+           }    
+       }
+    }
+
     isTimeToRenewFood = () => {
         const today = new Date();     
         if (!this.getRenewDate()) {

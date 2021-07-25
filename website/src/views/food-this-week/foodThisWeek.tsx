@@ -12,9 +12,14 @@ const FoodThisWeek = () => {
     const {foodThisWeek} = foodStore;
     const {appStore} = useStore();
 
-    useEffect(() => {
+    useEffect(()=> {
         appStore.setupHeader("Food This Week");
-    });
+        return () => {
+            foodStore.saveFoodThisWeek();
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [foodStore, foodThisWeek]);
+
     
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
         const newQuantity = +e.target.value;
@@ -32,7 +37,9 @@ const FoodThisWeek = () => {
     }
 
     window.onbeforeunload = (event) => {
-        foodStore.saveFoodThisWeek(); //TODOL await?
+        if(foodStore.foodThisWeek !== null ) {
+            foodStore.saveFoodThisWeek(); //TODOL await?
+        }
     };
     
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {

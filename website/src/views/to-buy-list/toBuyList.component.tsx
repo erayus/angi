@@ -11,11 +11,11 @@ const ToBuyList: React.FC<IProps> = () => {
     const { foodStore } = useStore();
     const { toBuyListStore } = useStore();
     const { aggregateIngredients } = toBuyListStore;
-    const { foodThisWeek } = foodStore;
     
     const { appStore } = useStore();
     
     useEffect(() => {
+        console.log('Heyyy');
         appStore.setupHeader("To Buy List", false);
         const clonedFoodThisWeek = foodStore.getFoodThisWeek();
 
@@ -33,7 +33,7 @@ const ToBuyList: React.FC<IProps> = () => {
             appStore.setupHeader("", true);
             foodStore.resetIsFoodThisWeek();
         }
-    }, [foodThisWeek]);
+    }, [foodStore.foodThisWeek]);
 
     const onToggleIngredientState = (ingredientName: string) => {
         toBuyListStore.toggleIngredientState(ingredientName);
