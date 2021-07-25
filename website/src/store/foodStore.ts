@@ -1,4 +1,4 @@
-import {makeAutoObservable} from 'mobx';
+import {makeAutoObservable, toJS} from 'mobx';
 import { IFoodCategory, IFood, Category } from "../models/food";
 import { FoodDirectory } from '../shared/foodDirectory';
 const clone = require("rfdc/default")
@@ -37,18 +37,19 @@ export default class FoodStore {
     private setRenewDate = (renewDate: Date) => {
        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' } ;
        const todayDateFormat = renewDate.toLocaleDateString('en-AU', options);
-       
+
        localStorage.setItem('renewDate', todayDateFormat);   
     }
 
     isTimeToRenewFood = () => {
         const today = new Date();     
         if (!this.getRenewDate()) {
-            this.setRenewDate(today);
+            const renewDateObj = new Date();
+            renewDateObj.setDate(today.getDate() + this.renewPeriod);// set renewDate to the next 7 day; 
+            this.setRenewDate(renewDateObj);
             return true;
         }
         const renewDateObj = new Date(this.getRenewDate()!);
-
         if (today > renewDateObj) {
             renewDateObj.setDate(today.getDate() + this.renewPeriod);// set renewDate to the next 7 day; 
             this.setRenewDate(renewDateObj);
@@ -99,7 +100,7 @@ export default class FoodStore {
     }
 
     updateFoodThisWeek = (newFood: IFood[], category: Category) => {
-        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek!.filter(curFood => curFood.category !== category)
+        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek !== null ? this.foodThisWeek!.filter(curFood => curFood.category !== category) : [];
         this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
         this.isFoodThisWeekUpdated = true;
     }

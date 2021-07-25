@@ -36,7 +36,7 @@ const FoodThisWeek = () => {
     };
     
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
-        const foodThisWeekUnderCategory = foodThisWeek!.filter(food => food.category === foodCategory.category);
+        const foodThisWeekUnderCategory = foodThisWeek !== null ? foodThisWeek!.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category}>
                 <div style={{display: "flex", }}>

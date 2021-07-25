@@ -40,7 +40,7 @@ const ToBuyList: React.FC<IProps> = () => {
     }
 
     window.onbeforeunload = (event) => {
-        if (toBuyListStore.aggregateIngredients !== null) {
+        if (toBuyListStore.aggregateIngredients !== null && toBuyListStore.aggregateIngredients.length !== 0) {
             toBuyListStore.saveToBuyList();
         }
     };
