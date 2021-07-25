@@ -1,6 +1,6 @@
 import { MDBBadge, MDBCheckbox, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
-import React, { useEffect, useState } from "react";
-import { IIngredient } from '../../models/food';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from "react";
 import { useStore } from '../../store/rootStore';
 
 interface IProps {
@@ -9,45 +9,41 @@ interface IProps {
 
 const ToBuyList: React.FC<IProps> = () => {
     const { foodStore } = useStore();
+    const { toBuyListStore } = useStore();
+    const { aggregateIngredients } = toBuyListStore;
     const { foodThisWeek } = foodStore;
     
     const { appStore } = useStore();
-    const [aggregateIngredients, setAggregateIngredients] = useState<IIngredient[]>([]); //TODO: has it own store?
     
     useEffect(() => {
-        appStore.headerTitle = "To Buy List";
-        appStore.showToBuyListButton = false;
+        appStore.setupHeader("To Buy List", false);
+        const clonedFoodThisWeek = foodStore.getFoodThisWeek();
 
-        let allIngredients: IIngredient[] = [];
-        const copyOfFoodThisWeek = foodStore.getFoodThisWeek();
-        copyOfFoodThisWeek.forEach(food => {
-            allIngredients = [...allIngredients.slice(), ...food.ingredients.slice()]
-        });
-        console.log('All ingredients: ', allIngredients);
-        const aggregateIngredients: IIngredient[] = allIngredients.reduce((accIngredients: IIngredient[], cur: IIngredient) => {
-            //check if object is already in the acc array.
-            const index = accIngredients.findIndex(x => x.name === cur.name);
-            if (index === -1) {
-                console.log('Push: ',  cur.name,  "-"  , cur.quantity)
-                accIngredients.push(cur);
+        if (clonedFoodThisWeek.length > 0 ) {
+            if (toBuyListStore.aggregateIngredients == null && !toBuyListStore.checkIfToBuyListExistInTheDb() 
+                || foodStore.isFoodThisWeekUpdated) {
+                toBuyListStore.generateNewToBuyList(clonedFoodThisWeek);
             } else {
-                console.log( accIngredients[index]['quantity']);
-                accIngredients[index]['quantity'] += cur.quantity;
+                toBuyListStore.loadToBuyList();
             }
-            console.log('Heyy: ', accIngredients)
-            //if yes, increase the quantity
-            //if no, add object to the acc array.
-            return accIngredients
-        }, []);
-
-
-        setAggregateIngredients(aggregateIngredients);
+        }
+        
 
         return () => {
-            appStore.showToBuyListButton = true;
-            setAggregateIngredients([]);
+            appStore.setupHeader("", true);
+            foodStore.resetIsFoodThisWeek();
         }
     }, [foodThisWeek]);
+
+    const onToggleIngredientState = (ingredientName: string) => {
+        toBuyListStore.toggleIngredientState(ingredientName);
+    }
+
+    window.onbeforeunload = (event) => {
+        if (toBuyListStore.aggregateIngredients !== null) {
+            toBuyListStore.saveToBuyList();
+        }
+    };
 
     return (
         <div className="mt-3">
@@ -56,8 +52,10 @@ const ToBuyList: React.FC<IProps> = () => {
                     ? aggregateIngredients.map(ingredient => (
                         <MDBListGroupItem  key={ingredient.name } 
                                 className="d-flex justify-content-between align-items-center"
-                                onClick={() => console.log('Hello')}>
-                            <MDBCheckbox label={ingredient.name}/>
+                                onClick={() => onToggleIngredientState(ingredient.name)}
+                            
+                            >
+                            <MDBCheckbox label={ingredient.name} checked={ingredient.isChecked} onChange={()=> {}}/>
                             <MDBBadge pill>{ingredient.quantity} {ingredient.unit}</MDBBadge>
                         </MDBListGroupItem>
                     ))
@@ -69,4 +67,4 @@ const ToBuyList: React.FC<IProps> = () => {
         </div>
     )
 }
-export default ToBuyList;
+export default observer(ToBuyList);

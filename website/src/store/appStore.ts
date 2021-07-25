@@ -10,5 +10,8 @@ export default class AppStore {
         makeAutoObservable(this)
     }
 
-   
+    setupHeader = (headerTitle: string, showToBuyListButton: boolean = true) => {
+        this.headerTitle = headerTitle;
+        this.showToBuyListButton = showToBuyListButton;
+    }
 }

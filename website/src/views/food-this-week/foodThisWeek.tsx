@@ -11,9 +11,10 @@ const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodThisWeek} = foodStore;
     const {appStore} = useStore();
+    const {toBuyListStore} = useStore();
 
     useEffect(() => {
-        appStore.headerTitle = "Food This Week"
+        appStore.setupHeader("Food This Week");
     });
     
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {

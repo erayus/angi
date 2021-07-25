@@ -11,8 +11,10 @@ export type IFood = {
 export type IIngredient = {
     name: string
     quantity: number //TODO: may split into two properties if necessary
-    unit: 'gram' | 'cu' | 'lon' | 'trai' | 'bo' | 'goi' | null 
+    unit: IUnit
 }
+
+export type IUnit = 'gram' | 'cu' | 'lon' | 'trai' | 'bo' | 'goi' | null 
 
 export enum Category {
     Main = 'Main',

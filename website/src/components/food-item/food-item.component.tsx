@@ -2,7 +2,7 @@ import React from 'react'
 import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol } from 'mdb-react-ui-kit';
 // import img from '../../assets/spaghetti.jpg';
 import { IFood } from '../../models/food';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 type IProps = IFood & RouteComponentProps ;
 

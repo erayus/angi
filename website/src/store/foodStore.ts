@@ -9,6 +9,8 @@ export default class FoodStore {
     foodList: IFood[] = [];
     foodThisWeek: IFood[] = [];
     availableFoodCategories: IFoodCategory[] = [];
+    isFoodThisWeekUpdated = false;
+
     // dateToRenew: Date | null = null;
     private renewPeriod: number = 7;
 
@@ -53,6 +55,10 @@ export default class FoodStore {
         }
     };
 
+    resetIsFoodThisWeek = () => {
+        this.isFoodThisWeekUpdated = false;
+    }
+
     loadFood = async () => {
         this.foodList = FoodDirectory;
         this.loadAvailableCategories();
@@ -70,7 +76,6 @@ export default class FoodStore {
 
     loadExistingFoodThisWeek = () => {
         if (this.foodThisWeek.length === 0) {
-            console.log('Getting food this from the database');
             this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
         }
     }
@@ -92,7 +97,8 @@ export default class FoodStore {
 
     updateFoodThisWeek = (newFood: IFood[], category: Category) => {
         const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek.filter(curFood => curFood.category !== category)
-        this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood]
+        this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
+        this.isFoodThisWeekUpdated = true;
     }
 
     setQuantityForCategory = (category: Category, quantityToShow: number)  => {
