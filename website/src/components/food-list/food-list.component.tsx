@@ -1,9 +1,10 @@
 import React from 'react'
-import FoodItem from '../food-item/food-item.component'
+import FoodItem from './food-item/food-item.component'
 import { IFood } from '../../models/food';
 
 type IProps = {
-  foodList: IFood[]
+  foodList: IFood[];
+  onFoodChangeBtnClicked: (foodId: number) => void
 }
 
 const FoodList: React.FC<IProps> = (props) => {
@@ -21,6 +22,7 @@ const FoodList: React.FC<IProps> = (props) => {
                 category={food.category}
                 imgUrl={food.imgUrl}
                 ingredients={food.ingredients}
+                onFoodChangeBtnClicked={props.onFoodChangeBtnClicked}
               />
             )
           })

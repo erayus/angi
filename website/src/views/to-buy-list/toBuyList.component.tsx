@@ -15,8 +15,7 @@ const ToBuyList: React.FC<IProps> = () => {
     const { appStore } = useStore();
     
     useEffect(() => {
-        console.log('Heyyy');
-        appStore.setupHeader("To Buy List", false);
+        appStore.setupHeader("To Buy List", false); //TODO: should be removed
         const clonedFoodThisWeek = foodStore.getFoodThisWeek();
 
         if (clonedFoodThisWeek !== null ) {

@@ -13,15 +13,15 @@ type Params = {
     foodId: string
 }
 
-const FoodDetail : React.FC<RouteComponentProps<Params>> = ({match}) => {
-    const {foodStore} = useStore();
+const FoodDetail: React.FC<RouteComponentProps<Params>> = ({ match }) => {
+    const { foodStore } = useStore();
     const targetFoodId = +match.params.foodId;
     const targetFood = foodStore.getFoodForId(targetFoodId);
-    const {appStore} = useStore();
+    const { appStore } = useStore();
 
     useEffect(() => {
-      appStore.setupHeader(`Food's ingredients`)
-      
+        appStore.setupHeader(`Food's ingredients`)
+
     }, [])
     return (
         <div className="p-3">
@@ -29,7 +29,7 @@ const FoodDetail : React.FC<RouteComponentProps<Params>> = ({match}) => {
             <img
                 src={targetFood?.imgUrl ? targetFood?.imgUrl : 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&resize=768,574'}
                 className='figure-img img-fluid rounded shadow-3 mb-3'
-                alt='Food Image'
+                alt='Pic of Food'
             />
             <MDBListGroup>
                 {targetFood ? targetFood.ingredients.map(ing => (
@@ -37,8 +37,8 @@ const FoodDetail : React.FC<RouteComponentProps<Params>> = ({match}) => {
                         {ing.name}
                         <MDBBadge pill>{ing.quantity} {ing.unit}</MDBBadge>
                     </MDBListGroupItem>
-                    )) : "No ingredients found for this food."
-                
+                )) : "No ingredients found for this food."
+
                 }
             </MDBListGroup>
         </div>

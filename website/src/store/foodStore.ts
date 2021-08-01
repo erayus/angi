@@ -1,9 +1,8 @@
-import {makeAutoObservable, toJS} from 'mobx';
+import {makeAutoObservable} from 'mobx';
 import { IFoodCategory, IFood, Category } from "../models/food";
 import { FoodDirectory } from '../shared/foodDirectory';
 const clone = require("rfdc/default")
 
-type DateFormat = `${number}${number} ${string}${string}${string}${string} ${number}${number}${number}${number}`;
 
 export default class FoodStore {
     foodList: IFood[] = [];

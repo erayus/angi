@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
 import './foodThisWeek.styles.scss';
 import { Category } from '../../models/food';
-import { MDBInput } from 'mdb-react-ui-kit';
+import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
+import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
 
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodThisWeek} = foodStore;
     const {appStore} = useStore();
+    const [foodChangeModalState, setFoodChangeModalState] = useState(false);
+    const [selectedFoodToChange, setSelectedFoodToChange] = useState<number>();
 
     useEffect(()=> {
         appStore.setupHeader("Food This Week");
@@ -20,7 +23,6 @@ const FoodThisWeek = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, foodThisWeek]);
 
-    
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
         const newQuantity = +e.target.value;
         const minQuantityAllowed = +e.target.min;
@@ -41,6 +43,13 @@ const FoodThisWeek = () => {
             foodStore.saveFoodThisWeek(); //TODOL await?
         }
     };
+
+    const onFoodChangeBtnClickedHandler = (foodId: number) => {
+        toggleFoodChangeModalState();
+        setSelectedFoodToChange(foodId)
+    }
+
+    const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
     
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
         const foodThisWeekUnderCategory = foodThisWeek !== null ? foodThisWeek!.filter(food => food.category === foodCategory.category) : [];
@@ -54,10 +63,22 @@ const FoodThisWeek = () => {
                 
                 {
                     foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory !== undefined 
-                    ? <FoodList key={foodCategory.category} foodList={foodThisWeekUnderCategory}/>
+                    ? <FoodList 
+                        key={foodCategory.category} 
+                        foodList={foodThisWeekUnderCategory}
+                        onFoodChangeBtnClicked={onFoodChangeBtnClickedHandler}
+                      />
                     : "Loading"
                 }
+        
+            <MDBModal show={foodChangeModalState} getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
+                <FoodChangeModal 
+                    selectedFoodToChange={selectedFoodToChange!}
+                    toggleShow={toggleFoodChangeModalState}
+                    />
+            </MDBModal>
             </div>
+            
         )}    
     )
 

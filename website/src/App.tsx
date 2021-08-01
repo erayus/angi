@@ -12,13 +12,12 @@ const App: React.FC = () => {
     const {foodStore} = useStore();
     const {appStore} = useStore();
     const {loadFood} = foodStore;
-    const {foodThisWeek} = foodStore;
     const history = useHistory();
 
     useEffect(()=> {
         loadFood();
         foodStore.initializeFoodThisWeek();
-    }, []);
+    }, [foodStore, loadFood]);
     
     return (
         <React.Fragment>
