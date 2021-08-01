@@ -3,7 +3,7 @@ import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
 import './foodThisWeek.styles.scss';
-import { Category } from '../../models/food';
+import { Category, IFood } from '../../models/food';
 import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
@@ -13,8 +13,8 @@ const FoodThisWeek = () => {
     const {foodThisWeek} = foodStore;
     const {appStore} = useStore();
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
-    const [selectedFoodToChange, setSelectedFoodToChange] = useState<number>();
-
+    const [selectedFoodIdToChange, setSelectedFoodIdToChange] = useState<number>();
+    
     useEffect(()=> {
         appStore.setupHeader("Food This Week");
         return () => {
@@ -45,8 +45,8 @@ const FoodThisWeek = () => {
     };
 
     const onFoodChangeBtnClickedHandler = (foodId: number) => {
+        setSelectedFoodIdToChange(foodId);
         toggleFoodChangeModalState();
-        setSelectedFoodToChange(foodId)
     }
 
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
@@ -62,18 +62,25 @@ const FoodThisWeek = () => {
                 </div>
                 
                 {
+
                     foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory !== undefined 
                     ? <FoodList 
                         key={foodCategory.category} 
                         foodList={foodThisWeekUnderCategory}
+                        enableViewDetails
+                        enableFoodChange
                         onFoodChangeBtnClicked={onFoodChangeBtnClickedHandler}
                       />
                     : "Loading"
                 }
         
-            <MDBModal show={foodChangeModalState} getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
+            <MDBModal
+                staticBackdrop={true} 
+                show={foodChangeModalState} 
+                getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
                 <FoodChangeModal 
-                    selectedFoodToChange={selectedFoodToChange!}
+                    // selectedFoodIdToChange={selectedFoodIdToChange!}
+                    allFood={foodStore.allFood}
                     toggleShow={toggleFoodChangeModalState}
                     />
             </MDBModal>

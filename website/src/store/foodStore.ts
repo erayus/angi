@@ -5,7 +5,7 @@ const clone = require("rfdc/default")
 
 
 export default class FoodStore {
-    foodList: IFood[] = [];
+    allFood: IFood[] = [];
     foodThisWeek: IFood[] | null = null;
     availableFoodCategories: IFoodCategory[] = [];
     isFoodThisWeekUpdated = false;
@@ -41,7 +41,7 @@ export default class FoodStore {
     }
 
     initializeFoodThisWeek = () => {
-        if (this.foodList == null) {
+        if (this.allFood == null) {
             this.loadFood();
        };
 
@@ -79,7 +79,7 @@ export default class FoodStore {
     }
 
     loadFood = async () => {
-        this.foodList = FoodDirectory;
+        this.allFood = FoodDirectory;
         this.loadAvailableCategories();
     };
 
@@ -128,11 +128,11 @@ export default class FoodStore {
     }
 
     getFoodForId = (id: number) : IFood | undefined => {
-        return this.foodList.find(item => item.id === id);
+        return this.allFood.find(item => item.id === id);
     }
 
     loadAvailableCategories = () => {
-        const copyFood = this.foodList.slice();
+        const copyFood = this.allFood.slice();
         const category = copyFood.map(food => food.category).filter((category, index, self) => self.indexOf(category) === index);
 
         this.availableFoodCategories = category.map(category => {
@@ -153,7 +153,7 @@ export default class FoodStore {
     };
 
     getRandomFoodForCategory = (category: Category, quantityToShow: number): IFood[] => {
-            const copyFood = this.foodList.slice();
+            const copyFood = this.allFood.slice();
             let foodUnderGivenCategory = copyFood.filter(food=> food.category === category);
 
             if (quantityToShow > foodUnderGivenCategory.length) {
