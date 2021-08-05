@@ -1,20 +1,45 @@
-import React from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react'
 import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
 // import img from '../../assets/spaghetti.jpg';
 import { IFood } from '../../../models/food';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, useHistory, withRouter } from 'react-router-dom';
 import './food-item.styles.scss';
-import { FoodChangeProps, FoodListOptionalProps, ViewDetailsProps } from '../food-list.component';
+import { FoodListOptionalProps } from '../food-list.component';
+import { useStore } from '../../../store/rootStore';
+import { observer } from 'mobx-react-lite';
 
-type IProps = FoodListOptionalProps & IFood & RouteComponentProps;
+type IProps =  FoodListOptionalProps & IFood;
 
-const FoodItem: React.FC<IProps> = ({ id, name, imgUrl, ingredients, history, enableIngredientChipsDisplay, enableViewDetails, enableFoodChange, onFoodChangeBtnClicked }) => {
+
+const FoodItem: React.FC<IProps> = ({ 
+    id,
+    name,
+    imgUrl,
+    onFoodItemSelected,
+    ingredients,
+    enableIngredientChipsDisplay,
+    enableViewDetails, 
+    enableFoodChange, 
+    onFoodChangeBtnClicked }) => {
   const noOfDisplayingIngredientItems = 2;
   const noOfMoreThanTwo = ingredients.length > noOfDisplayingIngredientItems ? ingredients.length - 2 : 0; //TODO: better name?
+  const [isSelected, setIsSelected] = useState(false);
+  const { foodStore } = useStore();
+  const history = useHistory();
+
+
+  useEffect(() => {
+    if (foodStore.newFoodToChangeId === id) {
+      setIsSelected(!isSelected);
+    } else {
+      setIsSelected(false);
+    }
+  }, [foodStore.newFoodToChangeId])
 
   const displayNoOfExtraIngredients = noOfMoreThanTwo !== 0
-    ? (<MDBBtn className="m-1" size="sm" rounded style={{ fontSize: '10px', padding: '4px 8px' }}>+ {noOfMoreThanTwo}</MDBBtn>)
-    : null;
+  ? (<MDBBtn className="m-1" size="sm" rounded style={{ fontSize: '10px', padding: '4px 8px' }}>+ {noOfMoreThanTwo}</MDBBtn>)
+  : null;
 
   const displayIngredientsChips = (
     ingredients.slice().splice(0, 2).map(itemIngredient => {
@@ -38,7 +63,7 @@ const FoodItem: React.FC<IProps> = ({ id, name, imgUrl, ingredients, history, en
         size="md"
         rounded
         color="info"
-        onClick={() => onFoodChangeBtnClicked!(id)}
+        onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
       >
         <MDBIcon fas icon="sync" />
       </MDBBtn>
@@ -57,7 +82,10 @@ const FoodItem: React.FC<IProps> = ({ id, name, imgUrl, ingredients, history, en
     : null;
 
   return (
-    <MDBCard className="m-2">
+    <MDBCard 
+      className={["m-2", isSelected ? 'text-white': 'text-black' ].join(' ')} 
+      onClick={() => onFoodItemSelected ?  onFoodItemSelected!(id) : null} 
+      background={isSelected ? 'info': '#FFF'}>
       <MDBRow className='g-0'>
         <MDBCol size="4" style={{
           backgroundImage: `url(${imgUrl})`,
@@ -80,4 +108,4 @@ const FoodItem: React.FC<IProps> = ({ id, name, imgUrl, ingredients, history, en
   )
 }
 
-export default withRouter(FoodItem);
+export default observer(FoodItem);

@@ -9,6 +9,9 @@ export default class FoodStore {
     foodThisWeek: IFood[] | null = null;
     availableFoodCategories: IFoodCategory[] = [];
     isFoodThisWeekUpdated = false;
+    targetFoodToChangeId : number = 0;
+    newFoodToChangeId: number = 0;
+
     renewDate: string | null = null;
     private renewPeriod: number = 7;
 
@@ -106,6 +109,9 @@ export default class FoodStore {
         return false;
     }
 
+    getAllFoodThisWeek = () : IFood[] => {
+        return clone(this.allFood);
+    }
     getFoodThisWeek = () : IFood[] => {
         return clone(this.foodThisWeek);
     }
@@ -117,7 +123,6 @@ export default class FoodStore {
     updateFoodThisWeek = (newFood: IFood[], category: Category) => {
         const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek !== null ? this.foodThisWeek!.filter(curFood => curFood.category !== category) : [];
         this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
-        this.isFoodThisWeekUpdated = true;
     }
 
     setQuantityForCategory = (category: Category, quantityToShow: number)  => {
@@ -127,8 +132,8 @@ export default class FoodStore {
         localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
     }
 
-    getFoodForId = (id: number) : IFood | undefined => {
-        return this.allFood.find(item => item.id === id);
+    getFoodForId = (id: number) : IFood | null => {
+        return this.allFood.find(item => item.id === id) || null;
     }
 
     loadAvailableCategories = () => {
@@ -169,5 +174,29 @@ export default class FoodStore {
                 foodToReturn.push(randomFood);
             }
             return foodToReturn;
+    }
+
+    setFoodToChangeId = (id: number) => {
+        this.newFoodToChangeId = id;
+    }
+
+    setTargetFoodIdToChange = (id: number) => {
+        this.targetFoodToChangeId = id;
+    }
+
+    changeFood() {
+        const newFoodThisWeek :IFood[] = this.foodThisWeek!.map(food => {
+            if (food.id === this.targetFoodToChangeId) {
+                return this.getFoodForId(this.newFoodToChangeId)!;
+            }
+            return food;
+        });
+    
+        this.foodThisWeek = [...newFoodThisWeek];
+        this.isFoodThisWeekUpdated = true;
+
+        //Resetting the foodchange-related values
+        this.targetFoodToChangeId = 0;
+        this.newFoodToChangeId = 0;
     }
 }

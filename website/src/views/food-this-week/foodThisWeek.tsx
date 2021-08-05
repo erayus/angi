@@ -13,7 +13,7 @@ const FoodThisWeek = () => {
     const {foodThisWeek} = foodStore;
     const {appStore} = useStore();
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
-    const [selectedFoodIdToChange, setSelectedFoodIdToChange] = useState<number>();
+    // const [selectedFoodIdToChange, setSelectedFoodIdToChange] = useState<number>();
     
     useEffect(()=> {
         appStore.setupHeader("Food This Week");
@@ -35,7 +35,6 @@ const FoodThisWeek = () => {
         foodStore.setQuantityForCategory(category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
         foodStore.updateFoodThisWeek(newFood, category);
-
     }
 
     window.onbeforeunload = (event) => {
@@ -45,13 +44,14 @@ const FoodThisWeek = () => {
     };
 
     const onFoodChangeBtnClickedHandler = (foodId: number) => {
-        setSelectedFoodIdToChange(foodId);
+        foodStore.setTargetFoodIdToChange(foodId);
         toggleFoodChangeModalState();
     }
 
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
     
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
+        console.log(foodCategory);
         const foodThisWeekUnderCategory = foodThisWeek !== null ? foodThisWeek!.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category}>
@@ -60,7 +60,6 @@ const FoodThisWeek = () => {
                     <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)}/>
                 </div>
-                
                 {
 
                     foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory !== undefined 
@@ -80,7 +79,12 @@ const FoodThisWeek = () => {
                 getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
                 <FoodChangeModal 
                     // selectedFoodIdToChange={selectedFoodIdToChange!}
-                    allFood={foodStore.allFood}
+                    foodAvailableForChange={
+                        foodStore.getAllFoodThisWeek()
+                            .filter(eachFoodInAllFood => eachFoodInAllFood.category === foodStore.getFoodForId(foodStore.targetFoodToChangeId)?.category )
+                            .filter(eachFoodInAllFood => 
+                                !foodThisWeek?.some(eachFoodInFoodThisWeek => eachFoodInFoodThisWeek.id === eachFoodInAllFood.id)
+                            )}
                     toggleShow={toggleFoodChangeModalState}
                     />
             </MDBModal>

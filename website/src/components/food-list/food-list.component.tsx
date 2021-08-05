@@ -6,16 +6,9 @@ export type FoodListOptionalProps = {
   enableIngredientChipsDisplay?: boolean;
   enableViewDetails?: boolean;
   enableFoodChange?: boolean;
+  onFoodItemSelected?: (id: number) => void;
   onFoodChangeBtnClicked?: (foodId: number) => void
 }
-
-export type ViewDetailsProps = {
-  enableViewDetails?: boolean;
-}
-export type FoodChangeProps = {
-  enableFoodChange?: boolean;
-  onFoodChangeBtnClicked?: (foodId: number) => void
-} 
 
 
 type IProps = {
@@ -26,22 +19,25 @@ const FoodList: React.FC<IProps> = (props) => {
     return (
       <div>
         {
-          props.foodList.map(food => {
-            return (
-              <FoodItem
-                key={food.id}
-                id={food.id}
-                name={food.name}
-                category={food.category}
-                imgUrl={food.imgUrl}
-                ingredients={food.ingredients}
-                enableViewDetails={props.enableViewDetails}
-                enableFoodChange={props.enableFoodChange}
-                onFoodChangeBtnClicked={props.onFoodChangeBtnClicked}
-                enableIngredientChipsDisplay={props.enableIngredientChipsDisplay}
-              />
-            )
+          props.foodList.length > 0 ?
+            props.foodList.map(food => {
+              return (
+                <FoodItem
+                  key={food.id}
+                  id={food.id}
+                  name={food.name}
+                  category={food.category}
+                  imgUrl={food.imgUrl}
+                  ingredients={food.ingredients}
+                  enableViewDetails={props.enableViewDetails}
+                  onFoodItemSelected={props.onFoodItemSelected}
+                  enableFoodChange={props.enableFoodChange}
+                  onFoodChangeBtnClicked={props.onFoodChangeBtnClicked}
+                  enableIngredientChipsDisplay={props.enableIngredientChipsDisplay}
+                />
+              )
           })
+          : "No food to display."
         }
       </div>
     )
