@@ -2,7 +2,7 @@ import { MDBBadge, MDBCheckbox, MDBListGroup, MDBListGroupItem } from 'mdb-react
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from "react";
 import { useStore } from '../../store/rootStore';
-
+import "./toBuyList.styles.scss"
 interface IProps {
 
 }
@@ -51,7 +51,7 @@ const ToBuyList: React.FC<IProps> = () => {
                             
                             >
                             <MDBCheckbox label={ingredient.name} checked={ingredient.isChecked} onChange={()=> {}}/>
-                            <MDBBadge pill>{ingredient.quantity} {ingredient.unit}</MDBBadge>
+                            <MDBBadge pill className="quantityUnit" >{ingredient.quantity} {ingredient.unit}</MDBBadge>
                         </MDBListGroupItem>
                     ))
                     : "No food generated for this week yet."

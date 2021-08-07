@@ -50,7 +50,6 @@ const FoodThisWeek = () => {
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
     
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
-        console.log(foodCategory);
         const foodThisWeekUnderCategory = foodThisWeek !== null ? foodThisWeek!.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category}>

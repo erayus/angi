@@ -12,15 +12,11 @@ export class HostingStack extends Stack {
       this, 
       'smartmenu-website-bucket')
 
-    const cloudfrontDistribution  = new CloudfrontDistribution(
-      this, 
-      'smartmenu-cloudfront-distribution', 
-      {bucket: webBucket.bucket});
 
     const route53ARecord = new Route53ARecord(
       this,
       'smartMenu-route53-ARecord',
-      {distribution: cloudfrontDistribution.distribution}
+      {distribution: webBucket.websiteCloudfrontDistribution.distribution}
     ) 
   }
 }

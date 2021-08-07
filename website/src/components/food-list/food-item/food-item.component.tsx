@@ -38,17 +38,16 @@ const FoodItem: React.FC<IProps> = ({
   }, [foodStore.newFoodToChangeId])
 
   const displayNoOfExtraIngredients = noOfMoreThanTwo !== 0
-    ? (<MDBBtn className="m-1" size="sm" rounded style={{ fontSize: '10px', padding: '4px 8px' }}>+ {noOfMoreThanTwo}</MDBBtn>)
+    ? (<MDBBtn className="no-of-extra-ingredients-chip m-1" size="sm" rounded>+ {noOfMoreThanTwo}</MDBBtn>)
     : null;
 
   const displayIngredientsChips = (
     ingredients.slice().splice(0, 2).map(itemIngredient => {
       return (
         <MDBBtn key={itemIngredient.name}
-          className="m-1"
+          className="ingredient-chip-btn m-1"
           outline
           rounded
-          style={{ fontSize: '8px', padding: '4px 8px' }}
         >
           {itemIngredient.name}
         </MDBBtn>
@@ -58,11 +57,10 @@ const FoodItem: React.FC<IProps> = ({
 
   const displayFoodChangeBtn = (
     <MDBBtn
-      className="change-btn"
+      className="change-modal-btn"
       floating
       size="md"
       rounded
-      color="info"
       onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
     >
       <MDBIcon fas icon="sync" />

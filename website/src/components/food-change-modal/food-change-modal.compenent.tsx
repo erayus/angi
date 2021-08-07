@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { IFood } from '../../models/food';
 import { useStore } from '../../store/rootStore';
 import FoodList from '../food-list/food-list.component';
+import styles from "./food-change-modal.module.css";
+
 
 type IProps = {
   foodAvailableForChange: IFood[];
@@ -46,11 +48,14 @@ const FoodChangeModal: React.FC<IProps> = ({ toggleShow, foodAvailableForChange 
         </MDBModalBody>
 
         <MDBModalFooter>
-          <MDBBtn color='secondary' onClick={toggleShow}>
+          <MDBBtn color='success' outline onClick={toggleShow}>
             Close
           </MDBBtn>
           <MDBBtn
-            disabled={changeBtnDisabled} onClick={() => onChangedHandler()}>Change</MDBBtn>
+            className={styles.changeBtn}
+            disabled={changeBtnDisabled} 
+            onClick={() => onChangedHandler()}
+          >Change</MDBBtn>
         </MDBModalFooter>
       </MDBModalContent>
     </MDBModalDialog>

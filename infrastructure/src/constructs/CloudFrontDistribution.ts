@@ -39,7 +39,7 @@ export default class CloudfrontDistribution extends Construct {
                 sslSupportMethod: aws_cloudfront.SSLMethod.SNI,
             }
         },
-        viewerProtocolPolicy:  aws_cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+        viewerProtocolPolicy:  aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         originConfigs: [
           {
             s3OriginSource: {
@@ -48,6 +48,15 @@ export default class CloudfrontDistribution extends Construct {
             behaviors: [{ isDefaultBehavior: true }],
           },
         ],
+        errorConfigurations: [
+            {
+                errorCode: 403,
+                responseCode: 200,
+                errorCachingMinTtl: 3600,
+                responsePagePath: '/index.html'
+            }
+        ] ,
+
         defaultRootObject: "index.html",
       }
     );

@@ -16,14 +16,14 @@ const NavFooter = () => {
         }
         return false;
     }
- 
+
     return (
         <MDBRow id="nav-footer" >
             <MDBCol className="nav-footer-item d-flex align-items-center justify-content-center" onClick={() => history.push('/')}>
-                <MDBIcon fas icon="utensils" style={{ color: shouldBeHighlighted(NavPath.FoodThisWeek) ? '#00C853' : 'black' }}/>
+                <MDBIcon fas icon="utensils" style={{ color: shouldBeHighlighted(NavPath.FoodThisWeek) ? '#00C853' : 'black' }} />
             </MDBCol>
             <MDBCol className="nav-footer-item  d-flex align-items-center justify-content-center" onClick={() => history.push('/to-buy-list')}>
-                <MDBIcon fas icon="list" style={{ color: shouldBeHighlighted(NavPath.ToBuyList) ? '#00C853' : 'black' }}/>            
+                <MDBIcon fas icon="list" style={{ color: shouldBeHighlighted(NavPath.ToBuyList) ? '#00C853' : 'black' }} />
             </MDBCol>
         </MDBRow>
     )

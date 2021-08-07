@@ -1,14 +1,30 @@
 .card-body-container {
     position: relative;
-    .change-btn{
+    .change-modal-btn{
         position: absolute;
         top: 8px;
         right: 5px;
         font-size: '10px'; 
         padding: '4px 8px';
         z-index: 10;
+        color: white;
+        background-color: #FF6F00;
     }
-    
+    .ingredient-chip-btn{
+        font-size: 10px;
+        padding: 4px 8px;
+        border:  2px solid #FF6F00;
+        color: #FF6F00;
+        background-color: white;
+    }
+    .no-of-extra-ingredients-chip {
+        font-size: 10px;
+        padding: 4px 8px;
+        background-color: #FF6F00;
+        color: white;
+    }
 }
+
+
 
 

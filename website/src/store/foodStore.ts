@@ -3,7 +3,6 @@ import { IFoodCategory, IFood, Category } from "../models/food";
 import { FoodDirectory } from '../shared/foodDirectory';
 const clone = require("rfdc/default")
 
-
 export default class FoodStore {
     allFood: IFood[] = [];
     foodThisWeek: IFood[] | null = null;
@@ -123,6 +122,7 @@ export default class FoodStore {
     updateFoodThisWeek = (newFood: IFood[], category: Category) => {
         const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek !== null ? this.foodThisWeek!.filter(curFood => curFood.category !== category) : [];
         this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
+        this.isFoodThisWeekUpdated = true;
     }
 
     setQuantityForCategory = (category: Category, quantityToShow: number)  => {
