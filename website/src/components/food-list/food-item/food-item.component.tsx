@@ -9,19 +9,19 @@ import { FoodListOptionalProps } from '../food-list.component';
 import { useStore } from '../../../store/rootStore';
 import { observer } from 'mobx-react-lite';
 
-type IProps =  FoodListOptionalProps & IFood;
+type IProps = FoodListOptionalProps & IFood;
 
 
-const FoodItem: React.FC<IProps> = ({ 
-    id,
-    name,
-    imgUrl,
-    onFoodItemSelected,
-    ingredients,
-    enableIngredientChipsDisplay,
-    enableViewDetails, 
-    enableFoodChange, 
-    onFoodChangeBtnClicked }) => {
+const FoodItem: React.FC<IProps> = ({
+  id,
+  name,
+  imgUrl,
+  onFoodItemSelected,
+  ingredients,
+  enableIngredientChipsDisplay,
+  enableViewDetails,
+  enableFoodChange,
+  onFoodChangeBtnClicked }) => {
   const noOfDisplayingIngredientItems = 2;
   const noOfMoreThanTwo = ingredients.length > noOfDisplayingIngredientItems ? ingredients.length - 2 : 0; //TODO: better name?
   const [isSelected, setIsSelected] = useState(false);
@@ -38,8 +38,8 @@ const FoodItem: React.FC<IProps> = ({
   }, [foodStore.newFoodToChangeId])
 
   const displayNoOfExtraIngredients = noOfMoreThanTwo !== 0
-  ? (<MDBBtn className="m-1" size="sm" rounded style={{ fontSize: '10px', padding: '4px 8px' }}>+ {noOfMoreThanTwo}</MDBBtn>)
-  : null;
+    ? (<MDBBtn className="m-1" size="sm" rounded style={{ fontSize: '10px', padding: '4px 8px' }}>+ {noOfMoreThanTwo}</MDBBtn>)
+    : null;
 
   const displayIngredientsChips = (
     ingredients.slice().splice(0, 2).map(itemIngredient => {
@@ -56,18 +56,18 @@ const FoodItem: React.FC<IProps> = ({
     })
   );
 
-  const displayFoodChangeBtn =  (
-      <MDBBtn
-        className="change-btn"
-        floating
-        size="md"
-        rounded
-        color="info"
-        onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
-      >
-        <MDBIcon fas icon="sync" />
-      </MDBBtn>
-    );
+  const displayFoodChangeBtn = (
+    <MDBBtn
+      className="change-btn"
+      floating
+      size="md"
+      rounded
+      color="info"
+      onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
+    >
+      <MDBIcon fas icon="sync" />
+    </MDBBtn>
+  );
 
   const displayViewDetailsBtn = enableViewDetails
     ? (
@@ -75,17 +75,17 @@ const FoodItem: React.FC<IProps> = ({
         className="view-detail-btn"
         color="success"
         rounded
-        onClick={() => history.push(`/food-list/${id}`)}>
+        onClick={() => history.push(`/food-details/${id}`)}>  
         View details
-      </MDBBtn>
+      </MDBBtn> //TODO: centralize pathname
     )
     : null;
 
   return (
-    <MDBCard 
-      className={["m-2", isSelected ? 'text-white': 'text-black' ].join(' ')} 
-      onClick={() => onFoodItemSelected ?  onFoodItemSelected!(id) : null} 
-      background={isSelected ? 'info': '#FFF'}>
+    <MDBCard
+      className={["m-2", isSelected ? 'text-white' : 'text-black'].join(' ')}
+      onClick={() => onFoodItemSelected ? onFoodItemSelected!(id) : null}
+      background={isSelected ? 'info' : '#FFF'}>
       <MDBRow className='g-0'>
         <MDBCol size="4" style={{
           backgroundImage: `url(${imgUrl})`,

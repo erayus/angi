@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { } from 'react'
 import { withRouter } from 'react-router'
 import { MDBBadge, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { RouteComponentProps } from 'react-router-dom';
@@ -17,12 +17,7 @@ const FoodDetail: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const { foodStore } = useStore();
     const targetFoodId = +match.params.foodId;
     const targetFood = foodStore.getFoodForId(targetFoodId);
-    const { appStore } = useStore();
 
-    useEffect(() => {
-        appStore.setupHeader(`Food's ingredients`)
-
-    }, [])
     return (
         <div className="p-3">
             <h3 className="text-center">{targetFood?.name}'s ingredients</h3>

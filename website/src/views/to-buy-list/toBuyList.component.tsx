@@ -11,11 +11,8 @@ const ToBuyList: React.FC<IProps> = () => {
     const { foodStore } = useStore();
     const { toBuyListStore } = useStore();
     const { aggregateIngredients } = toBuyListStore;
-    
-    const { appStore } = useStore();
-    
+        
     useEffect(() => {
-        appStore.setupHeader("To Buy List", false); //TODO: should be removed
         const clonedFoodThisWeek = foodStore.getFoodThisWeek();
 
         if (clonedFoodThisWeek !== null ) {
@@ -29,7 +26,6 @@ const ToBuyList: React.FC<IProps> = () => {
         
 
         return () => {
-            appStore.setupHeader("", true);
             foodStore.resetIsFoodThisWeek();
         }
     }, [foodStore.foodThisWeek]);

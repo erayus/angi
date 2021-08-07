@@ -16,7 +16,6 @@ const FoodThisWeek = () => {
     // const [selectedFoodIdToChange, setSelectedFoodIdToChange] = useState<number>();
     
     useEffect(()=> {
-        appStore.setupHeader("Food This Week");
         return () => {
             foodStore.saveFoodThisWeek();
         };
