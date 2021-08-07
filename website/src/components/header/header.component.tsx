@@ -2,6 +2,7 @@ import { MDBIcon } from 'mdb-react-ui-kit';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import './header.styles.scss';
+import { NavPath } from '../../shared/nav-path';
 const Header = () => {
     const [headerTitle, setHeaderTitle] = useState<string>();
     const [displayBackBtn, setDisplayBackBtn] = useState(false);
@@ -12,12 +13,12 @@ const Header = () => {
     useEffect(() => {
         let backBtnFlag = false;
         
-        if (location.pathname.endsWith('/')) {
+        if (location.pathname.includes(NavPath.FoodThisWeek)) {
             setHeaderTitle('Food This Week')
-        } else if (location.pathname.includes('food-details')) {
+        } else if (location.pathname.includes(NavPath.FoodDetails)) {
             backBtnFlag = true;
             setHeaderTitle('Food Details')
-        } else if (location.pathname.includes('to-buy-list')) {
+        } else if (location.pathname.includes(NavPath.ToBuyList)) {
             setHeaderTitle('To Buy List')
         }
         else {

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import FoodThisWeek from './views/food-this-week/foodThisWeek';
 import { useStore } from './store/rootStore';
 import FoodDetail from './views/food-detail/foodDetail';
@@ -8,6 +8,7 @@ import ToBuyList from './views/to-buy-list/toBuyList.component';
 import { observer } from 'mobx-react-lite';
 import NavFooter from './components/nav-footer/nav-footer.component';
 import Header from './components/header/header.component';
+import { NavPath } from './shared/nav-path';
 
 const App: React.FC = () => {
     const { foodStore } = useStore();
@@ -31,9 +32,10 @@ const App: React.FC = () => {
             } */}
             <div className="main" >
                 <Switch>
-                    <Route exact path="/" component={FoodThisWeek} />
-                    <Route path="/food-details/:foodId" component={FoodDetail} />
-                    <Route path="/to-buy-list" component={ToBuyList} />
+                    <Route exact path={'/' + NavPath.FoodThisWeek} component={FoodThisWeek} />
+                    <Route path={`/${NavPath.FoodDetails}/:foodId`}component={FoodDetail} />
+                    <Route path={`/${NavPath.ToBuyList}`} component={ToBuyList} />
+                    <Redirect from="/" to={NavPath.FoodThisWeek} />
                 </Switch>
             </div>
             <NavFooter />
