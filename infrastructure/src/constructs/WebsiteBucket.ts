@@ -5,7 +5,6 @@ import CloudfrontDistribution from "./CloudFrontDistribution";
 
 export default class WebsiteBucket extends Construct {
     public readonly bucket: aws_s3.IBucket;
-    public readonly websiteCloudfrontDistribution: CloudfrontDistribution;
   
     constructor(scope: Stack, id: string){
       super(scope,id)  
@@ -18,18 +17,6 @@ export default class WebsiteBucket extends Construct {
           autoDeleteObjects: true ,
           removalPolicy: RemovalPolicy.DESTROY
         });
-
-        this.websiteCloudfrontDistribution = new CloudfrontDistribution(
-            scope, 
-            'smartmenu-cloudfront-distribution', 
-            {bucket: this.bucket});
-
-        new aws_s3_deployment.BucketDeployment(this, 'DeployWebsite', {
-            sources: [aws_s3_deployment.Source.asset('../website/build')],
-            destinationBucket: this.bucket,
-            distribution: this.websiteCloudfrontDistribution.distribution,
-            distributionPaths: ['/index.html'],
-        }).node.addDependency(this.bucket);
   
         new CfnOutput(scope, 'output_bucketName', {
           exportName: 'smartmenu-bucket-name',
@@ -38,7 +25,7 @@ export default class WebsiteBucket extends Construct {
   
         new CfnOutput(scope, 'output_bucketDomainName', {
           exportName: 'smartmenu-bucket-domain-name',
-          value: this.bucket.bucketDomainName
+          value: `https://${this.bucket.bucketDomainName}`
         })
     }
   }
