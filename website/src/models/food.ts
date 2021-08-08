@@ -14,7 +14,7 @@ export type IIngredient = {
     unit: IUnit
 }
 
-export type IUnit = 'gram' | 'cu' | 'lon' | 'trai' | 'bo' | 'goi' | null 
+export type IUnit = 'kg' | 'gram' | 'củ' | 'con' |'lon' | 'trái' | 'bó' | 'gói' | 'bịch' | 'chai' | null 
 
 export enum Category {
     Main = 'Main',
