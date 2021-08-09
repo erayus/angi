@@ -25,6 +25,9 @@ const NavFooter = () => {
             <MDBCol className="nav-footer-item  d-flex align-items-center justify-content-center" onClick={() => history.push('/to-buy-list')}>
                 <MDBIcon fas icon="list" style={{ color: shouldBeHighlighted(NavPath.ToBuyList) ? '#00C853' : 'black' }} />
             </MDBCol>
+            <MDBCol className="nav-footer-item  d-flex align-items-center justify-content-center" onClick={() => history.push('/settings')}>
+                <MDBIcon fas icon="cogs" style={{ color: shouldBeHighlighted(NavPath.Settings) ? '#00C853' : 'black' }} />
+            </MDBCol>
         </MDBRow>
     )
 }

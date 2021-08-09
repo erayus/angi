@@ -19,7 +19,7 @@ export type IUnit = 'kg' | 'gram' | 'củ' | 'con' |'lon' | 'trái' | 'bó' | 'g
 export enum Category {
     Main = 'Main',
     Soup = 'Soup',
-    Dessert = 'Desert'
+    Side = 'Side'
 }
 
 export type IFoodCategory = {

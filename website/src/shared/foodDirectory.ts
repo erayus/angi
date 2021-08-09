@@ -5,7 +5,7 @@ export const FoodDirectory: IFood[] = [
     id: 1,
     name: "Braised Pork with Shrimp paste",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/359368442233884.jpeg",
     ingredients: [
       {
         name: "Pork belly",
@@ -58,7 +58,7 @@ export const FoodDirectory: IFood[] = [
     id: 2,
     name: "BBQ Pork",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/2143265135435333.jpg",
     ingredients: [
       {
         name: "Pork belly",
@@ -71,7 +71,7 @@ export const FoodDirectory: IFood[] = [
     id: 3,
     name: "Braised Pork with Pineapple",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/1555306671573782749046.jpg",
     ingredients: [
       {
         name: "Pork Belly",
@@ -99,7 +99,7 @@ export const FoodDirectory: IFood[] = [
     id: 4,
     name: "Kho quet",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/124530667157743241.jpg",
     ingredients: [
       {
         name: "Pork belly",
@@ -122,7 +122,7 @@ export const FoodDirectory: IFood[] = [
     id: 5,
     name: "Pork and Egg steamed cake/loaf",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/21478317589237432.jpg",
     ingredients: [
       {
         name: "Mince Pork",
@@ -150,7 +150,7 @@ export const FoodDirectory: IFood[] = [
     id: 6,
     name: "Boiled Pork",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32437259817525435.jpg",
     ingredients: [
       {
         name: "Pork Belly",
@@ -163,7 +163,7 @@ export const FoodDirectory: IFood[] = [
     id: 7,
     name: "Pork wrapped in Wild Betal Leaf (Cha la lot)",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32571982714132414.jpg",
     ingredients: [
       {
         name: "Minced pork",
@@ -189,9 +189,9 @@ export const FoodDirectory: IFood[] = [
   },
   {
     id: 8,
-    name: "Stir-fried beef with mix veggies ",
+    name: "Stir-fried beef with mix veggies",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/received_932824094322452.jpeg",
     ingredients: [
       {
         name: "Beef",
@@ -224,7 +224,7 @@ export const FoodDirectory: IFood[] = [
     id: 9,
     name: "Beef stake",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/324893014389571.jpg",
     ingredients: [
       {
         name: "Any beef stake",
@@ -237,7 +237,7 @@ export const FoodDirectory: IFood[] = [
     id: 10,
     name: "Clay Pot Braised Fish",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/507880050439917.jpeg",
     ingredients: [
       {
         name: "Fish",
@@ -270,7 +270,7 @@ export const FoodDirectory: IFood[] = [
     id: 11,
     name: "Stir-fried squid/calamari with mix veggies",
     category: Category.Main,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/313937753735915.jpeg",
     ingredients: [
       {
         name: "Squid",
@@ -323,7 +323,7 @@ export const FoodDirectory: IFood[] = [
     id: 12,
     name: "Canh mồng tơ cua đồng",
     category: Category.Soup,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/2132473815937245.jpg",
     ingredients: [
       {
         name: "Mồng tơi",
@@ -341,10 +341,10 @@ export const FoodDirectory: IFood[] = [
     id: 13,
     name: "Canh brocoli thịt viên",
     category: Category.Soup,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32947983758193275.jpg",
     ingredients: [
       {
-        name: "Brocoli",
+        name: "Broccoli",
         quantity: 2,
         unit: "củ",
       },
@@ -357,22 +357,27 @@ export const FoodDirectory: IFood[] = [
   },
   {
     id: 14,
-    name: "Canh cải thảo",
+    name: "Canh cải thảo hầm sươn",
     category: Category.Soup,
-    imgUrl: "",
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/21498375981753253251.jpg",
     ingredients: [
       {
         name: "Cải thảo",
         quantity: 1,
         unit: "bó",
       },
+      {
+        name: "Sươn heo",
+        quantity: 500,
+        unit: "gram",
+      },
     ],
   },
   {
     id: 15,
     name: "Xoài",
-    category: Category.Dessert,
-    imgUrl: "",
+    category: Category.Side,
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/274938515324325.jpg",
     ingredients: [
       {
         name: "Xoài",
@@ -384,8 +389,8 @@ export const FoodDirectory: IFood[] = [
   {
     id: 16,
     name: "Sinh tố Blueberry",
-    category: Category.Dessert,
-    imgUrl: "",
+    category: Category.Side,
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32758927591731928.jpg",
     ingredients: [
       {
         name: "Blueberry",
@@ -403,8 +408,8 @@ export const FoodDirectory: IFood[] = [
   {
     id: 17,
     name: "Sinh tố bơ",
-    category: Category.Dessert,
-    imgUrl: "",
+    category: Category.Side,
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/234957183753243.jpg",
     ingredients: [
       {
         name: "Banana",
@@ -418,6 +423,34 @@ export const FoodDirectory: IFood[] = [
       },
     ],
   },
+  {
+    id: 18,
+    name: "Canh sườn ninh",
+    category: Category.Soup,
+    imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/565952228105625.jpeg",
+    ingredients: [
+      {
+        name: "Pork Ribs",
+        quantity: 800,
+        unit: "gram",
+      },
+      {
+        name: "Broccoli",
+        quantity: 1,
+        unit: "củ",
+      },
+      {
+        name: "Carrot",
+        quantity: 2,
+        unit: "củ",
+      },
+      {
+        name: "Pumpkin",
+        quantity: 0.5,
+        unit: "củ",
+      }
+    ],
+  }
   // {
   //   id: 13,
   //   name: 'Snack 4',
