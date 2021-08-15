@@ -12,41 +12,42 @@ export type IngredientState = {
 
 
 export default class ToBuyListStore {
-    aggregateIngredients: IngredientState[] | null = null;
+    toBuyList: IngredientState[] | null = null;
     isToBuyListExistInTheDb: boolean | null= null;
     constructor(){
         makeAutoObservable(this)
     }
 
     generateNewToBuyList= (foodThisWeek: IFood[]) => {
-        let allIngredients: IIngredient[] = [];
+        let allIngredientsThisWeek: IIngredient[] = [];
             foodThisWeek.forEach(food => {
-                allIngredients = [...allIngredients.slice(), ...food.ingredients]
+                allIngredientsThisWeek = [...allIngredientsThisWeek.slice(), ...food.ingredients]
             });
-            const aggregateIngredients: IngredientState[] = allIngredients.reduce((accIngredients: IngredientState[], cur: IIngredient) => {
+
+            const aggregateIngredients: IngredientState[] = allIngredientsThisWeek.reduce((accIngredients: IngredientState[], cur: IIngredient) => {
                 //check if object is already in the acc array.
                 const index = accIngredients.findIndex(x => x.name === cur.name);
                 if (index === -1) {
-                    const ingredientState = {
+                    const toBuyIngredient = {
                         name: cur.name,
                         quantity: cur.quantity,
                         unit: cur.unit,
                         isChecked: false
                     }
-                    accIngredients.push(ingredientState);
+                    accIngredients.push(toBuyIngredient);
                 } else {
                     accIngredients[index]['quantity'] += cur.quantity;
                 }
 
                 return accIngredients
             }, []);
-            this.aggregateIngredients = aggregateIngredients;
+            this.toBuyList = aggregateIngredients;
             this.saveToBuyList();
     }
 
     toggleIngredientState = (ingredientName: string) => {
-        const index = this.aggregateIngredients!.findIndex(x => x.name === ingredientName);
-        this.aggregateIngredients![index].isChecked = !this.aggregateIngredients![index].isChecked;
+        const index = this.toBuyList!.findIndex(x => x.name === ingredientName);
+        this.toBuyList![index].isChecked = !this.toBuyList![index].isChecked;
     }
 
     checkIfToBuyListExistInTheDb = () => {
@@ -65,14 +66,14 @@ export default class ToBuyListStore {
     }
 
     loadToBuyList = () => {
-        if (this.aggregateIngredients == null) {
-            this.aggregateIngredients = JSON.parse(localStorage.getItem('toBuyList')!);
+        if (this.toBuyList == null) {
+            this.toBuyList = JSON.parse(localStorage.getItem('toBuyList')!);
         }
     }
 
     saveToBuyList = () => {
         // this.aggregateIngredients = aggregateIngredients;
-        localStorage.setItem('toBuyList', JSON.stringify(this.aggregateIngredients));
+        localStorage.setItem('toBuyList', JSON.stringify(this.toBuyList));
     }
 
    

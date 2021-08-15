@@ -10,20 +10,19 @@ interface IProps {
 const ToBuyList: React.FC<IProps> = () => {
     const { foodStore } = useStore();
     const { toBuyListStore } = useStore();
-    const { aggregateIngredients } = toBuyListStore;
+    const { toBuyList } = toBuyListStore;
         
     useEffect(() => {
         const clonedFoodThisWeek = foodStore.getFoodThisWeek();
 
         if (clonedFoodThisWeek !== null ) {
-            if (toBuyListStore.aggregateIngredients == null && !toBuyListStore.checkIfToBuyListExistInTheDb() 
+            if (toBuyListStore.toBuyList == null && !toBuyListStore.checkIfToBuyListExistInTheDb() 
                 || foodStore.isFoodThisWeekUpdated) {
                 toBuyListStore.generateNewToBuyList(clonedFoodThisWeek);
             } else {
                 toBuyListStore.loadToBuyList();
             }
         }
-        
 
         return () => {
             foodStore.resetIsFoodThisWeek();
@@ -35,7 +34,7 @@ const ToBuyList: React.FC<IProps> = () => {
     }
 
     window.onbeforeunload = (event) => {
-        if (toBuyListStore.aggregateIngredients !== null && toBuyListStore.aggregateIngredients.length !== 0) {
+        if (toBuyListStore.toBuyList !== null && toBuyListStore.toBuyList.length !== 0) {
             toBuyListStore.saveToBuyList();
         }
     };
@@ -43,12 +42,11 @@ const ToBuyList: React.FC<IProps> = () => {
     return (
         <div className="mt-3">
             <MDBListGroup className="mx-auto" style={{ maxWidth: '22rem' }}>
-                { aggregateIngredients 
-                    ? aggregateIngredients.map(ingredient => (
+                { toBuyList 
+                    ? toBuyList.slice().sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map(ingredient => (
                         <MDBListGroupItem  key={ingredient.name } 
                                 className="d-flex justify-content-between align-items-center"
                                 onClick={() => onToggleIngredientState(ingredient.name)}
-                            
                             >
                             <MDBCheckbox label={ingredient.name} checked={ingredient.isChecked} onChange={()=> {}}/>
                             <MDBBadge pill className="quantityUnit" >{ingredient.quantity} {ingredient.unit}</MDBBadge>

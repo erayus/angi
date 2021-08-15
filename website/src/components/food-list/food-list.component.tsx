@@ -16,31 +16,35 @@ type IProps = {
 } & FoodListOptionalProps;
 
 const FoodList: React.FC<IProps> = (props) => {
-    return (
-      <div>
-        {
-          props.foodList.length > 0 ?
-            props.foodList.map(food => {
-              return (
-                <FoodItem
-                  key={food.id}
-                  id={food.id}
-                  name={food.name}
-                  category={food.category}
-                  imgUrl={food.imgUrl}
-                  ingredients={food.ingredients}
-                  enableViewDetails={props.enableViewDetails}
-                  onFoodItemSelected={props.onFoodItemSelected}
-                  enableFoodChange={props.enableFoodChange}
-                  onFoodChangeBtnClicked={props.onFoodChangeBtnClicked}
-                  enableIngredientChipsDisplay={props.enableIngredientChipsDisplay}
-                />
-              )
+  return (
+    <div>
+      {
+        props.foodList.length > 0 ?
+          props.foodList.map(food => {
+            return (
+              <div 
+                className="my-3" 
+                key={food.id}>
+                  <FoodItem
+                    id={food.id}
+                    name={food.name}
+                    category={food.category}
+                    imgUrl={food.imgUrl}
+                    ingredients={food.ingredients}
+                    enableViewDetails={props.enableViewDetails}
+                    onFoodItemSelected={props.onFoodItemSelected}
+                    enableFoodChange={props.enableFoodChange}
+                    onFoodChangeBtnClicked={props.onFoodChangeBtnClicked}
+                    enableIngredientChipsDisplay={props.enableIngredientChipsDisplay}
+                  />
+              </div>
+
+            )
           })
           : "No food to display."
-        }
-      </div>
-    )
+      }
+    </div>
+  )
 }
 
 FoodList.defaultProps = {

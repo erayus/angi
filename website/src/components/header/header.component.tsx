@@ -3,9 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import './header.styles.scss';
 import { NavPath } from '../../shared/nav-path';
+import { useStore } from '../../store/rootStore';
+import { observer } from 'mobx-react-lite';
 const Header = () => {
     const [headerTitle, setHeaderTitle] = useState<string>();
     const [displayBackBtn, setDisplayBackBtn] = useState(false);
+    const {foodStore} = useStore();
     const location = useLocation();
     const history = useHistory();
 
@@ -14,7 +17,7 @@ const Header = () => {
         let backBtnFlag = false;
         
         if (location.pathname.includes(NavPath.FoodThisWeek)) {
-            setHeaderTitle('Food This Week')
+            setHeaderTitle('Menu This Week')
         } else if (location.pathname.includes(NavPath.FoodDetails)) {
             backBtnFlag = true;
             setHeaderTitle('Food Details')
@@ -32,7 +35,7 @@ const Header = () => {
     }, [location])
 
     return (
-        <header className="header">
+        <header className="header pt-2">
             {
                 displayBackBtn
                     ? <MDBIcon 
@@ -46,8 +49,9 @@ const Header = () => {
             }
 
             <h1>{headerTitle}</h1>
+            <p>Renew date: {foodStore.renewDate}</p>
         </header>
     )
 }
 
-export default Header
+export default observer(Header)

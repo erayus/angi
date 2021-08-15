@@ -18,7 +18,7 @@ const App: React.FC = () => {
     const history = useHistory();
 
     useEffect(() => {
-        loadFood();
+        // loadFood();
         foodStore.initializeFoodThisWeek();
     }, [foodStore, loadFood]);
 

@@ -8,6 +8,7 @@ import './food-item.styles.scss';
 import { FoodListOptionalProps } from '../food-list.component';
 import { useStore } from '../../../store/rootStore';
 import { observer } from 'mobx-react-lite';
+import { NavPath } from '../../../shared/nav-path';
 
 type IProps = FoodListOptionalProps & IFood;
 
@@ -55,29 +56,27 @@ const FoodItem: React.FC<IProps> = ({
     })
   );
 
-  const displayFoodChangeBtn = (
-    <MDBBtn
-      className="change-modal-btn"
-      floating
-      size="md"
-      rounded
-      onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
-    >
-      <MDBIcon fas icon="sync" />
-    </MDBBtn>
-  );
-
-  const displayViewDetailsBtn = enableViewDetails
-    ? (
+  const displayViewDetailsBtn =  (
       <MDBBtn
         className="view-detail-btn"
         color="success"
         rounded
-        onClick={() => history.push(`/food-details/${id}`)}>  
+        onClick={() => history.push(`/${NavPath.FoodDetails}/${id}`)}>  
         View details
       </MDBBtn> //TODO: centralize pathname
-    )
-    : null;
+    );
+
+    const displayFoodChangeBtn = (
+      <MDBBtn
+        className="change-modal-btn mx-1"
+        floating
+        size="md"
+        rounded
+        onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
+      >
+        <MDBIcon fas icon="sync" />
+      </MDBBtn>
+    );
 
   return (
     <MDBCard
@@ -97,9 +96,9 @@ const FoodItem: React.FC<IProps> = ({
             <MDBCardTitle>{name}</MDBCardTitle>
             {enableIngredientChipsDisplay && displayIngredientsChips}
             {enableIngredientChipsDisplay && displayNoOfExtraIngredients}
-            {displayViewDetailsBtn}
+            {enableViewDetails && displayViewDetailsBtn}
+            {enableFoodChange && displayFoodChangeBtn}
           </MDBCardBody>
-          {enableFoodChange && displayFoodChangeBtn}
         </MDBCol>
       </MDBRow>
     </MDBCard>

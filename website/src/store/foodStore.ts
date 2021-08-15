@@ -4,7 +4,7 @@ import { FoodDirectory } from '../shared/foodDirectory';
 const clone = require("rfdc/default")
 
 export default class FoodStore {
-    allFood: IFood[] = [];
+    allFood: IFood[] | null = null;
     foodThisWeek: IFood[] | null = null;
     availableFoodCategories: IFoodCategory[] = [];
     isFoodThisWeekUpdated = false;
@@ -32,18 +32,20 @@ export default class FoodStore {
         if(!localStorage.getItem('renewDate')) {
            return null;
         }
+
         return localStorage.getItem('renewDate')!;
     }
 
     private setRenewDate = (renewDate: Date) => {
        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' } ;
        const todayDateFormat = renewDate.toLocaleDateString('en-AU', options);
-
+       this.renewDate =  todayDateFormat;
        localStorage.setItem('renewDate', todayDateFormat);   
     }
 
     initializeFoodThisWeek = () => {
-        if (this.allFood == null) {
+        // console.log(this.allFood);
+       if (this.allFood == null) {
             this.loadFood();
        };
 
@@ -66,7 +68,10 @@ export default class FoodStore {
             this.setRenewDate(renewDateObj);
             return true;
         }
-        const renewDateObj = new Date(this.getRenewDate()!);
+
+        this.renewDate = this.getRenewDate()!
+        const renewDateObj = new Date(this.renewDate);
+
         if (today > renewDateObj) {
             renewDateObj.setDate(today.getDate() + this.renewPeriod);// set renewDate to the next 7 day; 
             this.setRenewDate(renewDateObj);
@@ -133,11 +138,12 @@ export default class FoodStore {
     }
 
     getFoodForId = (id: number) : IFood | null => {
-        return this.allFood.find(item => item.id === id) || null;
+
+        return this.allFood!.find(item => item.id === id) || null;
     }
 
     loadAvailableCategories = () => {
-        const copyFood = this.allFood.slice();
+        const copyFood = this.allFood!.slice();
         const category = copyFood.map(food => food.category).filter((category, index, self) => self.indexOf(category) === index);
 
         this.availableFoodCategories = category.map(category => {
@@ -158,7 +164,7 @@ export default class FoodStore {
     };
 
     getRandomFoodForCategory = (category: Category, quantityToShow: number): IFood[] => {
-            const copyFood = this.allFood.slice();
+            const copyFood = this.allFood!.slice();
             let foodUnderGivenCategory = copyFood.filter(food=> food.category === category);
 
             if (quantityToShow > foodUnderGivenCategory.length) {

@@ -52,7 +52,7 @@ const FoodThisWeek = () => {
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
         const foodThisWeekUnderCategory = foodThisWeek !== null ? foodThisWeek!.filter(food => food.category === foodCategory.category) : [];
         return (
-            <div key={foodCategory.category}>
+            <div key={foodCategory.category} className="mb-4">
                 <div style={{display: "flex", }}>
                     <h3 className="me-3 my-auto">{foodCategory.category}</h3>
                     <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'

@@ -376,7 +376,7 @@ export const FoodDirectory: IFood[] = [
   {
     id: 15,
     name: "Xoài",
-    category: Category.Side,
+    category: Category.Sidies,
     imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/274938515324325.jpg",
     ingredients: [
       {
@@ -389,7 +389,7 @@ export const FoodDirectory: IFood[] = [
   {
     id: 16,
     name: "Sinh tố Blueberry",
-    category: Category.Side,
+    category: Category.Sidies,
     imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32758927591731928.jpg",
     ingredients: [
       {
@@ -408,7 +408,7 @@ export const FoodDirectory: IFood[] = [
   {
     id: 17,
     name: "Sinh tố bơ",
-    category: Category.Side,
+    category: Category.Sidies,
     imgUrl: "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/234957183753243.jpg",
     ingredients: [
       {
