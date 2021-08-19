@@ -1,30 +1,27 @@
 
 export type IFood = {
-    id: number,
+    id: number
     name: string
-    category: Category
+    category: ICategory
     imgUrl: string
-    ingredients: IIngredient[]
+    ingredients: IFoodIngredient[]
 }
 
-//TODO: use if necessary
-export type IIngredient = {
-    name: string
-    quantity: number //TODO: may split into two properties if necessary
-    unit: IUnit
+export type IFoodIngredient = {
+    ingredientId: number
+    quantity: number
 }
 
-export type IUnit = 'kg' | 'gram' | 'củ' | 'con' |'lon' | 'trái' | 'bó' | 'gói' | 'bịch' | 'chai' | null 
-
-export enum Category {
+export enum ICategory {
     Main = 'Main',
     Soup = 'Soup',
     Sidies = 'Sidies'
 }
 
 export type IFoodCategory = {
-    category: Category
+    category: ICategory
     quantity: number
 }
+
 
 

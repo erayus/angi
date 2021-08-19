@@ -3,7 +3,7 @@ import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
 import './foodThisWeek.styles.scss';
-import { Category, IFood } from '../../models/food';
+import { ICategory, IFood } from '../../models/food';
 import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
@@ -11,9 +11,7 @@ import FoodChangeModal from '../../components/food-change-modal/food-change-moda
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodThisWeek} = foodStore;
-    const {appStore} = useStore();
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
-    // const [selectedFoodIdToChange, setSelectedFoodIdToChange] = useState<number>();
     
     useEffect(()=> {
         return () => {
@@ -22,7 +20,7 @@ const FoodThisWeek = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, foodThisWeek]);
 
-    const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: Category) => {
+    const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: ICategory) => {
         const newQuantity = +e.target.value;
         const minQuantityAllowed = +e.target.min;
         const maxQuantityAllowed = +e.target.max;

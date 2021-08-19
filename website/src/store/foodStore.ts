@@ -1,6 +1,6 @@
 import {makeAutoObservable} from 'mobx';
-import { IFoodCategory, IFood, Category } from "../models/food";
-import { FoodDirectory } from '../shared/foodDirectory';
+import { IFoodCategory, IFood, ICategory } from "../models/food";
+import { FoodDirectory } from '../shared/foodTable';
 const clone = require("rfdc/default")
 
 export default class FoodStore {
@@ -18,7 +18,7 @@ export default class FoodStore {
         makeAutoObservable(this)
     }
 
-    private getFoodCategoryQuantityForCategory = (category: Category): number | null => {  
+    private getFoodCategoryQuantityForCategory = (category: ICategory): number | null => {  
         return localStorage.getItem(`${category}-quantity`) 
                ? +localStorage.getItem(`${category}-quantity`)! 
                : null;
@@ -124,13 +124,13 @@ export default class FoodStore {
         localStorage.setItem('foodThisWeek', JSON.stringify(this.foodThisWeek));
     }
 
-    updateFoodThisWeek = (newFood: IFood[], category: Category) => {
+    updateFoodThisWeek = (newFood: IFood[], category: ICategory) => {
         const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek !== null ? this.foodThisWeek!.filter(curFood => curFood.category !== category) : [];
         this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
         this.isFoodThisWeekUpdated = true;
     }
 
-    setQuantityForCategory = (category: Category, quantityToShow: number)  => {
+    setQuantityForCategory = (category: ICategory, quantityToShow: number)  => {
         if (!quantityToShow || quantityToShow < 0 ) {
             return;
         }
@@ -163,7 +163,7 @@ export default class FoodStore {
         })
     };
 
-    getRandomFoodForCategory = (category: Category, quantityToShow: number): IFood[] => {
+    getRandomFoodForCategory = (category: ICategory, quantityToShow: number): IFood[] => {
             const copyFood = this.allFood!.slice();
             let foodUnderGivenCategory = copyFood.filter(food=> food.category === category);
 
