@@ -3,14 +3,14 @@ import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
 import './foodThisWeek.styles.scss';
-import { ICategory, IFood } from '../../models/food';
+import { ICategory } from '../../models/food';
 import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
 
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
-    const {foodThisWeek} = foodStore;
+    const {foodThisWeekProjection: foodThisWeek} = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
     
     useEffect(()=> {
@@ -31,11 +31,11 @@ const FoodThisWeek = () => {
         };
         foodStore.setQuantityForCategory(category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
-        foodStore.updateFoodThisWeek(newFood, category);
+        foodStore.updateFoodThisWeekProjection(newFood, category);
     }
 
     window.onbeforeunload = (event) => {
-        if(foodStore.foodThisWeek !== null ) {
+        if(foodStore.foodThisWeekProjection !== null ) {
             foodStore.saveFoodThisWeek(); //TODOL await?
         }
     };
@@ -75,12 +75,7 @@ const FoodThisWeek = () => {
                 getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
                 <FoodChangeModal 
                     // selectedFoodIdToChange={selectedFoodIdToChange!}
-                    foodAvailableForChange={
-                        foodStore.getAllFoodThisWeek()
-                            .filter(eachFoodInAllFood => eachFoodInAllFood.category === foodStore.getFoodForId(foodStore.targetFoodToChangeId)?.category )
-                            .filter(eachFoodInAllFood => 
-                                !foodThisWeek?.some(eachFoodInFoodThisWeek => eachFoodInFoodThisWeek.id === eachFoodInAllFood.id)
-                            )}
+                    foodAvailableForChange={foodStore.getFoodAvailableForChange()}
                     toggleShow={toggleFoodChangeModalState}
                     />
             </MDBModal>

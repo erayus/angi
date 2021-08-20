@@ -13,9 +13,8 @@ import Settings from './views/settings/settings.component';
 
 const App: React.FC = () => {
     const { foodStore } = useStore();
-    const { appStore } = useStore();
     const { loadFood } = foodStore;
-    const history = useHistory();
+    const { loadIngredients } = foodStore;
 
     useEffect(() => {
         // loadFood();

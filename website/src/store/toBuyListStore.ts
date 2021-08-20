@@ -1,5 +1,8 @@
 import {makeAutoObservable, toJS} from 'mobx';
-import { IFood, IIngredient, IUnit } from '../models/food';
+import { IFood, IFoodIngredient } from '../models/food';
+import { IIngredient, IUnit } from '../models/ingredient';
+import { RootStore } from './rootStore';
+import FoodStore from './foodStore';
 const clone = require("rfdc/default");
 
 
@@ -14,24 +17,32 @@ export type IngredientState = {
 export default class ToBuyListStore {
     toBuyList: IngredientState[] | null = null;
     isToBuyListExistInTheDb: boolean | null= null;
-    constructor(){
+    private _foodStore: FoodStore;
+    constructor(foodStore: FoodStore){
+        this._foodStore = foodStore;
         makeAutoObservable(this)
     }
 
     generateNewToBuyList= (foodThisWeek: IFood[]) => {
-        let allIngredientsThisWeek: IIngredient[] = [];
+        let allIngredientsThisWeek: IFoodIngredient[] = [];
             foodThisWeek.forEach(food => {
                 allIngredientsThisWeek = [...allIngredientsThisWeek.slice(), ...food.ingredients]
             });
 
-            const aggregateIngredients: IngredientState[] = allIngredientsThisWeek.reduce((accIngredients: IngredientState[], cur: IIngredient) => {
+            const aggregateIngredients: IngredientState[] = allIngredientsThisWeek.reduce((accIngredients: IngredientState[], cur: IFoodIngredient) => {
                 //check if object is already in the acc array.
-                const index = accIngredients.findIndex(x => x.name === cur.name);
+                const curIng = this._foodStore.getIngredientById(cur.id);
+                
+                if (!curIng) {
+                    alert("Can't find some ingredients")
+                } 
+
+                const index = accIngredients.findIndex(x => x.name === curIng!.name);
                 if (index === -1) {
                     const toBuyIngredient = {
-                        name: cur.name,
+                        name: curIng!.name,
                         quantity: cur.quantity,
-                        unit: cur.unit,
+                        unit: curIng!.unit,
                         isChecked: false
                     }
                     accIngredients.push(toBuyIngredient);

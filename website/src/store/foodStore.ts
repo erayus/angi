@@ -1,11 +1,29 @@
 import {makeAutoObservable} from 'mobx';
-import { IFoodCategory, IFood, ICategory } from "../models/food";
+import { type } from 'os';
+import { IFoodCategory, IFood, ICategory, IFoodIngredient } from '../models/food';
+import { IIngredient, IIngredientCategory, IUnit } from '../models/ingredient';
 import { FoodDirectory } from '../shared/foodTable';
+import { ingredientTable } from '../shared/ingredientTable';
+import foodThisWeek from '../views/food-this-week/foodThisWeek';
 const clone = require("rfdc/default")
 
+export type IFoodThisWeekProjection = {
+    id: number,
+    name: string
+    category: ICategory
+    imgUrl: string
+    ingredients: {
+        id: number;
+        category: IIngredientCategory;
+        name: string;
+        unit: IUnit;
+        quantity: number
+    }[]
+}
 export default class FoodStore {
     allFood: IFood[] | null = null;
-    foodThisWeek: IFood[] | null = null;
+    allIngredients: IIngredient[] | null = null;
+    foodThisWeekProjection: IFoodThisWeekProjection[] | null = null;
     availableFoodCategories: IFoodCategory[] = [];
     isFoodThisWeekUpdated = false;
     targetFoodToChangeId : number = 0;
@@ -46,6 +64,7 @@ export default class FoodStore {
     initializeFoodThisWeek = () => {
         // console.log(this.allFood);
        if (this.allFood == null) {
+            this.loadIngredients();
             this.loadFood();
        };
 
@@ -90,19 +109,23 @@ export default class FoodStore {
         this.loadAvailableCategories();
     };
 
+    loadIngredients = async () => {
+        this.allIngredients = ingredientTable;
+    }
+
     loadNewFoodThisWeek = async () => {
-        if (this.foodThisWeek === null && this.availableFoodCategories.length > 0) {
+        if (this.foodThisWeekProjection === null && this.availableFoodCategories.length > 0) {
             this.availableFoodCategories.forEach(foodCategory => {
                 const newFood = this.getRandomFoodForCategory(foodCategory.category, foodCategory.quantity);
-                this.updateFoodThisWeek(newFood, foodCategory.category);
+                this.updateFoodThisWeekProjection(newFood, foodCategory.category);
             })
         }
         this.saveFoodThisWeek();
     }
 
     loadExistingFoodThisWeek = () => {
-        if (this.foodThisWeek === null) {
-            this.foodThisWeek = JSON.parse(localStorage.getItem('foodThisWeek')!);
+        if (this.foodThisWeekProjection === null) {
+            this.foodThisWeekProjection = JSON.parse(localStorage.getItem('foodThisWeek')!);
         }
     }
 
@@ -113,20 +136,32 @@ export default class FoodStore {
         return false;
     }
 
-    getAllFoodThisWeek = () : IFood[] => {
+    getAllFood = () : IFoodThisWeekProjection[] => {
         return clone(this.allFood);
     }
     getFoodThisWeek = () : IFood[] => {
-        return clone(this.foodThisWeek);
+        return clone(this.foodThisWeekProjection);
+    }
+
+    getFoodAvailableForChange = () : IFoodThisWeekProjection[] => {
+        return this.getAllFood()
+            .filter(eachFoodInAllFood => eachFoodInAllFood.category === this.getFoodForId(this.targetFoodToChangeId)?.category )
+            .filter(eachFoodInAllFood => 
+                !this.foodThisWeekProjection?.some(eachFoodInFoodThisWeek => eachFoodInFoodThisWeek.id === eachFoodInAllFood.id)
+            ).map(food => this.convertFoodToFoodProjection(food))
     }
 
     saveFoodThisWeek() {
-        localStorage.setItem('foodThisWeek', JSON.stringify(this.foodThisWeek));
+        localStorage.setItem('foodThisWeek', JSON.stringify(this.foodThisWeekProjection));
     }
 
-    updateFoodThisWeek = (newFood: IFood[], category: ICategory) => {
-        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeek !== null ? this.foodThisWeek!.filter(curFood => curFood.category !== category) : [];
-        this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
+    updateFoodThisWeekProjection = (newFood: IFood[], category: ICategory) => {
+        const foodThisWeekWithoutUpdatingFood =  this.foodThisWeekProjection !== null 
+                                                ? this.foodThisWeekProjection!.filter(curFood => curFood.category !== category) 
+                                                : [];
+
+        const newFoodProjection = newFood.map(food => this.convertFoodToFoodProjection(food));
+        this.foodThisWeekProjection = [...foodThisWeekWithoutUpdatingFood, ...newFoodProjection];
         this.isFoodThisWeekUpdated = true;
     }
 
@@ -137,9 +172,17 @@ export default class FoodStore {
         localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
     }
 
-    getFoodForId = (id: number) : IFood | null => {
-
+    private getFoodForId = (id: number) : IFood | null => {
         return this.allFood!.find(item => item.id === id) || null;
+    }
+
+    getFoodProjectionById = (id: number) : IFoodThisWeekProjection | null => {
+        const food = this.getFoodForId(id);
+        if (!food)
+        {
+            alert('Cant find food');
+        }
+        return this.convertFoodToFoodProjection(food!);
     }
 
     loadAvailableCategories = () => {
@@ -190,19 +233,55 @@ export default class FoodStore {
         this.targetFoodToChangeId = id;
     }
 
-    changeFood() {
-        const newFoodThisWeek :IFood[] = this.foodThisWeek!.map(food => {
-            if (food.id === this.targetFoodToChangeId) {
-                return this.getFoodForId(this.newFoodToChangeId)!;
+    changeFood = () => {
+
+        const newFoodThisWeek : IFoodThisWeekProjection[] = this.foodThisWeekProjection!.map(foodProjection => {
+            if (foodProjection.id === this.targetFoodToChangeId) {
+                const food = this.getFoodForId(this.newFoodToChangeId)!;
+                foodProjection = this.convertFoodToFoodProjection(food);
             }
-            return food;
+            return foodProjection;
         });
     
-        this.foodThisWeek = [...newFoodThisWeek];
+        this.foodThisWeekProjection = [...newFoodThisWeek];
         this.isFoodThisWeekUpdated = true;
 
         //Resetting the foodchange-related values
         this.targetFoodToChangeId = 0;
         this.newFoodToChangeId = 0;
+    }
+
+    getIngredientById = (id: number) : IIngredient | undefined => {
+        if (!this.allIngredients) {
+            alert('No ingredients');
+        }
+        return this.allIngredients!.slice().find(ing => ing.id == id );
+    }
+
+    convertFoodToFoodProjection = (food: IFood) : IFoodThisWeekProjection => {
+        let foodThisWeekProjection : IFoodThisWeekProjection= {
+            id: food.id,
+            name: food.name,
+            category: food.category,
+            imgUrl: food.imgUrl,
+            ingredients: []
+        };
+
+        food.ingredients.forEach(foodIngredient => {
+            const ingredient = this.getIngredientById(foodIngredient.id);
+            if (!ingredient)
+            {
+                alert(`Çant find the ingredient!${foodIngredient.id}`);
+                return;
+            }
+            foodThisWeekProjection.ingredients.push({
+               id: ingredient!.id,
+               name: ingredient!.name,
+               category: ingredient!.category,
+               quantity: foodIngredient.quantity,
+               unit: ingredient!.unit
+            });
+        })
+        return foodThisWeekProjection;
     }
 }

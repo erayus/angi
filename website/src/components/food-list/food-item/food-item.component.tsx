@@ -9,9 +9,9 @@ import { FoodListOptionalProps } from '../food-list.component';
 import { useStore } from '../../../store/rootStore';
 import { observer } from 'mobx-react-lite';
 import { NavPath } from '../../../shared/nav-path';
+import { IFoodThisWeekProjection } from '../../../store/foodStore';
 
-type IProps = FoodListOptionalProps & IFood;
-
+type IProps = FoodListOptionalProps & IFoodThisWeekProjection;
 
 const FoodItem: React.FC<IProps> = ({
   id,

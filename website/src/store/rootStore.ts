@@ -3,16 +3,19 @@ import AppStore from "./appStore";
 import FoodStore from "./foodStore";
 import ToBuyListStore from "./toBuyListStore";
 
-interface RootStore {
+export interface RootStore {
     foodStore: FoodStore;
     appStore: AppStore;
     toBuyListStore: ToBuyListStore;
 }
+const foodStore = new FoodStore();
+const toBuyListStore = new ToBuyListStore(foodStore);
+
 
 export const store: RootStore = {
     appStore: new AppStore(),
-    foodStore: new FoodStore(),
-    toBuyListStore: new ToBuyListStore()
+    foodStore,
+    toBuyListStore,
 }
 
 export const StoreContext = createContext(store);

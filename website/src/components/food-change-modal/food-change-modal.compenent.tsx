@@ -5,10 +5,11 @@ import { IFood } from '../../models/food';
 import { useStore } from '../../store/rootStore';
 import FoodList from '../food-list/food-list.component';
 import styles from "./food-change-modal.module.css";
+import { IFoodThisWeekProjection } from '../../store/foodStore';
 
 
 type IProps = {
-  foodAvailableForChange: IFood[];
+  foodAvailableForChange: IFoodThisWeekProjection[];
   toggleShow: () => void;
 }
 
@@ -46,7 +47,7 @@ const FoodChangeModal: React.FC<IProps> = ({ toggleShow, foodAvailableForChange 
             onFoodItemSelected={onFoodItemSelectedHandler}
           />
         </MDBModalBody>
-
+        
         <MDBModalFooter>
           <MDBBtn color='success' outline onClick={toggleShow}>
             Close

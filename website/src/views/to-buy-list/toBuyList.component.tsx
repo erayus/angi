@@ -27,7 +27,7 @@ const ToBuyList: React.FC<IProps> = () => {
         return () => {
             foodStore.resetIsFoodThisWeek();
         }
-    }, [foodStore.foodThisWeek]);
+    }, [foodStore.foodThisWeekProjection]);
 
     const onToggleIngredientState = (ingredientName: string) => {
         toBuyListStore.toggleIngredientState(ingredientName);

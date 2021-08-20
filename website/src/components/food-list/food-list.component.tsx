@@ -1,6 +1,7 @@
 import React from 'react'
 import FoodItem from './food-item/food-item.component'
 import { IFood } from '../../models/food';
+import { IFoodThisWeekProjection } from '../../store/foodStore';
 
 export type FoodListOptionalProps = {
   enableIngredientChipsDisplay?: boolean;
@@ -12,7 +13,7 @@ export type FoodListOptionalProps = {
 
 
 type IProps = {
-  foodList: IFood[];
+  foodList: IFoodThisWeekProjection[];
 } & FoodListOptionalProps;
 
 const FoodList: React.FC<IProps> = (props) => {

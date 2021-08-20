@@ -8,7 +8,7 @@ export type IFood = {
 }
 
 export type IFoodIngredient = {
-    ingredientId: number
+    id: number
     quantity: number
 }
 

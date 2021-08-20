@@ -1,7 +1,7 @@
 import { ICategory, IFood } from "../models/food";
 import { IIngredient } from '../models/ingredient';
 
-export const IngredientDirector: IIngredient[] = [
+export const ingredientTable: IIngredient[] = [
   {
     id: 1,
     name: "Thịt ba rọi",
