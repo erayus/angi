@@ -69,7 +69,7 @@ export default class FoodStore {
        };
 
        if (this.isTimeToRenewFood()) {
-        this.loadNewFoodThisWeek();
+            this.loadNewFoodThisWeek();
        } else {
            if (this.IsFoodThisWeekLoaded())  {
                 this.loadExistingFoodThisWeek();
@@ -104,9 +104,9 @@ export default class FoodStore {
         this.isFoodThisWeekUpdated = false;
     }
 
-    loadFood = async () => {
-        this.allFood = FoodDirectory;
-        this.loadAvailableCategories();
+    loadFood = async () => { //TODO: should be removed after implementing dynamodb
+        this.allFood = FoodDirectory; //TODO: should be removed after implementing dynamodb
+        this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
     };
 
     loadIngredients = async () => {

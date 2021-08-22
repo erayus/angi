@@ -6,7 +6,7 @@ import FoodStore from './foodStore';
 const clone = require("rfdc/default");
 
 
-export type IngredientState = {
+export type ToBuyIngredient = {
     name: string;
     quantity: number;
     unit: IUnit;
@@ -15,7 +15,7 @@ export type IngredientState = {
 
 
 export default class ToBuyListStore {
-    toBuyList: IngredientState[] | null = null;
+    toBuyList: ToBuyIngredient[] | null = null;
     isToBuyListExistInTheDb: boolean | null= null;
     private _foodStore: FoodStore;
     constructor(foodStore: FoodStore){
@@ -29,7 +29,7 @@ export default class ToBuyListStore {
                 allIngredientsThisWeek = [...allIngredientsThisWeek.slice(), ...food.ingredients]
             });
 
-            const aggregateIngredients: IngredientState[] = allIngredientsThisWeek.reduce((accIngredients: IngredientState[], cur: IFoodIngredient) => {
+            const aggregateIngredients: ToBuyIngredient[] = allIngredientsThisWeek.reduce((accIngredients: ToBuyIngredient[], cur: IFoodIngredient) => {
                 //check if object is already in the acc array.
                 const curIng = this._foodStore.getIngredientById(cur.id);
                 
