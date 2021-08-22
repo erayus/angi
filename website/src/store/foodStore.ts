@@ -2,8 +2,8 @@ import {makeAutoObservable} from 'mobx';
 import { type } from 'os';
 import { IFoodCategory, IFood, ICategory, IFoodIngredient } from '../models/food';
 import { IIngredient, IIngredientCategory, IUnit } from '../models/ingredient';
-import { FoodDirectory } from '../shared/foodTable';
-import { ingredientTable } from '../shared/ingredientTable';
+import { FoodDirectory } from '../utils/foodTable';
+import { ingredientTable } from '../utils/ingredientTable';
 import foodThisWeek from '../views/food-this-week/foodThisWeek';
 const clone = require("rfdc/default")
 

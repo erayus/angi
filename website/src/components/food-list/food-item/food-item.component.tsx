@@ -8,7 +8,7 @@ import './food-item.styles.scss';
 import { FoodListOptionalProps } from '../food-list.component';
 import { useStore } from '../../../store/rootStore';
 import { observer } from 'mobx-react-lite';
-import { NavPath } from '../../../shared/nav-path';
+import { NavPath } from '../../../utils/nav-path';
 import { IFoodThisWeekProjection } from '../../../store/foodStore';
 
 type IProps = FoodListOptionalProps & IFoodThisWeekProjection;
@@ -80,9 +80,9 @@ const FoodItem: React.FC<IProps> = ({
 
   return (
     <MDBCard
-      className={["m-2", isSelected ? 'text-white' : 'text-black'].join(' ')}
+      className={["m-2", !isSelected || 'is-selected'].join(' ')}
       onClick={() => onFoodItemSelected ? onFoodItemSelected!(id) : null}
-      background={isSelected ? 'info' : '#FFF'}>
+      background={isSelected ? '#00C853' : '#FFF'}>
       <MDBRow className='g-0'>
         <MDBCol size="4" style={{
           backgroundImage: `url(${imgUrl})`,

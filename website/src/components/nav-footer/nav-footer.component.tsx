@@ -2,7 +2,7 @@ import { MDBCol, MDBIcon, MDBRow } from 'mdb-react-ui-kit'
 import React, { useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import './nav-footer.styles.scss';
-import { NavPath } from '../../shared/nav-path';
+import { NavPath } from '../../utils/nav-path';
 
 
 

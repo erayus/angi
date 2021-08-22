@@ -1,4 +1,3 @@
-import { ICategory, IFood } from "../models/food";
 import { IIngredient } from '../models/ingredient';
 
 export const ingredientTable: IIngredient[] = [

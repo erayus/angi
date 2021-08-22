@@ -2,7 +2,7 @@ import { MDBIcon } from 'mdb-react-ui-kit';
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 import './header.styles.scss';
-import { NavPath } from '../../shared/nav-path';
+import { NavPath } from '../../utils/nav-path';
 import { useStore } from '../../store/rootStore';
 import { observer } from 'mobx-react-lite';
 const Header = () => {
@@ -11,7 +11,6 @@ const Header = () => {
     const {foodStore} = useStore();
     const location = useLocation();
     const history = useHistory();
-
 
     useEffect(() => {
         let backBtnFlag = false;

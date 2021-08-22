@@ -8,7 +8,7 @@ import ToBuyList from './views/to-buy-list/toBuyList.component';
 import { observer } from 'mobx-react-lite';
 import NavFooter from './components/nav-footer/nav-footer.component';
 import Header from './components/header/header.component';
-import { NavPath } from './shared/nav-path';
+import { NavPath } from './utils/nav-path';
 import Settings from './views/settings/settings.component';
 
 const App: React.FC = () => {

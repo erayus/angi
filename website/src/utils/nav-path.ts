@@ -10,4 +10,4 @@ export type NavItem  = {
     headerTitle: string,
     navFooterIcon: string,
     showOnNavFooter: boolean,
-} 
+}

@@ -162,7 +162,7 @@ export const FoodDirectory: IFood[] = [
   },
   {
     id: 8,
-    name: "Stir-fried beef with mix veggies",
+    name: "Thịt bò xào rau cải",
     category: ICategory.Main,
     imgUrl:
       "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/received_932824094322452.jpeg",
