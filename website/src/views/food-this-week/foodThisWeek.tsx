@@ -31,7 +31,7 @@ const FoodThisWeek = () => {
         };
         foodStore.setQuantityForCategory(category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
-        foodStore.updateFoodThisWeekProjection(newFood, category);
+        foodStore.updateFoodThisWeek(newFood, category);
     }
 
     window.onbeforeunload = (event) => {
