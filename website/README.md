@@ -1,6 +1,8 @@
-# Database
+# Smart Menu
 
-## Food table
+## Database
+
+### Food table
 
 - IFood[]
 
@@ -20,7 +22,23 @@
 
 - toBuyList : ToBuyIngredient[]
 
-### Making a Progressive Web App
+## Test plan
+
+### Food This Week
+
+- Food This Week should display three categories.
+
+### To Buy List
+
+- Each ingredient should be checked when clicked on.
+  
+- On page reload when user is viewing the ToBuyList page, the state of to-buy-list ingredients should be remained the same.
+
+- After ticking the ToBuyList ingredients and the user navigate to different views, on page reload => the state of to-buy-list ingredients should be remained the same.
+
+- When the the user modifies the FoodThisWeek list => refresh the page => go to ToBuyList view => a new ToBuyList should be generated.
+
+## Making a Progressive Web App
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
