@@ -12,7 +12,7 @@ import { ingredientTable } from "../utils/ingredientTable";
 import { UserService } from '../services/user.service';
 const clone = require("rfdc/default");
 
-export type IFoodThisWeekProjection = {
+export type IFoodProjection = {
   id: number;
   name: string;
   category: ICategory;
@@ -39,7 +39,7 @@ export default class FoodStore {
 
   allFood: IFood[] | null = null;
   allIngredients: IIngredient[] | null = null;
-  foodThisWeekProjection: IFoodThisWeekProjection[] | null = null;
+//   foodThisWeekProjection: IFoodProjection[] | null = null;
   availableFoodCategories: IFoodCategory[] = [];
   targetFoodToChangeId: number = 0;
   newFoodToChangeId: number = 0;
@@ -49,6 +49,14 @@ export default class FoodStore {
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  get foodThisWeekProjection () {
+      if (this.foodThisWeek) {
+        return [...this.foodThisWeek.map((food) =>
+            this.convertFoodToFoodProjection(food)
+          )];
+      }
   }
 
   get toBuyList(){
@@ -196,7 +204,6 @@ export default class FoodStore {
         ...foodThisWeekWithoutUpdatingFood,
         ...newFood
     ];
-    this.updateFoodThisWeekProjection(this.foodThisWeek!);
     this.saveFoodThisWeek();
   }
 
@@ -205,7 +212,6 @@ export default class FoodStore {
       this.foodThisWeek = JSON.parse(
         localStorage.getItem("foodThisWeek")!
       );
-      this.updateFoodThisWeekProjection(this.foodThisWeek!);
     }
   };
 
@@ -234,7 +240,7 @@ export default class FoodStore {
     return clone(this.foodThisWeekProjection);
   };
 
-  getFoodAvailableForChange = (): IFoodThisWeekProjection[] => {
+  getFoodAvailableForChange = (): IFoodProjection[] => {
     return this.getAllFood()
       .filter(
         (eachFoodInAllFood) =>
@@ -263,12 +269,6 @@ export default class FoodStore {
     UserService.SaveFoodThisWeekToDb(this.foodThisWeek!);
   }
 
-  updateFoodThisWeekProjection = (newFood: IFood[]) => {
-    this.foodThisWeekProjection = [...newFood.map((food) =>
-        this.convertFoodToFoodProjection(food)
-      )];
-  };
-
   setQuantityForCategory = (category: ICategory, quantityToShow: number) => {
     if (!quantityToShow || quantityToShow < 0) {
       return;
@@ -280,7 +280,7 @@ export default class FoodStore {
     return this.allFood!.find((item) => item.id === id) || null;
   };
 
-  getFoodProjectionById = (id: number): IFoodThisWeekProjection | null => {
+  getFoodProjectionById = (id: number): IFoodProjection | null => {
     const food = this.getFoodForId(id);
     if (!food) {
       alert("Cant find food");
@@ -355,8 +355,6 @@ export default class FoodStore {
         return food;
       });
 
-    this.updateFoodThisWeekProjection(this.foodThisWeek);
-
     //Resetting the foodchange-related values
     this.targetFoodToChangeId = 0;
     this.newFoodToChangeId = 0;
@@ -369,8 +367,8 @@ export default class FoodStore {
     return this.allIngredients!.slice().find((ing) => ing.id == id);
   };
 
-  convertFoodToFoodProjection = (food: IFood): IFoodThisWeekProjection => {
-    let foodThisWeekProjection: IFoodThisWeekProjection = {
+  convertFoodToFoodProjection = (food: IFood): IFoodProjection => {
+    let foodProjection: IFoodProjection = {
       id: food.id,
       name: food.name,
       category: food.category,
@@ -384,7 +382,7 @@ export default class FoodStore {
         alert(`Can't find the ingredient!${foodIngredient.id}`);
         return;
       }
-      foodThisWeekProjection.ingredients.push({
+      foodProjection.ingredients.push({
         id: ingredient!.id,
         name: ingredient!.name,
         category: ingredient!.category,
@@ -392,7 +390,7 @@ export default class FoodStore {
         unit: ingredient!.unit,
       });
     });
-    return foodThisWeekProjection;
+    return foodProjection;
   };
 
   toggleIngredientState = (ingredientId: number) => {

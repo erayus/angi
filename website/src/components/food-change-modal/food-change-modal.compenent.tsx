@@ -5,11 +5,11 @@ import { IFood } from '../../models/food';
 import { useStore } from '../../store/rootStore';
 import FoodList from '../food-list/food-list.component';
 import styles from "./food-change-modal.module.css";
-import { IFoodThisWeekProjection } from '../../store/foodStore';
+import { IFoodProjection } from '../../store/foodStore';
 
 
 type IProps = {
-  foodAvailableForChange: IFoodThisWeekProjection[];
+  foodAvailableForChange: IFoodProjection[];
   toggleShow: () => void;
 }
 
