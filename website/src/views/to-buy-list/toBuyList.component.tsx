@@ -1,16 +1,16 @@
 import { MDBBadge, MDBCheckbox, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useStore } from '../../store/rootStore';
-import "./toBuyList.styles.scss"
-import { ToBuyIngredient } from '../../store/foodStore';
-interface IProps {
+import "./toBuyList.styles.scss";
 
-}
-
-const ToBuyList: React.FC<IProps> = () => {
+const ToBuyList: React.FC = () => {
     const { foodStore } = useStore();
     const { toBuyList } = foodStore;
+
+    useEffect(() => {
+        foodStore.loadListOfCheckedIngredientIds();
+    }, [])
     
     return (
         <div className="mt-3">

@@ -131,8 +131,6 @@ export default class FoodStore {
       this.loadFood();
     }
 
-    this.loadListOfCheckedIngredientIds();
-
     if (this.isTimeToRenewFood()) {
       this.loadNewFoodThisWeek();
     } else {
