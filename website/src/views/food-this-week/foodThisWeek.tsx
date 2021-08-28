@@ -10,7 +10,7 @@ import FoodChangeModal from '../../components/food-change-modal/food-change-moda
 
 const FoodThisWeek = () => {
     const {foodStore} = useStore();
-    const {foodThisWeekProjection: foodThisWeek} = foodStore;
+    const {foodThisWeekProjection} = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
     
     useEffect(()=> {
@@ -18,7 +18,7 @@ const FoodThisWeek = () => {
             foodStore.saveFoodThisWeek();
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [foodStore, foodThisWeek]);
+    }, [foodStore, foodThisWeekProjection]);
 
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: ICategory) => {
         const newQuantity = +e.target.value;
@@ -35,7 +35,7 @@ const FoodThisWeek = () => {
     }
 
     window.onbeforeunload = (event) => {
-        if(foodStore.foodThisWeekProjection !== null ) {
+        if(!foodStore.foodThisWeekProjection) {
             foodStore.saveFoodThisWeek(); //TODOL await?
         }
     };
@@ -48,7 +48,7 @@ const FoodThisWeek = () => {
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
     
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
-        const foodThisWeekUnderCategory = foodThisWeek !== null ? foodThisWeek!.filter(food => food.category === foodCategory.category) : [];
+        const foodThisWeekUnderCategory = foodThisWeekProjection ? foodThisWeekProjection.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category} className="mb-4">
                 <div style={{display: "flex", }}>
@@ -57,8 +57,7 @@ const FoodThisWeek = () => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)}/>
                 </div>
                 {
-
-                    foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory !== undefined 
+                    foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory 
                     ? <FoodList 
                         key={foodCategory.category} 
                         foodList={foodThisWeekUnderCategory}

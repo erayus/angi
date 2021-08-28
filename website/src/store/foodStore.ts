@@ -1,5 +1,4 @@
 import { get, makeAutoObservable } from "mobx";
-import { type } from "os";
 import {
   IFoodCategory,
   IFood,
@@ -9,7 +8,7 @@ import {
 import { IIngredient, IIngredientCategory, IUnit } from "../models/ingredient";
 import { FoodDirectory } from "../utils/foodTable";
 import { ingredientTable } from "../utils/ingredientTable";
-import { UserService } from '../services/user.service';
+import { UserService } from "../services/user.service";
 const clone = require("rfdc/default");
 
 export type IFoodProjection = {
@@ -27,11 +26,11 @@ export type IFoodProjection = {
 };
 
 export type ToBuyIngredient = {
-    id: number;
-    name: string;
-    quantity: number;
-    unit: IUnit;
-    isChecked: boolean;
+  id: number;
+  name: string;
+  quantity: number;
+  unit: IUnit;
+  isChecked: boolean;
 };
 export default class FoodStore {
   private foodThisWeek: IFood[] | null = null;
@@ -39,7 +38,7 @@ export default class FoodStore {
 
   allFood: IFood[] | null = null;
   allIngredients: IIngredient[] | null = null;
-//   foodThisWeekProjection: IFoodProjection[] | null = null;
+  //   foodThisWeekProjection: IFoodProjection[] | null = null;
   availableFoodCategories: IFoodCategory[] = [];
   targetFoodToChangeId: number = 0;
   newFoodToChangeId: number = 0;
@@ -51,48 +50,60 @@ export default class FoodStore {
     makeAutoObservable(this);
   }
 
-  get foodThisWeekProjection () {
-      if (this.foodThisWeek) {
-        return [...this.foodThisWeek.map((food) =>
-            this.convertFoodToFoodProjection(food)
-          )];
-      }
+  get foodThisWeekProjection() {
+    if (this.foodThisWeek) {
+      return [
+        ...this.foodThisWeek!.map((food) =>
+          this.convertFoodToFoodProjection(food)
+        ),
+      ];
+    }
   }
 
-  get toBuyList(){
+  get toBuyList() {
     let allIngredientsThisWeek: IFoodIngredient[] = [];
-    this.foodThisWeek?.forEach(food => {
-        allIngredientsThisWeek = [...allIngredientsThisWeek.slice(), ...food.ingredients]
+    this.foodThisWeek?.forEach((food) => {
+      allIngredientsThisWeek = [
+        ...allIngredientsThisWeek.slice(),
+        ...food.ingredients,
+      ];
     });
 
-    const aggregateIngredients: ToBuyIngredient[] = allIngredientsThisWeek.reduce((accIngredients: ToBuyIngredient[], cur: IFoodIngredient) => {
-        //check if object is already in the acc array.
-        const curIng = this.getIngredientById(cur.id);
-        
-        if (curIng == undefined) {
+    const aggregateIngredients: ToBuyIngredient[] =
+      allIngredientsThisWeek.reduce(
+        (accIngredients: ToBuyIngredient[], cur: IFoodIngredient) => {
+          //check if object is already in the acc array.
+          const curIng = this.getIngredientById(cur.id);
+
+          if (curIng == undefined) {
             alert(`Can't find ingredient's details of ${cur.id}`); //TODO: log this
-        } 
+          }
 
-        const index = accIngredients.findIndex(x => x.name === curIng!.name);
-        if (index === -1) {
+          const index = accIngredients.findIndex(
+            (x) => x.name === curIng!.name
+          );
+          if (index === -1) {
             const toBuyIngredient = {
-                id: cur.id,
-                name: curIng?.name || "No name",
-                quantity: cur.quantity,
-                unit: curIng?.unit || null,
-                isChecked: this.listOfCheckedIngredientIds?.some(checkedIngId => checkedIngId == curIng!.id)
-            }
+              id: cur.id,
+              name: curIng?.name || "No name",
+              quantity: cur.quantity,
+              unit: curIng?.unit || null,
+              isChecked: this.listOfCheckedIngredientIds?.some(
+                (checkedIngId) => checkedIngId == curIng!.id
+              ),
+            };
             accIngredients.push(toBuyIngredient);
-        } else {
-            accIngredients[index]['quantity'] += cur.quantity;
-        }
+          } else {
+            accIngredients[index]["quantity"] += cur.quantity;
+          }
 
-        return accIngredients
-    }, []);
+          return accIngredients;
+        },
+        []
+      );
 
     return aggregateIngredients;
-    
-  };
+  }
 
   private getFoodCategoryQuantityForCategory = (
     category: ICategory
@@ -142,7 +153,7 @@ export default class FoodStore {
     }
   };
 
-  isTimeToRenewFood = () => {
+  private isTimeToRenewFood = () => {
     const today = new Date();
     if (!this.getRenewDate()) {
       const renewDateObj = new Date();
@@ -163,64 +174,58 @@ export default class FoodStore {
     }
   };
 
-  loadFood = async () => {
+  private loadFood = async () => {
     //TODO: should be removed after implementing dynamodb
     this.allFood = FoodDirectory; //TODO: should be removed after implementing dynamodb
     this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
   };
 
-  loadIngredients = async () => {
+  private loadIngredients = async () => {
     this.allIngredients = ingredientTable;
   };
 
-  loadNewFoodThisWeek = async () => {
-    if (
-      this.foodThisWeekProjection === null &&
-      this.availableFoodCategories.length > 0
-    ) {
+  private loadNewFoodThisWeek = async () => {
+    this.resetListOfCheckedIngredients();
 
-      this.availableFoodCategories.forEach((foodCategory) => {
-        const newFood = this.getRandomFoodForCategory(
-          foodCategory.category,
-          foodCategory.quantity
-        );
+    this.availableFoodCategories.forEach((foodCategory) => {
+      const newFood = this.getRandomFoodForCategory(
+        foodCategory.category,
+        foodCategory.quantity
+      );
 
-        this.updateFoodThisWeek(newFood, foodCategory.category);
-      });
-    }
+      this.updateFoodThisWeek(newFood, foodCategory.category);
+    });
+  };
+
+  private resetListOfCheckedIngredients = () => {
+    this.listOfCheckedIngredientIds = [];
+    localStorage.removeItem("listOfCheckedIngredientIds");
   };
 
   updateFoodThisWeek = (newFood: IFood[], category: ICategory) => {
     const foodThisWeekWithoutUpdatingFood =
-    this.foodThisWeek !== null
-      ? this.foodThisWeek!.filter(
-          (curFood) => curFood.category !== category
-        )
-      : [];
+      this.foodThisWeek !== null
+        ? this.foodThisWeek!.filter((curFood) => curFood.category !== category)
+        : [];
 
-    this.foodThisWeek = [
-        ...foodThisWeekWithoutUpdatingFood,
-        ...newFood
-    ];
+    this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
     this.saveFoodThisWeek();
-  }
+  };
 
   loadExistingFoodThisWeek = () => {
-    if (this.foodThisWeek === null) {
-      this.foodThisWeek = JSON.parse(
-        localStorage.getItem("foodThisWeek")!
-      );
-    }
+    this.foodThisWeek = JSON.parse(localStorage.getItem("foodThisWeek")!);
   };
 
   //TODO: need rework after database implementing
   loadListOfCheckedIngredientIds = () => {
-    if (!localStorage.getItem('listOfCheckedIngredientIds')) {
-        this.listOfCheckedIngredientIds = [];
+    if (!localStorage.getItem("listOfCheckedIngredientIds")) {
+      this.listOfCheckedIngredientIds = [];
     }
-    const listOfCheckedIngredientIds = JSON.parse(localStorage.getItem('listOfCheckedIngredientIds')!);
+    const listOfCheckedIngredientIds = JSON.parse(
+      localStorage.getItem("listOfCheckedIngredientIds")!
+    );
     this.listOfCheckedIngredientIds = listOfCheckedIngredientIds || [];
-  }
+  };
 
   IsFoodThisWeekLoaded = () => {
     if (localStorage.getItem("foodThisWeek")) {
@@ -256,16 +261,12 @@ export default class FoodStore {
   };
 
   saveFoodThisWeek = () => {
-    // localStorage.setItem(
-    //   "foodThisWeek",
-    //   JSON.stringify(this.foodThisWeekProjection)
-    // );
     if (!this.foodThisWeek) {
-        alert('No food this week');
-        return;
+      alert("No food this week");
+      return;
     }
     UserService.SaveFoodThisWeekToDb(this.foodThisWeek!);
-  }
+  };
 
   setQuantityForCategory = (category: ICategory, quantityToShow: number) => {
     if (!quantityToShow || quantityToShow < 0) {
@@ -347,11 +348,11 @@ export default class FoodStore {
 
   changeFood = () => {
     this.foodThisWeek = this.foodThisWeek!.map((food) => {
-        if (food.id === this.targetFoodToChangeId) {
-            return this.getFoodForId(this.newFoodToChangeId)!;
-        }
-        return food;
-      });
+      if (food.id === this.targetFoodToChangeId) {
+        return this.getFoodForId(this.newFoodToChangeId)!;
+      }
+      return food;
+    });
 
     //Resetting the foodchange-related values
     this.targetFoodToChangeId = 0;
@@ -392,13 +393,15 @@ export default class FoodStore {
   };
 
   toggleIngredientState = (ingredientId: number) => {
-      const index = this.listOfCheckedIngredientIds.indexOf(ingredientId);
-      if (index >= 0) {
-        this.listOfCheckedIngredientIds.splice(index, 1)
-      }
-      else {
-        this.listOfCheckedIngredientIds.push(ingredientId);
-      }
-      localStorage.setItem('listOfCheckedIngredientIds', JSON.stringify(this.listOfCheckedIngredientIds)); //TODO: rework after database 
-  }
+    const index = this.listOfCheckedIngredientIds.indexOf(ingredientId);
+    if (index >= 0) {
+      this.listOfCheckedIngredientIds.splice(index, 1);
+    } else {
+      this.listOfCheckedIngredientIds.push(ingredientId);
+    }
+    localStorage.setItem(
+      "listOfCheckedIngredientIds",
+      JSON.stringify(this.listOfCheckedIngredientIds)
+    ); //TODO: rework after database
+  };
 }

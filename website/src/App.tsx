@@ -13,13 +13,11 @@ import Settings from './views/settings/settings.component';
 
 const App: React.FC = () => {
     const { foodStore } = useStore();
-    const { loadFood } = foodStore;
-    const { loadIngredients } = foodStore;
 
     useEffect(() => {
         // loadFood();
         foodStore.initializeFoodThisWeek();
-    }, [foodStore, loadFood]);
+    }, [foodStore]);
 
     return (
         <React.Fragment>
