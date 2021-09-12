@@ -205,4 +205,28 @@ export const ingredientTable: IIngredient[] = [
     category: 'Trái cây',
     unit: "trái",
   },
+  {
+    id: 36,
+    name: "Nếp",
+    category: 'Gạo',
+    unit: "gram",
+  },
+  {
+    id: 37,
+    name: "Chả chiên",
+    category: 'Thịt',
+    unit: null
+  },
+  {
+    id: 38,
+    name: "Chà bông",
+    category: null,
+    unit: "hộp",
+  },
+  {
+    id: 39,
+    name: "Patê",
+    category: null,
+    unit: "hộp",
+  },
 ]

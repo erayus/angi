@@ -1,4 +1,4 @@
-import * as cdk from 'aws-cdk-lib';
+import * as cdk from '@aws-cdk/core';
 import * as Infrastructure from '../src/stacks/hosting-stack';
 
 test('Empty Stack', () => {

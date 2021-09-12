@@ -13,9 +13,9 @@ export type IFoodIngredient = {
 }
 
 export enum ICategory {
-    Main = 'Main',
-    Soup = 'Soup',
-    Sidies = 'Sidies'
+    Main = 'Món chính',
+    Soup = 'Món Súp',
+    Sidies = 'Các món phụ'
 }
 
 export type IFoodCategory = {

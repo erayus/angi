@@ -1,19 +1,21 @@
-import { aws_s3, aws_s3_deployment, aws_cloudfront, Stack } from "aws-cdk-lib";
-import { Construct } from "constructs";
+import * as cdk from '@aws-cdk/core';
+import * as aws_s3 from '@aws-cdk/aws-s3';
+import * as aws_s3_deployment from '@aws-cdk/aws-s3-deployment';
+import * as aws_cloudfront from '@aws-cdk/aws-cloudfront';
 
 interface IWebSiteDeploymentProps {
   destinationBucket: aws_s3.IBucket;
-  distribution: aws_cloudfront.IDistribution;
+  distribution?: aws_cloudfront.IDistribution;
 }
 
-export default class WebsiteDeployment extends Construct {
-  constructor(scope: Stack, id: string, props: IWebSiteDeploymentProps) {
+export default class WebsiteDeployment extends cdk.Construct {
+  constructor(scope: cdk.Stack, id: string, props: IWebSiteDeploymentProps) {
     super(scope, id);
-    new aws_s3_deployment.BucketDeployment(this, "DeployWebsite", {
+    new aws_s3_deployment.BucketDeployment(this, `${this.node.tryGetContext('appName')}-bucket-deploymnet`, {
       sources: [aws_s3_deployment.Source.asset("../website/build")],
       destinationBucket: props.destinationBucket,
-      distribution: props.distribution,
-      distributionPaths: ["/index.html"],
+      // distribution: props.distribution || undefined,
+      // distributionPaths: props.distribution ? ["/index.html"] : undefined,
     });
   }
 }

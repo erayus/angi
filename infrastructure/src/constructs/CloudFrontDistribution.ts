@@ -1,14 +1,14 @@
-import { Construct } from "constructs";
-import { aws_cloudfront, aws_s3, Stack, aws_cloudfront_origins } from "aws-cdk-lib";
-
+import * as cdk from '@aws-cdk/core';
+import * as aws_s3 from '@aws-cdk/aws-s3';
+import * as aws_cloudfront from '@aws-cdk/aws-cloudfront';
 interface ICloudFrontDistributionProps {
   bucket: aws_s3.IBucket;
 }
 
-export default class CloudfrontDistribution extends Construct {
+export default class CloudfrontDistribution extends cdk.Construct {
   public readonly distribution: aws_cloudfront.CloudFrontWebDistribution;
 
-  constructor(scope: Stack, id: string, props: ICloudFrontDistributionProps) {
+  constructor(scope: cdk.Stack, id: string, props: ICloudFrontDistributionProps) {
     super(scope, id);
     // Provision of cloudfront distribution
     const acmCertRefArn = scope.formatArn({
@@ -22,16 +22,8 @@ export default class CloudfrontDistribution extends Construct {
 
     this.distribution = new aws_cloudfront.CloudFrontWebDistribution(
       scope,
-      "CarsWebDistribution",
+      `${this.node.tryGetContext('appName')}-web-distribution`,
       {
-          
-
-        // aliasConfiguration: {
-        //   names: [props.bucket.bucketName],
-        //   acmCertRef: acmCertRefArn,
-        //   sslMethod: aws_cloudfront.SSLMethod.SNI,
-        //   securityPolicy: aws_cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
-        // },
         viewerCertificate: {
             aliases: [props.bucket.bucketName],
             props: {

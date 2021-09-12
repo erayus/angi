@@ -6,7 +6,7 @@ export const FoodDirectory: IFood[] = [
     name: "Thịt kho mắm ruốc",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/359368442233884.jpeg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/1.jpeg",
     ingredients: [
       {
         id: 1,
@@ -43,7 +43,7 @@ export const FoodDirectory: IFood[] = [
     name: "Ba rọi nướng",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/2143265135435333.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/2.jpg",
     ingredients: [
       {
         id: 1,
@@ -56,7 +56,7 @@ export const FoodDirectory: IFood[] = [
     name: "Thịt heo kho dứa",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/1555306671573782749046.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/3.jpg",
     ingredients: [
       {
         id: 1,
@@ -81,7 +81,7 @@ export const FoodDirectory: IFood[] = [
     name: "Kho quẹt",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/124530667157743241.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/4.jpg",
     ingredients: [
       {
         id: 1,
@@ -102,7 +102,7 @@ export const FoodDirectory: IFood[] = [
     name: "Thịt chưng",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/21478317589237432.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/5.jpg",
     ingredients: [
       {
         id: 2,
@@ -127,7 +127,7 @@ export const FoodDirectory: IFood[] = [
     name: "Thịt heo luộc",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32437259817525435.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/6.jpg",
     ingredients: [
       {
         id: 1,
@@ -140,7 +140,7 @@ export const FoodDirectory: IFood[] = [
     name: "Chả lá lốt",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32571982714132414.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/7.jpg",
     ingredients: [
       {
         id: 10,
@@ -165,7 +165,7 @@ export const FoodDirectory: IFood[] = [
     name: "Thịt bò xào rau cải",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/received_932824094322452.jpeg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/8.jpeg",
     ingredients: [
       {
         id: 14,
@@ -194,7 +194,7 @@ export const FoodDirectory: IFood[] = [
     name: "Bít tết",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/324893014389571.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/9.jpg",
     ingredients: [
       {
         id: 14,
@@ -207,7 +207,7 @@ export const FoodDirectory: IFood[] = [
     name: "Cá kho",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/507880050439917.jpeg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/10.jpeg",
     ingredients: [
       {
         id: 34,
@@ -236,7 +236,7 @@ export const FoodDirectory: IFood[] = [
     name: "Mực xào rau cải",
     category: ICategory.Main,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/313937753735915.jpeg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/11.jpeg",
     ingredients: [
       {
         id: 19,
@@ -281,7 +281,7 @@ export const FoodDirectory: IFood[] = [
     name: "Canh mồng tơ cua đồng",
     category: ICategory.Soup,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/2132473815937245.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/12.jpg",
     ingredients: [
       {
         id: 24,
@@ -298,7 +298,7 @@ export const FoodDirectory: IFood[] = [
     name: "Canh bông cải thịt viên",
     category: ICategory.Soup,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32947983758193275.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/13.jpg",
     ingredients: [
       {
         id: 15,
@@ -315,7 +315,7 @@ export const FoodDirectory: IFood[] = [
     name: "Canh cải thảo hầm sươn",
     category: ICategory.Soup,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/21498375981753253251.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/14.jpg",
     ingredients: [
       {
         id: 27,
@@ -332,7 +332,7 @@ export const FoodDirectory: IFood[] = [
     name: "Xoài",
     category: ICategory.Sidies,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/274938515324325.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/15.jpg",
     ingredients: [
       {
         id: 29,
@@ -345,7 +345,7 @@ export const FoodDirectory: IFood[] = [
     name: "Sinh tố Blueberry",
     category: ICategory.Sidies,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/32758927591731928.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/16.jpg",
     ingredients: [
       {
         id: 30,
@@ -362,7 +362,7 @@ export const FoodDirectory: IFood[] = [
     name: "Sinh tố bơ",
     category: ICategory.Sidies,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/234957183753243.jpg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/17.jpg",
     ingredients: [
       {
         id: 31,
@@ -379,7 +379,7 @@ export const FoodDirectory: IFood[] = [
     name: "Canh sườn ninh",
     category: ICategory.Soup,
     imgUrl:
-      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/565952228105625.jpeg",
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/18.jpeg",
     ingredients: [
       {
         id: 28,
@@ -392,11 +392,61 @@ export const FoodDirectory: IFood[] = [
       {
         id: 32,
         quantity: 2,
+      }
+    ],
+  },
+  {
+    id: 19,
+    name: "Xôi trứng chà bông tép riu",
+    category: ICategory.Main,
+    imgUrl:
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/19.jpeg",
+    ingredients: [
+      {
+        id: 36,
+        quantity: 100,
       },
       {
-        id: 35,
-        quantity: 0.5,
+        id: 37,
+        quantity: 1/3,
       },
+      {
+        id: 38,
+        quantity: 1/8,
+      },
+      {
+        id: 39,
+        quantity: 1/3,
+      },
+      {
+        id: 39,
+        quantity: 1/3,
+      },
+      {
+        id: 11,
+        quantity: 1,
+      },
+    ],
+  },
+  {
+    id: 20,
+    name: "Tôm xào rau cải",
+    category: ICategory.Main,
+    imgUrl:
+      "https://smart-menu-erayus-images.s3.ap-southeast-2.amazonaws.com/20.jpeg",
+    ingredients: [
+      {
+        id: 5,
+        quantity: 500,
+      },
+      {
+        id: 15,
+        quantity: 2,
+      },
+      {
+        id: 32,
+        quantity: 2,
+      }
     ],
   },
 ];

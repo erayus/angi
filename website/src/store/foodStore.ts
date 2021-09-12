@@ -75,7 +75,7 @@ export default class FoodStore {
           //check if object is already in the acc array.
           const curIng = this.getIngredientById(cur.id);
 
-          if (curIng == undefined) {
+          if (curIng === undefined) {
             alert(`Can't find ingredient's details of ${cur.id}`); //TODO: log this
           }
 
@@ -86,15 +86,15 @@ export default class FoodStore {
             const toBuyIngredient = {
               id: cur.id,
               name: curIng?.name || "No name",
-              quantity: cur.quantity,
+              quantity: Math.round(cur.quantity * 10) / 10,
               unit: curIng?.unit || null,
               isChecked: this.listOfCheckedIngredientIds?.some(
-                (checkedIngId) => checkedIngId == curIng!.id
+                (checkedIngId) => checkedIngId === curIng!.id
               ),
             };
             accIngredients.push(toBuyIngredient);
           } else {
-            accIngredients[index]["quantity"] += cur.quantity;
+            accIngredients[index]["quantity"] += Math.round(cur.quantity * 10) / 10;
           }
 
           return accIngredients;
@@ -276,13 +276,13 @@ export default class FoodStore {
   };
 
   private getFoodForId = (id: number): IFood | null => {
-    return this.allFood!.find((item) => item.id === id) || null;
+    return this.allFood?.find((item) => item.id === id) || null;
   };
 
   getFoodProjectionById = (id: number): IFoodProjection | null => {
     const food = this.getFoodForId(id);
     if (!food) {
-      alert("Cant find food");
+      return null
     }
     return this.convertFoodToFoodProjection(food!);
   };
