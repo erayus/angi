@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "**/constructs/*.js": true,
+        "**/stacks/*.js": true
+    }
+}

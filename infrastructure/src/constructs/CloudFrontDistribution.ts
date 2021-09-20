@@ -18,8 +18,6 @@ export default class CloudfrontDistribution extends cdk.Construct {
       resourceName: "0bed8ba1-d090-47f3-9ddf-d6db173a3f33",
     });
 
-
-
     this.distribution = new aws_cloudfront.CloudFrontWebDistribution(
       scope,
       `${this.node.tryGetContext('appName')}-web-distribution`,

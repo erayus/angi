@@ -3,8 +3,6 @@ import * as aws_cloudfront from '@aws-cdk/aws-cloudfront';
 import * as aws_route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
 
-
-
 interface IRoute53ARecord {
     distribution: aws_cloudfront.CloudFrontWebDistribution
   }

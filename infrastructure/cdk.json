@@ -7,6 +7,6 @@
     "@aws-cdk/aws-lambda:recognizeVersionProps": false,
     "@aws-cdk/core:newStyleStackSynthesis": true,
     "appName": "smartmenu",
-    "environment": "development"
+    "environment": "production"
   }
 }

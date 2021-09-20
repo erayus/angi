@@ -34,7 +34,6 @@ const FoodDetail: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         <MDBBadge pill color="none"  style={{backgroundColor: colors.primary }}>{Math.round(ing.quantity * 10) / 10} {ing.unit}</MDBBadge>
                     </MDBListGroupItem>
                 )) : "No ingredients found for this food."
-
                 }
             </MDBListGroup>
         </div>
