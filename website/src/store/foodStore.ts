@@ -28,6 +28,7 @@ export type IFoodProjection = {
 export type ToBuyIngredient = {
   id: number;
   name: string;
+  category: IIngredientCategory;
   quantity: number;
   unit: IUnit;
   isChecked: boolean;
@@ -60,7 +61,7 @@ export default class FoodStore {
     }
   }
 
-  get toBuyList() {
+  get toBuyList() :ToBuyIngredient[] {
     let allIngredientsThisWeek: IFoodIngredient[] = [];
     this.foodThisWeek?.forEach((food) => {
       allIngredientsThisWeek = [
@@ -86,6 +87,7 @@ export default class FoodStore {
             const toBuyIngredient = {
               id: cur.id,
               name: curIng?.name || "No name",
+              category: curIng?.category ?? "",
               quantity: Math.round(cur.quantity * 10) / 10,
               unit: curIng?.unit || null,
               isChecked: this.listOfCheckedIngredientIds?.some(

@@ -220,13 +220,13 @@ export const ingredientTable: IIngredient[] = [
   {
     id: 38,
     name: "Chà bông",
-    category: null,
+    category: "",
     unit: "hộp",
   },
   {
     id: 39,
     name: "Patê",
-    category: null,
+    category: "",
     unit: "hộp",
   },
 ]
