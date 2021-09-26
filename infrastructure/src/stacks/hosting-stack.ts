@@ -7,9 +7,10 @@ import WebsiteDeployment from "../constructs/WebsiteDeployment";
 import { RemovalPolicy } from "@aws-cdk/core";
 import * as aws_s3_deployment from "@aws-cdk/aws-s3-deployment";
 import { HttpMethods } from "@aws-cdk/aws-s3";
+import Commnads from '../constructs/Commands';
 
 export class HostingStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
     const webBucket = new aws_s3.Bucket(
@@ -87,6 +88,8 @@ export class HostingStack extends cdk.Stack {
         }
       );
     }
+
+    new Commnads(this,`${this.node.tryGetContext("appName")}-Commands`, props);
 
     new cdk.CfnOutput(
       this,

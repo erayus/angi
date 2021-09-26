@@ -66,7 +66,7 @@ export default class FoodStore {
     this.foodThisWeek?.forEach((food) => {
       allIngredientsThisWeek = [
         ...allIngredientsThisWeek.slice(),
-        ...food.ingredients,
+        ...food.food_ingredients,
       ];
     });
 
@@ -207,7 +207,7 @@ export default class FoodStore {
   updateFoodThisWeek = (newFood: IFood[], category: ICategory) => {
     const foodThisWeekWithoutUpdatingFood =
       this.foodThisWeek !== null
-        ? this.foodThisWeek!.filter((curFood) => curFood.category !== category)
+        ? this.foodThisWeek!.filter((curFood) => curFood.food_category !== category)
         : [];
 
     this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
@@ -249,14 +249,14 @@ export default class FoodStore {
     return this.getAllFood()
       .filter(
         (eachFoodInAllFood) =>
-          eachFoodInAllFood.category ===
-          this.getFoodForId(this.targetFoodToChangeId)?.category
+          eachFoodInAllFood.food_category ===
+          this.getFoodForId(this.targetFoodToChangeId)?.food_category
       )
       .filter(
         (eachFoodInAllFood) =>
           !this.foodThisWeekProjection?.some(
             (eachFoodInFoodThisWeek) =>
-              eachFoodInFoodThisWeek.id === eachFoodInAllFood.id
+              eachFoodInFoodThisWeek.id === eachFoodInAllFood.food_id
           )
       )
       .map((food) => this.convertFoodToFoodProjection(food));
@@ -278,7 +278,7 @@ export default class FoodStore {
   };
 
   private getFoodForId = (id: number): IFood | null => {
-    return this.allFood?.find((item) => item.id === id) || null;
+    return this.allFood?.find((item) => item.food_id === id) || null;
   };
 
   getFoodProjectionById = (id: number): IFoodProjection | null => {
@@ -292,7 +292,7 @@ export default class FoodStore {
   loadAvailableCategories = () => {
     const copyFood = this.allFood!.slice();
     const category = copyFood
-      .map((food) => food.category)
+      .map((food) => food.food_category)
       .filter((category, index, self) => self.indexOf(category) === index);
 
     this.availableFoodCategories = category.map((category) => {
@@ -318,7 +318,7 @@ export default class FoodStore {
   ): IFood[] => {
     const copyFood = this.allFood!.slice();
     let foodUnderGivenCategory = copyFood.filter(
-      (food) => food.category === category
+      (food) => food.food_category === category
     );
 
     if (quantityToShow > foodUnderGivenCategory.length) {
@@ -350,7 +350,7 @@ export default class FoodStore {
 
   changeFood = () => {
     this.foodThisWeek = this.foodThisWeek!.map((food) => {
-      if (food.id === this.targetFoodToChangeId) {
+      if (food.food_id === this.targetFoodToChangeId) {
         return this.getFoodForId(this.newFoodToChangeId)!;
       }
       return food;
@@ -370,14 +370,14 @@ export default class FoodStore {
 
   convertFoodToFoodProjection = (food: IFood): IFoodProjection => {
     let foodProjection: IFoodProjection = {
-      id: food.id,
-      name: food.name,
-      category: food.category,
+      id: food.food_id,
+      name: food.food_name,
+      category: food.food_category,
       imgUrl: food.imgUrl,
       ingredients: [],
     };
 
-    food.ingredients.forEach((foodIngredient) => {
+    food.food_ingredients.forEach((foodIngredient) => {
       const ingredient = this.getIngredientById(foodIngredient.id);
       if (!ingredient) {
         alert(`Can't find the ingredient!${foodIngredient.id}`);

@@ -1,10 +1,10 @@
 
 export type IFood = {
-    id: number
-    name: string
-    category: ICategory
+    food_id: number
+    food_name: string
+    food_category: ICategory
     imgUrl: string
-    ingredients: IFoodIngredient[]
+    food_ingredients: IFoodIngredient[]
 }
 
 export type IFoodIngredient = {
