@@ -46,7 +46,6 @@ const Header = () => {
                         />
                     : null
             }
-
             <h1>{headerTitle}</h1>
             <p>Renew date: {foodStore.renewDate}</p>
         </header>

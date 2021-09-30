@@ -6,7 +6,7 @@
     "test": "jest",
     "cdk": "cdk",
     "cdklocal": "cdklocal",
-    "local-deploy": "cdklocal deploy * -- --c environment=development"
+    "local-deploy": "cdklocal deploy * -c environment=development"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",

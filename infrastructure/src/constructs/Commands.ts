@@ -82,14 +82,22 @@ export default class Commnads extends cdk.Construct {
       const api = new apigateway.RestApi(this,  `${appName}-api`, {
         restApiName: `${appName}-service`,
       });
-      const foodApi = api.root.addResource('food');
+      const importFoodApi = api.root.addResource('import-food');
       // onst getAllIntegration = new apigateway.LambdaIntegration(getAllLambda);
       // cars.addMethod('GET', getAllIntegration);
-
+      
       const importFoodIntegration = new apigateway.LambdaIntegration(importFoodFunc);
-      foodApi.addMethod('POST', importFoodIntegration);
-      addCorsOptions(foodApi);
-
+      importFoodApi.addMethod('POST', importFoodIntegration);
+      addCorsOptions(importFoodApi);
+      
+      new cdk.CfnOutput(
+        scope,
+        `output-importFood-api-endpoint`,
+        {
+          exportName: `${this.node.tryGetContext("appName")}-importFood-api-endpoint`,
+          value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${importFoodApi.path}`,
+        }
+      );
       // const singleItem = cars.addResource('{id}');
       // const getOneIntegration = new apigateway.LambdaIntegration(getOneLambda);
       // singleItem.addMethod('GET', getOneIntegration);

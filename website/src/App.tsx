@@ -10,18 +10,18 @@ import NavFooter from './components/nav-footer/nav-footer.component';
 import Header from './components/header/header.component';
 import { NavPath } from './utils/nav-path';
 import Settings from './views/settings/settings.component';
+import config from './config';
 
 const App: React.FC = () => {
     const { foodStore } = useStore();
-
+    console.log(config.IMPORT_FOOD_API);
     useEffect(() => {
-        // loadFood();
         foodStore.initializeFoodThisWeek();
     }, [foodStore]);
 
     return (
         <React.Fragment>
-            <Header/>
+            <Header />
             {/* {appStore.showToBuyListButton
                 ? <MDBBtn className="to-buy-btn" size='lg' floating tag='a' onClick={() => history.push('/to-buy-list')}>
                     <MDBIcon fas icon="cart-arrow-down" />
@@ -31,7 +31,7 @@ const App: React.FC = () => {
             <div className="main" >
                 <Switch>
                     <Route exact path={'/' + NavPath.FoodThisWeek} component={FoodThisWeek} />
-                    <Route path={`/${NavPath.FoodDetails}/:foodId`}component={FoodDetail} />
+                    <Route path={`/${NavPath.FoodDetails}/:foodId`} component={FoodDetail} />
                     <Route path={`/${NavPath.ToBuyList}`} component={ToBuyList} />
                     <Route path={`/${NavPath.Settings}`} component={Settings} />
                     <Redirect from="/" to={NavPath.FoodThisWeek} />

@@ -8,6 +8,7 @@ import { RemovalPolicy } from "@aws-cdk/core";
 import * as aws_s3_deployment from "@aws-cdk/aws-s3-deployment";
 import { HttpMethods } from "@aws-cdk/aws-s3";
 import Commnads from '../constructs/Commands';
+import { ConfigProvider } from "../utils/config-provider";
 
 export class HostingStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
@@ -26,10 +27,8 @@ export class HostingStack extends cdk.Stack {
       }
     );
 
-    const isProduction = scope.node.tryGetContext("environment") === "production";
-
     let cloudfrontDistribution;
-    if (isProduction) {
+    if (ConfigProvider.Context(scope).IsProduction) {
       cloudfrontDistribution = new CloudfrontDistribution(
         this,
         `${scope.node.tryGetContext("appName")}-cloudfront-distribution`,
