@@ -4,6 +4,7 @@ import * as apigateway from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaNode from "@aws-cdk/aws-lambda-nodejs";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
+import { ConfigProvider } from '../utils/config-provider';
 
 
 export default class Commnads extends cdk.Construct {
@@ -11,20 +12,18 @@ export default class Commnads extends cdk.Construct {
 
   constructor(scope: cdk.Stack, id: string, props: cdk.StackProps) {
     super(scope, id);
-    const appName = this.node.tryGetContext('appName') ?? "defaultAppName";
+    const appName: string = ConfigProvider.Context(scope).AppName;
+    const isDevelopment: boolean = ConfigProvider.Context(scope).IsDevelopment;
 
-
+    const primaryKey = "foodId";
     const dynamoTable = new dynamodb.Table(this, "foodTable", {
       partitionKey: {
-        name: "foodId",
+        name: primaryKey,
         type: dynamodb.AttributeType.STRING,
       },
       tableName: `${appName}-food-table`,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      // The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
-      // the new table, and it will remain in your account until manually deleted. By setting the policy to
-      // DESTROY, cdk destroy will delete the table (even if it has data in it)
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+      removalPolicy: isDevelopment ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN, 
     });
 
     // const getOneLambda = new lambda.Function(this, 'getOneItemFunction', {
@@ -65,7 +64,7 @@ export default class Commnads extends cdk.Construct {
       entry: __dirname + '/../lambda/import-food/import-food.ts',
       environment: {
         TABLE_NAME: dynamoTable.tableName,
-        PRIMARY_KEY: 'foodId'
+        PRIMARY_KEY: primaryKey
       },
       bundling: {
         minify: true,
@@ -97,7 +96,7 @@ export default class Commnads extends cdk.Construct {
       // dynamoTable.grantReadWriteData(getOneLambda);
       // dynamoTable.grantReadWriteData(getAllLambda);
       
-      const api = new apigateway.RestApi(this,  `${appName}-api`, {
+      const api = new apigateway.RestApi(this,  `${appName}-Api`, {
         restApiName: `${appName}-service`,
       });
       const importFoodApi = api.root.addResource('import-food');
@@ -108,14 +107,17 @@ export default class Commnads extends cdk.Construct {
       importFoodApi.addMethod('POST', importFoodIntegration);
       addCorsOptions(importFoodApi);
       
-      new cdk.CfnOutput(
-        scope,
-        `output-importFood-api-endpoint`,
-        {
-          exportName: `${this.node.tryGetContext("appName")}-importFood-api-endpoint`,
-          value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${importFoodApi.path}`,
-        }
-      );
+      if (ConfigProvider.Context(this).IsDevelopment) {
+        new cdk.CfnOutput(
+          scope,
+          `Output-ImportFood-Api-Endpoint`,
+          {
+            exportName: `${this.node.tryGetContext("appName")}-importFood-api-endpoint`,
+            value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${importFoodApi.path}`,
+          }
+        );
+      }
+     
       // const singleItem = cars.addResource('{id}');
       // const getOneIntegration = new apigateway.LambdaIntegration(getOneLambda);
       // singleItem.addMethod('GET', getOneIntegration);

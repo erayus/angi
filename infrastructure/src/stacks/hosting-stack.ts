@@ -7,55 +7,57 @@ import { RemovalPolicy } from "@aws-cdk/core";
 import * as aws_s3_deployment from "@aws-cdk/aws-s3-deployment";
 import { HttpMethods } from "@aws-cdk/aws-s3";
 import Commnads from '../constructs/Commands';
-import { ConfigProvider } from "../utils/config-provider";
+import { ConfigProvider } from '../utils/config-provider';
 
 export class HostingStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
+    const appName = ConfigProvider.Context(scope).AppName;
+    const isDevelopment = ConfigProvider.Context(scope).IsDevelopment;
 
     const webBucket = new aws_s3.Bucket(
       this,
-      `${this.node.tryGetContext("appName")}-bucket`,
+      `Website-Bucket`,
       {
-        bucketName: `${this.node.tryGetContext("appName")}.erayus.com`,
+        bucketName: `${appName}.erayus.com`,
         websiteIndexDocument: "index.html",
         websiteErrorDocument: "index.html",
         publicReadAccess: true,
-        autoDeleteObjects: true,
-        removalPolicy: RemovalPolicy.DESTROY,
+        autoDeleteObjects:  isDevelopment? true : false,
+        removalPolicy: isDevelopment? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
       }
     );
 
     let cloudfrontDistribution;
-    if (ConfigProvider.Context(scope).IsProduction) {
+    if (!isDevelopment) {
       cloudfrontDistribution = new CloudfrontDistribution(
         this,
-        `${scope.node.tryGetContext("appName")}-cloudfront-distribution`,
+        `${appName}-cloudfront-distribution`,
         { bucket: webBucket }
       );
 
       new Route53ARecord(
         this,
-        `${scope.node.tryGetContext("appName")}-route53-ARecord`,
+        `${appName}-route53-ARecord`,
         { distribution: cloudfrontDistribution.distribution }
       ).node.addDependency(webBucket, cloudfrontDistribution);
 
       new aws_s3_deployment.BucketDeployment(
         this,
-        `${this.node.tryGetContext("appName")}-web-bucket-deploymnet`,
+        `Web-Bucket-Deploymnet`,
         {
           sources: [aws_s3_deployment.Source.asset("../website/build")],
           destinationBucket: webBucket,
           distribution: cloudfrontDistribution.distribution || undefined,
           distributionPaths: ["/index.html"],
         }
-      );
+      ).node.addDependency(webBucket, cloudfrontDistribution);
 
       const imgBucket = new aws_s3.Bucket(
         this,
-        `${this.node.tryGetContext("appName")}-erayus-images-bucket`,
+        `Images-Bucket`,
         {
-          bucketName: `${this.node.tryGetContext("appName")}-erayus-images`,
+          bucketName: `${appName}-erayus-images`,
           publicReadAccess: true,
           cors: [
             {
@@ -63,14 +65,14 @@ export class HostingStack extends cdk.Stack {
               allowedOrigins: ["localhost:3000", "smartmenu.erayus.com"],
             },
           ],
-          autoDeleteObjects: true,
-          removalPolicy: RemovalPolicy.DESTROY,
+          autoDeleteObjects: isDevelopment ? true : false,
+          removalPolicy: isDevelopment ? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
         }
       );
 
       new aws_s3_deployment.BucketDeployment(
         this,
-        `${this.node.tryGetContext("appName")}-food-images-bucket-deploymnet`,
+        `Food-Images-Bucket-Deploymnet`,
         {
           sources: [aws_s3_deployment.Source.asset("../shared/food-images")],
           destinationBucket: imgBucket,
@@ -78,22 +80,22 @@ export class HostingStack extends cdk.Stack {
       );
     }
 
-    new Commnads(this,`${this.node.tryGetContext("appName")}-Commands`, props);
+    new Commnads(this,`${appName}-Commands`, props);
 
     new cdk.CfnOutput(
       this,
-      `${this.node.tryGetContext("appName")}-output-bucketName`,
+      `Output-bucketName`,
       {
-        exportName: `${scope.node.tryGetContext("appName")}-bucket-name`,
+        exportName: `${appName}-bucket-name`,
         value: webBucket.bucketName,
       }
     );
 
     new cdk.CfnOutput(
       this,
-      `${this.node.tryGetContext("appName")}-output-bucketDomainName`,
+      `Output-BucketDomainName`,
       {
-        exportName: `${this.node.tryGetContext("appName")}-bucket-domain-name`,
+        exportName: `${appName}-bucket-domain-name`,
         value: `https://${webBucket.bucketDomainName}`,
       }
     );

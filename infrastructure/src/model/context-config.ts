@@ -15,8 +15,8 @@ export class ContextConfig {
    * Gets the flag indicating that the project is being deployed in developer mode.
    * This enables less-secure but easily debuggable config.
    */
-  public get IsProduction(): boolean {
-    return this.scope.node.tryGetContext("environment") === "production";;
+  public get IsDevelopment(): boolean {
+    return this.scope.node.tryGetContext("environment") === "developmnet";;
   }
 
   /**
