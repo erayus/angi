@@ -17,6 +17,7 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=local
       - DEFAULT_REGION=ap-southeast-2
+      - AWS_DEFAULT_REGION=ap-southeast-2
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     tmpfs:

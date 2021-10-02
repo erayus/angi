@@ -5,6 +5,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaNode from "@aws-cdk/aws-lambda-nodejs";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 
+
 export default class Commnads extends cdk.Construct {
   public readonly distribution: aws_cloudfront.CloudFrontWebDistribution;
 
@@ -56,7 +57,7 @@ export default class Commnads extends cdk.Construct {
     //   }
     // });
 
-    const importFoodFunc = new lambdaNode.NodejsFunction(this, 'PostFunction', {
+    const importFoodFunc = new lambdaNode.NodejsFunction(this, 'ImportFoodFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
       // name of the exported function
       handler: 'importFood',
@@ -66,6 +67,10 @@ export default class Commnads extends cdk.Construct {
         TABLE_NAME: dynamoTable.tableName,
         PRIMARY_KEY: 'foodId'
       },
+      bundling: {
+        minify: true,
+        externalModules: [],
+      }
     });
 
     // const updateOne = new lambda.Function(this, 'updateItemFunction', {

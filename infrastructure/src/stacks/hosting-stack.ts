@@ -3,7 +3,6 @@ import * as aws_s3 from "@aws-cdk/aws-s3";
 
 import CloudfrontDistribution from "../constructs/CloudFrontDistribution";
 import Route53ARecord from "../constructs/Route53ARecord";
-import WebsiteDeployment from "../constructs/WebsiteDeployment";
 import { RemovalPolicy } from "@aws-cdk/core";
 import * as aws_s3_deployment from "@aws-cdk/aws-s3-deployment";
 import { HttpMethods } from "@aws-cdk/aws-s3";
@@ -39,15 +38,6 @@ export class HostingStack extends cdk.Stack {
         this,
         `${scope.node.tryGetContext("appName")}-route53-ARecord`,
         { distribution: cloudfrontDistribution.distribution }
-      ).node.addDependency(webBucket, cloudfrontDistribution);
-
-      new WebsiteDeployment(
-        this,
-        `${this.node.tryGetContext("appName")}-websiteDeployment`,
-        {
-          destinationBucket: webBucket,
-          distribution: cloudfrontDistribution.distribution,
-        }
       ).node.addDependency(webBucket, cloudfrontDistribution);
 
       new aws_s3_deployment.BucketDeployment(
