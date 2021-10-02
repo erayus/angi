@@ -2,6 +2,7 @@ import * as cdk from "@aws-cdk/core";
 import * as aws_cloudfront from "@aws-cdk/aws-cloudfront";
 import * as apigateway from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambdaNode from "@aws-cdk/aws-lambda-nodejs";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 
 export default class Commnads extends cdk.Construct {
@@ -45,14 +46,26 @@ export default class Commnads extends cdk.Construct {
     //     }
     //   });
   
-    const importFoodFunc = new lambda.Function(this, 'importFoodFunction', {
-      code: new lambda.AssetCode('src/lambda'),
-      handler: 'import-food.handler',
-      runtime: lambda.Runtime.PYTHON_3_7,
+    // const importFoodFunc = new lambda.Function(this, 'importFoodFunction', {
+    //   code: new lambda.AssetCode('src/lambda'),
+    //   handler: 'import-food.handler',
+    //   runtime: lambda.Runtime.PYTHON_3_7,
+    //   environment: {
+    //     TABLE_NAME: dynamoTable.tableName,
+    //     PRIMARY_KEY: 'foodId'
+    //   }
+    // });
+
+    const importFoodFunc = new lambdaNode.NodejsFunction(this, 'PostFunction', {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      // name of the exported function
+      handler: 'importFood',
+      // file to use as entry point for our Lambda function
+      entry: __dirname + '/../lambda/import-food/import-food.ts',
       environment: {
         TABLE_NAME: dynamoTable.tableName,
         PRIMARY_KEY: 'foodId'
-      }
+      },
     });
 
     // const updateOne = new lambda.Function(this, 'updateItemFunction', {
