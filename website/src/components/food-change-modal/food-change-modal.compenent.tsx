@@ -1,7 +1,6 @@
-import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
+import { MDBBtn, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
-import { IFood } from '../../models/food';
 import { useStore } from '../../store/rootStore';
 import FoodList from '../food-list/food-list.component';
 import styles from "./food-change-modal.module.css";

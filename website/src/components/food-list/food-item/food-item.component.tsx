@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
 // import img from '../../assets/spaghetti.jpg';
-import { IFood } from '../../../models/food';
-import { RouteComponentProps, useHistory, withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import './food-item.styles.scss';
 import { FoodListOptionalProps } from '../food-list.component';
 import { useStore } from '../../../store/rootStore';

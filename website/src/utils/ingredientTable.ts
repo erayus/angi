@@ -1,4 +1,4 @@
-import { IIngredient } from '../models/ingredient';
+import { IIngredient } from '../../../shared/models/ingredient';
 
 export const ingredientTable: IIngredient[] = [
   {

@@ -15,11 +15,11 @@ export default class Commnads extends cdk.Construct {
     const appName: string = ConfigProvider.Context(scope).AppName;
     const isDevelopment: boolean = ConfigProvider.Context(scope).IsDevelopment;
 
-    const primaryKey = "foodId";
-    const dynamoTable = new dynamodb.Table(this, "foodTable", {
+    const foodTablePartitionKey = "food_id";
+    const foodTable = new dynamodb.Table(this, "Food-Table", {
       partitionKey: {
-        name: primaryKey,
-        type: dynamodb.AttributeType.STRING,
+        name: foodTablePartitionKey,
+        type: dynamodb.AttributeType.NUMBER,
       },
       tableName: `${appName}-food-table`,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -63,12 +63,13 @@ export default class Commnads extends cdk.Construct {
       // file to use as entry point for our Lambda function
       entry: __dirname + '/../lambda/import-food/import-food.ts',
       environment: {
-        TABLE_NAME: dynamoTable.tableName,
-        PRIMARY_KEY: primaryKey
+        TABLE_NAME: foodTable.tableName,
+        PARTITION_KEY: foodTablePartitionKey
       },
       bundling: {
         minify: true,
         externalModules: [],
+        
       }
     });
 
@@ -92,7 +93,7 @@ export default class Commnads extends cdk.Construct {
     //   }
     // });
     
-      dynamoTable.grantReadWriteData(importFoodFunc);
+      foodTable.grantReadWriteData(importFoodFunc);
       // dynamoTable.grantReadWriteData(getOneLambda);
       // dynamoTable.grantReadWriteData(getAllLambda);
       
@@ -110,7 +111,7 @@ export default class Commnads extends cdk.Construct {
       if (ConfigProvider.Context(this).IsDevelopment) {
         new cdk.CfnOutput(
           scope,
-          `Output-ImportFood-Api-Endpoint`,
+          `Output-Local-ImportFood-Api-Endpoint`,
           {
             exportName: `${this.node.tryGetContext("appName")}-importFood-api-endpoint`,
             value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${importFoodApi.path}`,

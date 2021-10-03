@@ -1,6 +1,5 @@
 import React from 'react'
-import FoodItem from './food-item/food-item.component'
-import { IFood } from '../../models/food';
+import FoodItem from './food-item/food-item.component';
 import { IFoodProjection } from '../../store/foodStore';
 
 export type FoodListOptionalProps = {

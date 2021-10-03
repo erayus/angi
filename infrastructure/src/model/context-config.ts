@@ -16,7 +16,7 @@ export class ContextConfig {
    * This enables less-secure but easily debuggable config.
    */
   public get IsDevelopment(): boolean {
-    return this.scope.node.tryGetContext("environment") === "developmnet";;
+    return this.scope.node.tryGetContext("environment") === "development";;
   }
 
   /**

@@ -1,11 +1,11 @@
-import { get, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import {
   IFoodCategory,
   IFood,
   ICategory,
   IFoodIngredient,
-} from "../models/food";
-import { IIngredient, IIngredientCategory, IUnit } from "../models/ingredient";
+} from "../../../shared/models/food";
+import { IIngredient, IIngredientCategory, IUnit } from "../../../shared/models/ingredient";
 import { FoodDirectory } from "../utils/foodTable";
 import { ingredientTable } from "../utils/ingredientTable";
 import { UserService } from "../services/user.service";

@@ -1,4 +1,4 @@
-import { ICategory, IFood } from "../models/food";
+import { ICategory, IFood } from "../../../shared/models/food";
 
 export const FoodDirectory: IFood[] = [
   {

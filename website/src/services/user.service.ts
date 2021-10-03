@@ -1,4 +1,4 @@
-import { IFood } from "../models/food";
+import { IFood } from "../../../shared/models/food";
 
 export abstract class UserService {
 

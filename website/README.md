@@ -2,26 +2,26 @@
 
 ## Database
 
-### Food table
+### **Food table**
 
 - IFood[]
 
-## Ingredient table
+### **Ingredient table**
 
 - IIngredient[]
 
-## User table
+### **User table**
 
-- userId: number
+- user_id: number
 
-- foodThisWeekList: nunber[]
+- food_this_week_list: nunber[]
 
-- renewDate: string
+- renew_date: string
   
-- {category}-quantiy: number
+- food_category_{food_category_id}_quantiy: number
 
-- toBuyList : ToBuyIngredient[]
-
+- to_buy_ist : ToBuyIngredient[]
+  
 ## Test plan
 
 ### Food This Week
