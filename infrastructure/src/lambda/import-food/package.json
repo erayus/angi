@@ -9,6 +9,7 @@
   "author": "erayus",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^6.12.6",
     "aws-sdk": "^2.714.0"
   },
   "devDependencies": {

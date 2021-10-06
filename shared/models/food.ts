@@ -1,9 +1,8 @@
-
 export type IFood = {
     food_id: number
     food_name: string
     food_category: ICategory;
-    imgUrl: string
+    img_url: string
     food_ingredients: IFoodIngredient[]
 }
 

@@ -23,7 +23,7 @@ export default class Commnads extends cdk.Construct {
       },
       tableName: `${appName}-food-table`,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: isDevelopment ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN, 
+      removalPolicy: isDevelopment ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
     });
 
     // const getOneLambda = new lambda.Function(this, 'getOneItemFunction', {
@@ -55,6 +55,14 @@ export default class Commnads extends cdk.Construct {
     //     PRIMARY_KEY: 'foodId'
     //   }
     // });
+    const schemasLayer = new lambda.LayerVersion(this, 'SchemaLayer', {
+      compatibleRuntimes: [
+        lambda.Runtime.NODEJS_12_X,
+        lambda.Runtime.NODEJS_14_X,
+      ],
+      code: lambda.Code.fromAsset('src/layers/schemas'),
+      description: 'Json Schemas for validating lambda input',
+    });
 
     const importFoodFunc = new lambdaNode.NodejsFunction(this, 'ImportFoodFunction', {
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -64,13 +72,14 @@ export default class Commnads extends cdk.Construct {
       entry: __dirname + '/../lambda/import-food/import-food.ts',
       environment: {
         TABLE_NAME: foodTable.tableName,
-        PARTITION_KEY: foodTablePartitionKey
+        PARTITION_KEY: foodTablePartitionKey,
+        ENVIRONEMENT: ConfigProvider.Context(scope).Environment
       },
       bundling: {
-        minify: true,
-        externalModules: [],
-        
-      }
+        minify: false,
+        externalModules: [] //TODO: excluding aws-cdk in Production
+      },
+      layers: [schemasLayer]
     });
 
     // const updateOne = new lambda.Function(this, 'updateItemFunction', {

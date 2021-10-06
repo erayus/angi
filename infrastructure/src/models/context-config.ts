@@ -19,6 +19,10 @@ export class ContextConfig {
     return this.scope.node.tryGetContext("environment") === "development";;
   }
 
+  public get Environment(): "development" | "production" {
+    return this.scope.node.tryGetContext("environment");
+  }
+
   /**
    * Gets the project name.
    */

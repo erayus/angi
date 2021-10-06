@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "food_id": {
+      "type": "number"
+    },
+    "food_name": {
+      "type": "string"
+    },
+    "food_category": {
+      "$ref": "#/definitions/ICategory"
+    },
+    "img_url": {
+      "type": "string"
+    },
+    "food_ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "quantity"
+        ]
+      }
+    }
+  },
+  "required": [
+    "food_category",
+    "food_id",
+    "food_ingredients",
+    "food_name",
+    "img_url"
+  ],
+  "definitions": {
+    "ICategory": {
+      "enum": [
+        "Các món phụ",
+        "Món chính",
+        "Món súp"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

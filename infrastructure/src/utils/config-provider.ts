@@ -1,5 +1,5 @@
 import { IConstruct } from "@aws-cdk/core";
-import { ContextConfig } from "../model/context-config";
+import { ContextConfig } from "../models/context-config";
 
 export class ConfigProvider {
     private readonly scope: IConstruct;

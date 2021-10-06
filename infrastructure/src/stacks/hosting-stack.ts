@@ -24,7 +24,7 @@ export class HostingStack extends cdk.Stack {
         websiteErrorDocument: "index.html",
         publicReadAccess: true,
         autoDeleteObjects:  isDevelopment? true : false,
-        removalPolicy: isDevelopment? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
+        removalPolicy: isDevelopment? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN
       }
     );
 
