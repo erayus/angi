@@ -1,11 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import * as AWS from "aws-sdk";
 import Ajv from "ajv";
-/* eslint-disable import/extensions, import/no-absolute-path */
 import * as foodSchema from "/opt/nodejs/foodSchema.json";
-import { ServiceConfigurationOptions } from "aws-sdk/lib/service";
-import { DocumentClient } from "aws-sdk/lib/dynamodb/document_client";
-import { ClientApiVersions } from "aws-sdk/clients/dynamodb";
 
 const dynClient = new AWS.DynamoDB.DocumentClient(  { apiVersion: '2012-08-10' });
 

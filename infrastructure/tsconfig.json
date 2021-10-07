@@ -26,7 +26,7 @@
   "exclude": [
     "node_modules",
     "cdk.out",
-    "src/constructs",
-    "src/stacks"
+    "src/lambda",
+    "src/layers"
   ]
 }

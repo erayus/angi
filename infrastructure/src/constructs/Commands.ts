@@ -5,6 +5,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaNode from "@aws-cdk/aws-lambda-nodejs";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import { ConfigProvider } from '../utils/config-provider';
+import { NameGenerator } from '../utils/name-generator';
 
 
 export default class Commnads extends cdk.Construct {
@@ -21,7 +22,7 @@ export default class Commnads extends cdk.Construct {
         name: foodTablePartitionKey,
         type: dynamodb.AttributeType.NUMBER,
       },
-      tableName: `${appName}-food-table`,
+      tableName: NameGenerator.generateConstructName(scope, 'food-table', isDevelopment),
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: isDevelopment ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
     });
@@ -55,7 +56,7 @@ export default class Commnads extends cdk.Construct {
     //     PRIMARY_KEY: 'foodId'
     //   }
     // });
-    const schemasLayer = new lambda.LayerVersion(this, 'SchemaLayer', {
+    const schemasLayer = new lambda.LayerVersion(this, 'Schema-Layer', {
       compatibleRuntimes: [
         lambda.Runtime.NODEJS_12_X,
         lambda.Runtime.NODEJS_14_X,
@@ -64,7 +65,8 @@ export default class Commnads extends cdk.Construct {
       description: 'Json Schemas for validating lambda input',
     });
 
-    const importFoodFunc = new lambdaNode.NodejsFunction(this, 'ImportFoodFunction', {
+    const importFoodFunc = new lambdaNode.NodejsFunction(this, 'Import-Food-Function', {
+      functionName: NameGenerator.generateConstructName(scope, 'import-food-function', isDevelopment),
       runtime: lambda.Runtime.NODEJS_12_X,
       // name of the exported function
       handler: 'importFood',
@@ -107,7 +109,7 @@ export default class Commnads extends cdk.Construct {
       // dynamoTable.grantReadWriteData(getAllLambda);
       
       const api = new apigateway.RestApi(this,  `${appName}-Api`, {
-        restApiName: `${appName}-service`,
+        restApiName: NameGenerator.generateConstructName(scope, 'api-service', isDevelopment),
       });
       const importFoodApi = api.root.addResource('import-food');
       // onst getAllIntegration = new apigateway.LambdaIntegration(getAllLambda);
@@ -122,7 +124,7 @@ export default class Commnads extends cdk.Construct {
           scope,
           `Output-Local-ImportFood-Api-Endpoint`,
           {
-            exportName: `${this.node.tryGetContext("appName")}-importFood-api-endpoint`,
+            exportName: NameGenerator.generateConstructName(scope, 'importFood-api-endpoint-output', isDevelopment),
             value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${importFoodApi.path}`,
           }
         );

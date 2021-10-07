@@ -15,13 +15,13 @@ import * as fs from "fs";
 
   // as this function is called by package.json, the path is relative to infrastructure folder
   const basePathToModels = "../shared/models";
-
   const program = TJS.getProgramFromFiles(
     [resolve(basePathToModels, "food.ts")],
     compilerOptions
   );
 
+  const basePathToSchemasLayer = "./src/layers/schemas/nodejs/"
   const foodSchema = await TJS.generateSchema(program, "IFood", settings);
   const foodSchemaString = JSON.stringify(foodSchema, null, 2);
-  await fs.writeFileSync("./src/layers/schemas/nodejs/foodSchema.json", foodSchemaString);
+  await fs.writeFileSync(resolve(basePathToSchemasLayer, "foodSchema.json"), foodSchemaString);
 })();

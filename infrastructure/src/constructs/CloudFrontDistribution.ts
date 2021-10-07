@@ -20,7 +20,7 @@ export default class CloudfrontDistribution extends cdk.Construct {
 
     this.distribution = new aws_cloudfront.CloudFrontWebDistribution(
       scope,
-      `${this.node.tryGetContext('appName')}-web-distribution`,
+      `Web-Distribution`,
       {
         viewerCertificate: {
             aliases: [props.bucket.bucketName],
