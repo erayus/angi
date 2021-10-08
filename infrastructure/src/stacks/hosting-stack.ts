@@ -18,7 +18,7 @@ export class HostingStack extends cdk.Stack {
 
     new Commnads(this, `${appName}-Commands`, props);
 
-    const imgBucket = new aws_s3.Bucket(this, NameGenerator.generateConstructName(scope, 'Images-Bucket', isDevelopment), {
+    const imgBucket = new aws_s3.Bucket(this, 'Images-Bucket', {
       bucketName: NameGenerator.generateConstructName(scope, 'erayus-images', isDevelopment),
       publicReadAccess: true,
       cors: [
@@ -35,7 +35,7 @@ export class HostingStack extends cdk.Stack {
 
     new aws_s3_deployment.BucketDeployment(
       this,
-      NameGenerator.generateConstructName(scope, 'Food-Images-Bucket-Deployment', isDevelopment),
+      'Food-Images-Bucket-Deployment',
       {
         sources: [aws_s3_deployment.Source.asset("../shared/food-images")],
         destinationBucket: imgBucket,
@@ -44,7 +44,7 @@ export class HostingStack extends cdk.Stack {
 
     if (!isDevelopment) {
       let cloudfrontDistribution;
-      const webBucket = new aws_s3.Bucket(this, NameGenerator.generateConstructName(scope, 'Website-Bucket', isDevelopment ), {
+      const webBucket = new aws_s3.Bucket(this, 'Website-Bucket', {
         bucketName: `${appName}.erayus.com`,
         websiteIndexDocument: "index.html",
         websiteErrorDocument: "index.html",

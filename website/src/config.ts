@@ -1,5 +1,5 @@
 const importFoodApi = {
-    development: "http://localhost:4566/restapis/1ziss5z0fs/prod/_user_request_/import-food",
+    development: "https://ju1imclj69.execute-api.ap-southeast-2.amazonaws.com/prod/import_food",
     production: "production_api",
 }
 

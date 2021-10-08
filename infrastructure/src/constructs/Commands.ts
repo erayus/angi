@@ -13,7 +13,6 @@ export default class Commnads extends cdk.Construct {
 
   constructor(scope: cdk.Stack, id: string, props: cdk.StackProps) {
     super(scope, id);
-    const appName: string = ConfigProvider.Context(scope).AppName;
     const isDevelopment: boolean = ConfigProvider.Context(scope).IsDevelopment;
 
     const foodTablePartitionKey = "food_id";
@@ -108,7 +107,7 @@ export default class Commnads extends cdk.Construct {
       // dynamoTable.grantReadWriteData(getOneLambda);
       // dynamoTable.grantReadWriteData(getAllLambda);
       
-      const api = new apigateway.RestApi(this,  `${appName}-Api`, {
+      const api = new apigateway.RestApi(this,  `Api`, {
         restApiName: NameGenerator.generateConstructName(scope, 'api-service', isDevelopment),
       });
       const importFoodApi = api.root.addResource('import-food');
@@ -119,16 +118,6 @@ export default class Commnads extends cdk.Construct {
       importFoodApi.addMethod('POST', importFoodIntegration);
       addCorsOptions(importFoodApi);
       
-      if (ConfigProvider.Context(this).IsDevelopment) {
-        new cdk.CfnOutput(
-          scope,
-          `Output-Local-ImportFood-Api-Endpoint`,
-          {
-            exportName: NameGenerator.generateConstructName(scope, 'importFood-api-endpoint-output', isDevelopment),
-            value: `http://localhost:4566/restapis/${api.restApiId}/prod/_user_request_${importFoodApi.path}`,
-          }
-        );
-      }
      
       // const singleItem = cars.addResource('{id}');
       // const getOneIntegration = new apigateway.LambdaIntegration(getOneLambda);

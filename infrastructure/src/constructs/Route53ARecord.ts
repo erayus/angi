@@ -17,7 +17,7 @@ interface IRoute53ARecord {
             const zone = aws_route53.HostedZone.fromLookup(scope, 'Zone', { domainName: 'erayus.com' });
             const appName = ConfigProvider.Context(scope).AppName;
             
-            const ARecord = new aws_route53.ARecord(scope, `${appName}-ARecord`, {
+            const ARecord = new aws_route53.ARecord(scope, `ARecord`, {
               recordName: `${appName}.erayus.com`,
               target: aws_route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(props.distribution)),
               zone: zone
