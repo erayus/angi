@@ -23,7 +23,7 @@ const validateInput = (input: unknown): boolean => {
     return false
   }
 }
-export async function importFood(event: APIGatewayProxyEventV2) {
+export async function importFoodHandler(event: APIGatewayProxyEventV2) {
   if (!tableName || !partitionKey) {
     return {
       statusCode: 500,

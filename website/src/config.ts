@@ -1,20 +1,22 @@
-const importFoodApi = {
-    development: "https://ju1imclj69.execute-api.ap-southeast-2.amazonaws.com/prod/import_food",
+import { ApiPath } from '../../shared/models/api-path';
+
+const apiBaseUrl = {
+    development: "https://ju1imclj69.execute-api.ap-southeast-2.amazonaws.com/prod/",
     production: "production_api",
 }
 
-const getImportFoodApi = () => {
+const getApiUrlForPath = (path: ApiPath) => {
     switch(process.env.NODE_ENV) {
         case "development":
-            return importFoodApi.development
+            return apiBaseUrl.development + path
         case "production":
-            return importFoodApi.production
+            return apiBaseUrl.production + path
         default:
             return null;
     }
 }
 const config = {
-    IMPORT_FOOD_API: getImportFoodApi(),
+    getApiUrlForPath,
 }
 
 export default config;
