@@ -3,7 +3,7 @@ import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from './../../store/rootStore';
 import './foodThisWeek.styles.scss';
-import { ICategory } from '../../../../shared/models/food';
+import { IFoodCategory } from '../../../../shared/models/food';
 import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
@@ -12,7 +12,7 @@ const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodThisWeekProjection} = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
-    
+
     useEffect(()=> {
         return () => {
             foodStore.saveFoodThisWeek();
@@ -20,7 +20,7 @@ const FoodThisWeek = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, foodThisWeekProjection]);
 
-    const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: ICategory) => {
+    const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
         const newQuantity = +e.target.value;
         const minQuantityAllowed = +e.target.min;
         const maxQuantityAllowed = +e.target.max;
@@ -46,7 +46,7 @@ const FoodThisWeek = () => {
     }
 
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
-    
+
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
         const foodThisWeekUnderCategory = foodThisWeekProjection ? foodThisWeekProjection.filter(food => food.category === foodCategory.category) : [];
         return (
@@ -57,9 +57,9 @@ const FoodThisWeek = () => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)}/>
                 </div>
                 {
-                    foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory 
-                    ? <FoodList 
-                        key={foodCategory.category} 
+                    foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory
+                    ? <FoodList
+                        key={foodCategory.category}
                         foodList={foodThisWeekUnderCategory}
                         enableViewDetails
                         enableFoodChange
@@ -67,20 +67,20 @@ const FoodThisWeek = () => {
                       />
                     : "Loading"
                 }
-        
+
             <MDBModal
-                staticBackdrop={true} 
-                show={foodChangeModalState} 
+                staticBackdrop={true}
+                show={foodChangeModalState}
                 getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
-                <FoodChangeModal 
+                <FoodChangeModal
                     // selectedFoodIdToChange={selectedFoodIdToChange!}
                     foodAvailableForChange={foodStore.getFoodAvailableForChange()}
                     toggleShow={toggleFoodChangeModalState}
                     />
             </MDBModal>
             </div>
-            
-        )}    
+
+        )}
     )
 
     return (

@@ -1,7 +1,7 @@
 import { ApiPath } from '../../shared/models/api-path';
 
 const apiBaseUrl = {
-    development: "https://ju1imclj69.execute-api.ap-southeast-2.amazonaws.com/prod/",
+    development: "https://xog1qed10d.execute-api.ap-southeast-2.amazonaws.com/prod/",
     production: "production_api",
 }
 

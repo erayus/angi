@@ -1,7 +1,7 @@
 export type IFood = {
     food_id: number
     food_name: string
-    food_category: ICategory;
+    food_category: IFoodCategory;
     img_url: string
     food_ingredients: IFoodIngredient[]
 }
@@ -11,14 +11,10 @@ export type IFoodIngredient = {
     quantity: number
 }
 
-export enum ICategory {
-    Main = 'Món chính',
-    Soup = 'Món súp',
-    Sidies = 'Các món phụ'
-}
+export type IFoodCategory = "Món chính" | "Món súp" | "Các món phụ";
 
-export type IFoodCategory = {
-    category: ICategory
+export type IFoodCategoryQuantiy = {
+    category: IFoodCategory
     quantity: number
 }
 

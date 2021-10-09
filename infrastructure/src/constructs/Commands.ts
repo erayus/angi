@@ -4,33 +4,24 @@ import * as apigateway from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaNode from "@aws-cdk/aws-lambda-nodejs";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
+
 import { ConfigProvider } from "../utils/config-provider";
 import { NameGenerator } from "../utils/name-generator";
 import { ApiPath } from "../../../shared/models/api-path";
+import { foodTablePartitionKey } from "../stacks/database-stack";
 
 export default class Commnads extends cdk.Construct {
   public readonly distribution: aws_cloudfront.CloudFrontWebDistribution;
-
-  constructor(scope: cdk.Stack, id: string, props: cdk.StackProps) {
+    constructor(scope: cdk.Stack, id: string, props: cdk.StackProps) {
     super(scope, id);
     const isDevelopment: boolean = ConfigProvider.Context(scope).IsDevelopment;
 
-    const foodTablePartitionKey = "food_id";
-    const foodTable = new dynamodb.Table(this, "Food-Table", {
-      partitionKey: {
-        name: foodTablePartitionKey,
-        type: dynamodb.AttributeType.NUMBER,
-      },
-      tableName: NameGenerator.generateConstructName(
-        scope,
-        "food-table",
-        isDevelopment
-      ),
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: isDevelopment
-        ? cdk.RemovalPolicy.DESTROY
-        : cdk.RemovalPolicy.RETAIN,
-    });
+    const foodTableName = cdk.Fn.importValue(NameGenerator.generateConstructName(
+      scope,
+      "food-table-name",
+      isDevelopment
+    ));
+    const importedFoodTable = dynamodb.Table.fromTableName(this, 'Imported-Food-Table',foodTableName);
 
     const schemasLayer = new lambda.LayerVersion(this, "Schema-Layer", {
       compatibleRuntimes: [
@@ -56,17 +47,16 @@ export default class Commnads extends cdk.Construct {
         // file to use as entry point for our Lambda function
         entry: __dirname + "/../lambda/get-all-food/get-all-food.ts",
         environment: {
-          TABLE_NAME: foodTable.tableName,
-          PARTITION_KEY: foodTablePartitionKey,
+          TABLE_NAME: importedFoodTable.tableName,
         },
         bundling: {
           minify: false,
-          externalModules: [], //TODO: excluding aws-cdk in Production
+          externalModules: ['aws-sdk'],
         },
         layers: [schemasLayer],
       }
     );
-    foodTable.grantReadData(getAllFoodFunc);
+    importedFoodTable.grantReadData(getAllFoodFunc);
 
     const importFoodFunc = new lambdaNode.NodejsFunction(
       this,
@@ -83,17 +73,17 @@ export default class Commnads extends cdk.Construct {
         // file to use as entry point for our Lambda function
         entry: __dirname + "/../lambda/import-food/import-food.ts",
         environment: {
-          TABLE_NAME: foodTable.tableName,
+          TABLE_NAME: importedFoodTable.tableName,
           PARTITION_KEY: foodTablePartitionKey,
         },
         bundling: {
           minify: false,
-          externalModules: [], //TODO: excluding aws-cdk in Production
+          externalModules: ['aws-sdk'],
         },
         layers: [schemasLayer],
       }
     );
-    foodTable.grantReadWriteData(importFoodFunc);
+    importedFoodTable.grantReadWriteData(importFoodFunc);
 
     const api = new apigateway.RestApi(this, `Api`, {
       restApiName: NameGenerator.generateConstructName(
@@ -102,7 +92,7 @@ export default class Commnads extends cdk.Construct {
         isDevelopment
       ),
     });
-    
+
     const importFoodApi = api.root.addResource(ApiPath.IMPORT_FOOD);
     const importFoodIntegration = new apigateway.LambdaIntegration(
       importFoodFunc

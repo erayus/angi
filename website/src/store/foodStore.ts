@@ -1,8 +1,8 @@
 import { makeAutoObservable } from "mobx";
 import {
-  IFoodCategory,
+  IFoodCategoryQuantiy,
   IFood,
-  ICategory,
+  IFoodCategory,
   IFoodIngredient,
 } from "../../../shared/models/food";
 import { IIngredient, IIngredientCategory, IUnit } from "../../../shared/models/ingredient";
@@ -14,7 +14,7 @@ const clone = require("rfdc/default");
 export type IFoodProjection = {
   id: number;
   name: string;
-  category: ICategory;
+  category: IFoodCategory;
   imgUrl: string;
   ingredients: {
     id: number;
@@ -40,7 +40,7 @@ export default class FoodStore {
   allFood: IFood[] | null = null;
   allIngredients: IIngredient[] | null = null;
   //   foodThisWeekProjection: IFoodProjection[] | null = null;
-  availableFoodCategories: IFoodCategory[] = [];
+  availableFoodCategories: IFoodCategoryQuantiy[] = [];
   targetFoodToChangeId: number = 0;
   newFoodToChangeId: number = 0;
 
@@ -108,7 +108,7 @@ export default class FoodStore {
   }
 
   private getFoodCategoryQuantityForCategory = (
-    category: ICategory
+    category: IFoodCategory
   ): number | null => {
     return localStorage.getItem(`${category}-quantity`)
       ? +localStorage.getItem(`${category}-quantity`)!
@@ -204,7 +204,7 @@ export default class FoodStore {
     localStorage.removeItem("listOfCheckedIngredientIds");
   };
 
-  updateFoodThisWeek = (newFood: IFood[], category: ICategory) => {
+  updateFoodThisWeek = (newFood: IFood[], category: IFoodCategory) => {
     const foodThisWeekWithoutUpdatingFood =
       this.foodThisWeek !== null
         ? this.foodThisWeek!.filter((curFood) => curFood.food_category !== category)
@@ -270,7 +270,7 @@ export default class FoodStore {
     UserService.SaveFoodThisWeekToDb(this.foodThisWeek!);
   };
 
-  setQuantityForCategory = (category: ICategory, quantityToShow: number) => {
+  setQuantityForCategory = (category: IFoodCategory, quantityToShow: number) => {
     if (!quantityToShow || quantityToShow < 0) {
       return;
     }
@@ -313,7 +313,7 @@ export default class FoodStore {
   };
 
   getRandomFoodForCategory = (
-    category: ICategory,
+    category: IFoodCategory,
     quantityToShow: number
   ): IFood[] => {
     const copyFood = this.allFood!.slice();

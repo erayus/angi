@@ -8,7 +8,7 @@
       "type": "string"
     },
     "food_category": {
-      "$ref": "#/definitions/ICategory"
+      "$ref": "#/definitions/IFoodCategory"
     },
     "img_url": {
       "type": "string"
@@ -40,7 +40,7 @@
     "img_url"
   ],
   "definitions": {
-    "ICategory": {
+    "IFoodCategory": {
       "enum": [
         "Các món phụ",
         "Món chính",

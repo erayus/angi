@@ -17,11 +17,11 @@
 - food_this_week_list: nunber[]
 
 - renew_date: string
-  
+
 - food_category_{food_category_id}_quantiy: number
 
-- to_buy_ist : ToBuyIngredient[]
-  
+- to_buy_list : ToBuyIngredient[]
+
 ## Test plan
 
 ### Food This Week
@@ -31,7 +31,7 @@
 ### To Buy List
 
 - Each ingredient should be checked when clicked on.
-  
+
 - On page reload when user is viewing the ToBuyList page, the state of to-buy-list ingredients should be remained the same.
 
 - After ticking the ToBuyList ingredients and the user navigate to different views, on page reload => the state of to-buy-list ingredients should be remained the same.
