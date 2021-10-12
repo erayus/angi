@@ -28,6 +28,12 @@ export async function getAllFoodHandler(event: APIGatewayProxyEventV2) {
 
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers" : "application/json",
+        "Access-Control-Allow-Origin" : "http://localhost:3000", // Required for CORS support to work,
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        // "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+      },
       body: JSON.stringify(scanResults),
     };
   } catch (e) {

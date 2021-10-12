@@ -5,10 +5,10 @@ import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol, MDBIcon } f
 import { useHistory } from 'react-router-dom';
 import './food-item.styles.scss';
 import { FoodListOptionalProps } from '../food-list.component';
-import { useStore } from '../../../store/rootStore';
+import { useStore } from '../../../store/root-store';
 import { observer } from 'mobx-react-lite';
 import { NavPath } from '../../../utils/nav-path';
-import { IFoodProjection } from '../../../store/foodStore';
+import { IFoodProjection } from '../../../store/food-store';
 
 type IProps = FoodListOptionalProps & IFoodProjection;
 
@@ -60,7 +60,7 @@ const FoodItem: React.FC<IProps> = ({
         className="view-detail-btn"
         color="success"
         rounded
-        onClick={() => history.push(`/${NavPath.FoodDetails}/${id}`)}>  
+        onClick={() => history.push(`/${NavPath.FoodDetails}/${id}`)}>
         View details
       </MDBBtn> //TODO: centralize pathname
     );

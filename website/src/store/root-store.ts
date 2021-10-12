@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import AppStore from "./appStore";
-import FoodStore from "./foodStore";
+import AppStore from "./app-store";
+import FoodStore from "./food-store";
 
 export interface RootStore {
     foodStore: FoodStore;

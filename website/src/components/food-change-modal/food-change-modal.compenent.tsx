@@ -1,10 +1,10 @@
 import { MDBBtn, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
-import { useStore } from '../../store/rootStore';
+import { useStore } from '../../store/root-store';
 import FoodList from '../food-list/food-list.component';
 import styles from "./food-change-modal.module.css";
-import { IFoodProjection } from '../../store/foodStore';
+import { IFoodProjection } from '../../store/food-store';
 
 
 type IProps = {
@@ -46,14 +46,14 @@ const FoodChangeModal: React.FC<IProps> = ({ toggleShow, foodAvailableForChange 
             onFoodItemSelected={onFoodItemSelectedHandler}
           />
         </MDBModalBody>
-        
+
         <MDBModalFooter>
           <MDBBtn color='success' outline onClick={toggleShow}>
             Close
           </MDBBtn>
           <MDBBtn
             className={styles.changeBtn}
-            disabled={changeBtnDisabled} 
+            disabled={changeBtnDisabled}
             onClick={() => onChangedHandler()}
           >Change</MDBBtn>
         </MDBModalFooter>

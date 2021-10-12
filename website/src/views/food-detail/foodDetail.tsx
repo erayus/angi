@@ -2,7 +2,7 @@ import React, { } from 'react'
 import { withRouter } from 'react-router'
 import { MDBBadge, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { RouteComponentProps } from 'react-router-dom';
-import { useStore } from '../../store/rootStore';
+import { useStore } from '../../store/root-store';
 import { observer } from 'mobx-react-lite';
 import colors from '../../constants/colors/colors';
 

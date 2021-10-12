@@ -1,7 +1,7 @@
 import { MDBBadge, MDBCheckbox, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from "react";
-import { useStore } from '../../store/rootStore';
+import { useStore } from '../../store/root-store';
 import "./toBuyList.styles.scss";
 
 const ToBuyList: React.FC = () => {
@@ -11,15 +11,15 @@ const ToBuyList: React.FC = () => {
     useEffect(() => {
         foodStore.loadListOfCheckedIngredientIds();
     }, [])
-    
+
     return (
         <div className="mt-3">
             <MDBListGroup className="mx-auto" style={{ maxWidth: '22rem' }}>
-                { toBuyList 
+                { toBuyList
                     ? toBuyList.slice().sort((a,b) => a.category.toLowerCase().localeCompare(b.category!.toLowerCase())).map(ingredient => (
-                        <MDBListGroupItem  
+                        <MDBListGroupItem
                             style={{ height: '4rem', fontSize: '1.2rem'}}
-                            key={ingredient.name } 
+                            key={ingredient.name }
                             className="d-flex justify-content-between align-items-center"
                             onClick={() => foodStore.toggleIngredientState(ingredient.id)}
                         >

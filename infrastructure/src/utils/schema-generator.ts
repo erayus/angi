@@ -14,7 +14,7 @@ import * as fs from "fs";
   };
 
   // as this function is called by package.json, the path is relative to infrastructure folder
-  const basePathToModels = "../shared/models";
+  const basePathToModels = "../website/src/models";
   const program = TJS.getProgramFromFiles(
     [resolve(basePathToModels, "food.ts")],
     compilerOptions

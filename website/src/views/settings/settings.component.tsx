@@ -8,7 +8,7 @@ const Settings = () => {
         <MDBContainer className="pt-3">
             <MDBBtn rounded size="lg" className='my-2 w-100' color='danger'
                 onClick={() => {
-                    localStorage.clear(); alert('Clear successfully.');
+                    localStorage.clear();
                     history.push("/");
                     window.location.reload();
                 }}>

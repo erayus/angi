@@ -1,5 +1,5 @@
-import { MDBCol, MDBIcon, MDBRow } from 'mdb-react-ui-kit'
-import React, { useState } from 'react'
+import { MDBCol, MDBIcon, MDBRow } from 'mdb-react-ui-kit';
+import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import './nav-footer.styles.scss';
 import { NavPath } from '../../utils/nav-path';

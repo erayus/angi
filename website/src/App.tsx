@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import React from 'react'
+import { Redirect, Route, Switch } from 'react-router-dom';
 import FoodThisWeek from './views/food-this-week/foodThisWeek';
-import { useStore } from './store/rootStore';
 import FoodDetail from './views/food-detail/foodDetail';
 import './App.styles.scss';
 import ToBuyList from './views/to-buy-list/toBuyList.component';
@@ -10,14 +9,8 @@ import NavFooter from './components/nav-footer/nav-footer.component';
 import Header from './components/header/header.component';
 import { NavPath } from './utils/nav-path';
 import Settings from './views/settings/settings.component';
-import config from './config';
 
 const App: React.FC = () => {
-    const { foodStore } = useStore();
-    console.log(config.IMPORT_FOOD_API);
-    useEffect(() => {
-        foodStore.initializeFoodThisWeek();
-    }, [foodStore]);
 
     return (
         <React.Fragment>

@@ -1,14 +1,14 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction, toJS } from "mobx";
 import {
   IFoodCategoryQuantiy,
   IFood,
   IFoodCategory,
   IFoodIngredient,
-} from "../../../shared/models/food";
-import { IIngredient, IIngredientCategory, IUnit } from "../../../shared/models/ingredient";
-import { FoodDirectory } from "../utils/foodTable";
+} from "../models/food";
+import { IIngredient, IIngredientCategory, IUnit } from "../models/ingredient";
 import { ingredientTable } from "../utils/ingredientTable";
 import { UserService } from "../services/user.service";
+import axiosApi from "../utils/axios-api";
 const clone = require("rfdc/default");
 
 export type IFoodProjection = {
@@ -59,6 +59,7 @@ export default class FoodStore {
         ),
       ];
     }
+    return []
   }
 
   get toBuyList() :ToBuyIngredient[] {
@@ -138,10 +139,10 @@ export default class FoodStore {
     localStorage.setItem("renewDate", todayDateFormat);
   };
 
-  initializeFoodThisWeek = () => {
+  initializeFoodThisWeek = async () => {
     if (this.allFood == null) {
       this.loadIngredients();
-      this.loadFood();
+      await this.retrieveAllFood();
     }
 
     if (this.isTimeToRenewFood()) {
@@ -157,16 +158,16 @@ export default class FoodStore {
 
   private isTimeToRenewFood = () => {
     const today = new Date();
-    if (!this.getRenewDate()) {
+    const renewDate = this.getRenewDate()
+    if (!renewDate) {
       const renewDateObj = new Date();
       renewDateObj.setDate(today.getDate() + this.renewPeriod); // set renewDate to the next 7 day;
       this.setRenewDate(renewDateObj);
       return true;
     }
 
-    this.renewDate = this.getRenewDate()!;
+    this.renewDate = renewDate;
     const renewDateObj = new Date(this.renewDate);
-
     if (today > renewDateObj) {
       renewDateObj.setDate(today.getDate() + this.renewPeriod); // set renewDate to the next 7 day;
       this.setRenewDate(renewDateObj);
@@ -176,10 +177,12 @@ export default class FoodStore {
     }
   };
 
-  private loadFood = async () => {
-    //TODO: should be removed after implementing dynamodb
-    this.allFood = FoodDirectory; //TODO: should be removed after implementing dynamodb
-    this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
+  private retrieveAllFood = async () => {
+    const result = await axiosApi.Food.list();
+    // runInAction(() => {
+      this.allFood = result.data;
+      this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
+    // })
   };
 
   private loadIngredients = async () => {
@@ -188,13 +191,12 @@ export default class FoodStore {
 
   private loadNewFoodThisWeek = async () => {
     this.resetListOfCheckedIngredients();
-
     this.availableFoodCategories.forEach((foodCategory) => {
       const newFood = this.getRandomFoodForCategory(
         foodCategory.category,
         foodCategory.quantity
       );
-
+//
       this.updateFoodThisWeek(newFood, foodCategory.category);
     });
   };
@@ -295,9 +297,10 @@ export default class FoodStore {
       .map((food) => food.food_category)
       .filter((category, index, self) => self.indexOf(category) === index);
 
+
     this.availableFoodCategories = category.map((category) => {
       let quantity: number;
-      const defaultQuantity = 5; //TODO
+      const defaultQuantity = 7; //TODO
       if (!this.getFoodCategoryQuantityForCategory(category)) {
         quantity = defaultQuantity;
         this.setQuantityForCategory(category, defaultQuantity);
@@ -325,7 +328,6 @@ export default class FoodStore {
       console.log(
         "Number of food required to show is larger than the number of food in the database."
       );
-      // console.log('quantityToShow: ',quantityToShow );
       quantityToShow = foodUnderGivenCategory.length;
     }
 
@@ -373,7 +375,7 @@ export default class FoodStore {
       id: food.food_id,
       name: food.food_name,
       category: food.food_category,
-      imgUrl: food.imgUrl,
+      imgUrl: food.img_url,
       ingredients: [],
     };
 

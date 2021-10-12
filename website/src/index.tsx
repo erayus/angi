@@ -5,7 +5,7 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { store, StoreContext } from './store/rootStore';
+import { store, StoreContext } from './store/root-store';
 
 ReactDOM.render(
   <React.StrictMode>

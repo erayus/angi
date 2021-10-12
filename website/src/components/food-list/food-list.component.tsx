@@ -1,6 +1,6 @@
 import React from 'react'
 import FoodItem from './food-item/food-item.component';
-import { IFoodProjection } from '../../store/foodStore';
+import { IFoodProjection } from '../../store/food-store';
 
 export type FoodListOptionalProps = {
   enableIngredientChipsDisplay?: boolean;
@@ -22,8 +22,8 @@ const FoodList: React.FC<IProps> = (props) => {
         props.foodList.length > 0 ?
           props.foodList.map(food => {
             return (
-              <div 
-                className="my-3" 
+              <div
+                className="my-3"
                 key={food.id}>
                   <FoodItem
                     id={food.id}

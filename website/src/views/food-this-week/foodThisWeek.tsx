@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {observer} from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
-import { useStore } from './../../store/rootStore';
+import { useStore } from '../../store/root-store';
 import './foodThisWeek.styles.scss';
-import { IFoodCategory } from '../../../../shared/models/food';
+import { IFoodCategory } from '../../models/food';
 import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
@@ -12,6 +12,10 @@ const FoodThisWeek = () => {
     const {foodStore} = useStore();
     const {foodThisWeekProjection} = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
+
+    useEffect(() => {
+        foodStore.initializeFoodThisWeek();
+    }, [foodStore]);
 
     useEffect(()=> {
         return () => {
@@ -36,7 +40,7 @@ const FoodThisWeek = () => {
 
     window.onbeforeunload = (event) => {
         if(!foodStore.foodThisWeekProjection) {
-            foodStore.saveFoodThisWeek(); //TODOL await?
+            foodStore.saveFoodThisWeek(); //TODO await?
         }
     };
 

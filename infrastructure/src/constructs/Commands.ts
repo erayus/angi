@@ -7,7 +7,7 @@ import * as dynamodb from "@aws-cdk/aws-dynamodb";
 
 import { ConfigProvider } from "../utils/config-provider";
 import { NameGenerator } from "../utils/name-generator";
-import { ApiPath } from "../../../shared/models/api-path";
+import { ApiPath } from "../../../website/src/models/api-path";
 import { foodTablePartitionKey } from "../stacks/database-stack";
 
 export default class Commnads extends cdk.Construct {
@@ -45,7 +45,7 @@ export default class Commnads extends cdk.Construct {
         // name of the exported function
         handler: "getAllFoodHandler",
         // file to use as entry point for our Lambda function
-        entry: __dirname + "/../lambda/get-all-food/get-all-food.ts",
+        entry: "./src/lambda/get-all-food/get-all-food.ts",
         environment: {
           TABLE_NAME: importedFoodTable.tableName,
         },
