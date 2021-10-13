@@ -13,10 +13,6 @@ const FoodThisWeek = () => {
     const {foodThisWeekProjection} = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
 
-    useEffect(() => {
-        foodStore.initializeFoodThisWeek();
-    }, [foodStore]);
-
     useEffect(()=> {
         return () => {
             foodStore.saveFoodThisWeek();

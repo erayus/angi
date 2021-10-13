@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction, toJS } from "mobx";
+import { makeAutoObservable } from "mobx";
 import {
   IFoodCategoryQuantiy,
   IFood,
@@ -39,10 +39,11 @@ export default class FoodStore {
 
   allFood: IFood[] | null = null;
   allIngredients: IIngredient[] | null = null;
-  //   foodThisWeekProjection: IFoodProjection[] | null = null;
   availableFoodCategories: IFoodCategoryQuantiy[] = [];
   targetFoodToChangeId: number = 0;
   newFoodToChangeId: number = 0;
+  error: any;
+  loading: boolean = false;
 
   renewDate: string | null = null;
   private renewPeriod: number = 7;
@@ -140,9 +141,11 @@ export default class FoodStore {
   };
 
   initializeFoodThisWeek = async () => {
-    if (this.allFood == null) {
+    if (this.allFood == null) { //TODO: check if the user has menu yet
       this.loadIngredients();
-      await this.retrieveAllFood();
+      this.allFood = await this.retrieveAllFood();
+
+      this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
     }
 
     if (this.isTimeToRenewFood()) {
@@ -177,12 +180,17 @@ export default class FoodStore {
     }
   };
 
-  private retrieveAllFood = async () => {
-    const result = await axiosApi.Food.list();
-    // runInAction(() => {
-      this.allFood = result.data;
-      this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
-    // })
+  private retrieveAllFood = async () : Promise<IFood[]>  => {
+    try {
+      this.loading = true;
+      const result = await axiosApi.Food.list();
+
+      this.loading = false;
+      return result.data;
+    } catch (e) {
+      this.error = e;
+      return []
+    }
   };
 
   private loadIngredients = async () => {

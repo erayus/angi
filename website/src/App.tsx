@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom';
 import FoodThisWeek from './views/food-this-week/foodThisWeek';
 import FoodDetail from './views/food-detail/foodDetail';
@@ -9,8 +9,14 @@ import NavFooter from './components/nav-footer/nav-footer.component';
 import Header from './components/header/header.component';
 import { NavPath } from './utils/nav-path';
 import Settings from './views/settings/settings.component';
+import { useStore } from './store/root-store';
 
 const App: React.FC = () => {
+    const {foodStore} = useStore();
+
+    useEffect(() => {
+        foodStore.initializeFoodThisWeek();
+    }, [foodStore]);
 
     return (
         <React.Fragment>
