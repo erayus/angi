@@ -1,5 +1,4 @@
 import { MDBBtn, MDBContainer } from 'mdb-react-ui-kit'
-import React from 'react'
 import { useHistory } from 'react-router-dom';
 
 const Settings = () => {

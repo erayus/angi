@@ -141,21 +141,29 @@ export default class FoodStore {
   };
 
   initializeFoodThisWeek = async () => {
-    if (this.allFood == null) { //TODO: check if the user has menu yet
-      this.loadIngredients();
-      this.allFood = await this.retrieveAllFood();
+    try {
+      this.loading = true;
 
-      this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
-    }
+      if (this.allFood == null) { //TODO: check if the user has menu yet
+        this.loadIngredients();
+        this.allFood = await this.retrieveAllFood();
 
-    if (this.isTimeToRenewFood()) {
-      this.loadNewFoodThisWeek();
-    } else {
-      if (this.IsFoodThisWeekLoaded()) {
-        this.loadExistingFoodThisWeek();
-      } else {
-        this.loadNewFoodThisWeek();
+        this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
       }
+
+      if (this.isTimeToRenewFood()) {
+        this.loadNewFoodThisWeek();
+      } else {
+        if (this.IsFoodThisWeekLoaded()) {
+          this.loadExistingFoodThisWeek();
+        } else {
+          this.loadNewFoodThisWeek();
+        }
+      }
+      this.loading = false;
+    } catch (e: any) {
+      this.loading = false;
+      this.error = e.message;
     }
   };
 
@@ -182,14 +190,11 @@ export default class FoodStore {
 
   private retrieveAllFood = async () : Promise<IFood[]>  => {
     try {
-      this.loading = true;
       const result = await axiosApi.Food.list();
 
-      this.loading = false;
       return result.data;
     } catch (e) {
-      this.error = e;
-      return []
+      throw new Error("Failed to get food from the database.");
     }
   };
 
@@ -274,7 +279,7 @@ export default class FoodStore {
 
   saveFoodThisWeek = () => {
     if (!this.foodThisWeek) {
-      alert("No food this week");
+      // alert("No food this week");
       return;
     }
     UserService.SaveFoodThisWeekToDb(this.foodThisWeek!);

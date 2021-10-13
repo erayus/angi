@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import {observer} from 'mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from '../../store/root-store';
 import './foodThisWeek.styles.scss';
 import { IFoodCategory } from '../../models/food';
-import { MDBInput, MDBModal } from 'mdb-react-ui-kit';
+import { MDBIcon, MDBInput, MDBModal, MDBSpinner } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
 
 
 const FoodThisWeek = () => {
-    const {foodStore} = useStore();
-    const {foodThisWeekProjection} = foodStore;
+    const { foodStore } = useStore();
+    const { foodThisWeekProjection, loading, error } = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
 
-    useEffect(()=> {
+    useEffect(() => {
         return () => {
             foodStore.saveFoodThisWeek();
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, foodThisWeekProjection]);
 
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
@@ -35,7 +35,7 @@ const FoodThisWeek = () => {
     }
 
     window.onbeforeunload = (event) => {
-        if(!foodStore.foodThisWeekProjection) {
+        if (!foodStore.foodThisWeekProjection) {
             foodStore.saveFoodThisWeek(); //TODO await?
         }
     };
@@ -47,45 +47,64 @@ const FoodThisWeek = () => {
 
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
 
-    const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory =>  {
+    const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory => {
         const foodThisWeekUnderCategory = foodThisWeekProjection ? foodThisWeekProjection.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category} className="mb-4">
-                <div style={{display: "flex", }}>
+                <div style={{ display: "flex", }}>
                     <h3 className="me-3 my-auto">{foodCategory.category}</h3>
                     <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)}/>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)} />
                 </div>
                 {
                     foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory
-                    ? <FoodList
-                        key={foodCategory.category}
-                        foodList={foodThisWeekUnderCategory}
-                        enableViewDetails
-                        enableFoodChange
-                        onFoodChangeBtnClicked={onFoodChangeBtnClickedHandler}
-                      />
-                    : "Loading"
+                        ? <FoodList
+                            key={foodCategory.category}
+                            foodList={foodThisWeekUnderCategory}
+                            enableViewDetails
+                            enableFoodChange
+                            onFoodChangeBtnClicked={onFoodChangeBtnClickedHandler}
+                        />
+                        : "Loading"
                 }
 
-            <MDBModal
-                staticBackdrop={true}
-                show={foodChangeModalState}
-                getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
-                <FoodChangeModal
-                    // selectedFoodIdToChange={selectedFoodIdToChange!}
-                    foodAvailableForChange={foodStore.getFoodAvailableForChange()}
-                    toggleShow={toggleFoodChangeModalState}
+                <MDBModal
+                    staticBackdrop={true}
+                    show={foodChangeModalState}
+                    getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
+                    <FoodChangeModal
+                        // selectedFoodIdToChange={selectedFoodIdToChange!}
+                        foodAvailableForChange={foodStore.getFoodAvailableForChange()}
+                        toggleShow={toggleFoodChangeModalState}
                     />
-            </MDBModal>
+                </MDBModal>
             </div>
 
-        )}
+        )
+    }
+    )
+
+    const loadingView =
+        (
+            <div className='d-flex justify-content-center align-items-center' style={{ height: "100vh" }}  >
+                <MDBSpinner color='success' style={{ width: '3rem', height: '3rem' }}>
+                    <span className='visually-hidden'>Loading...</span>
+                </MDBSpinner>
+            </div>
+        )
+
+    const errorView = (
+        <div className='d-flex flex-column align-items-center mt-5 text-center' style={{ height: '100vh' }} >
+            <MDBIcon className='my-2' fas icon='exclamation-triangle' size='4x' style={{ color: '#FFA900'}}/>
+            <h4>{error}</h4>
+        </div>
     )
 
     return (
         <div className="food-list-container">
-            {foodToDisplay}
+            {loading && !error && loadingView}
+            {!loading && error && errorView}
+            {!loading && !error && foodToDisplay}
         </div>
     )
 }
