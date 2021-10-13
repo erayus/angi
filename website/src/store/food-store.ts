@@ -52,7 +52,7 @@ export default class FoodStore {
     makeAutoObservable(this);
   }
 
-  get foodThisWeekProjection() {
+  get menuProjection() {
     if (this.foodThisWeek) {
       return [
         ...this.foodThisWeek!.map((food) =>
@@ -148,7 +148,7 @@ export default class FoodStore {
         this.loadIngredients();
         this.allFood = await this.retrieveAllFood();
 
-        this.loadAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
+        this.availableFoodCategories = this.getAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
       }
 
       if (this.isTimeToRenewFood()) {
@@ -252,16 +252,16 @@ export default class FoodStore {
   };
 
   //TODO
-  getAllFood = (): IFood[] => {
+  private clonedAllFood = (): IFood[] => {
     return clone(this.allFood);
   };
   //TODO
-  getFoodThisWeek = (): IFood[] => {
-    return clone(this.foodThisWeekProjection);
+  clonedMenu = (): IFood[] => {
+    return clone(this.menuProjection);
   };
 
   getFoodAvailableForChange = (): IFoodProjection[] => {
-    return this.getAllFood()
+    return this.clonedAllFood()
       .filter(
         (eachFoodInAllFood) =>
           eachFoodInAllFood.food_category ===
@@ -269,7 +269,7 @@ export default class FoodStore {
       )
       .filter(
         (eachFoodInAllFood) =>
-          !this.foodThisWeekProjection?.some(
+          !this.menuProjection?.some(
             (eachFoodInFoodThisWeek) =>
               eachFoodInFoodThisWeek.id === eachFoodInAllFood.food_id
           )
@@ -279,7 +279,6 @@ export default class FoodStore {
 
   saveFoodThisWeek = () => {
     if (!this.foodThisWeek) {
-      // alert("No food this week");
       return;
     }
     UserService.SaveFoodThisWeekToDb(this.foodThisWeek!);
@@ -304,14 +303,14 @@ export default class FoodStore {
     return this.convertFoodToFoodProjection(food!);
   };
 
-  loadAvailableCategories = () => {
+  private getAvailableCategories = () => {
     const copyFood = this.allFood!.slice();
     const category = copyFood
       .map((food) => food.food_category)
       .filter((category, index, self) => self.indexOf(category) === index);
 
 
-    this.availableFoodCategories = category.map((category) => {
+    return category.map((category) => {
       let quantity: number;
       const defaultQuantity = 7; //TODO
       if (!this.getFoodCategoryQuantityForCategory(category)) {

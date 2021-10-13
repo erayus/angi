@@ -10,7 +10,7 @@ import FoodChangeModal from '../../components/food-change-modal/food-change-moda
 
 const FoodThisWeek = () => {
     const { foodStore } = useStore();
-    const { foodThisWeekProjection, loading, error } = foodStore;
+    const { menuProjection, loading, error } = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const FoodThisWeek = () => {
             foodStore.saveFoodThisWeek();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [foodStore, foodThisWeekProjection]);
+    }, [foodStore, menuProjection]);
 
     const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
         const newQuantity = +e.target.value;
@@ -35,7 +35,7 @@ const FoodThisWeek = () => {
     }
 
     window.onbeforeunload = (event) => {
-        if (!foodStore.foodThisWeekProjection) {
+        if (!foodStore.menuProjection) {
             foodStore.saveFoodThisWeek(); //TODO await?
         }
     };
@@ -48,7 +48,7 @@ const FoodThisWeek = () => {
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
 
     const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory => {
-        const foodThisWeekUnderCategory = foodThisWeekProjection ? foodThisWeekProjection.filter(food => food.category === foodCategory.category) : [];
+        const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category} className="mb-4">
                 <div style={{ display: "flex", }}>
@@ -79,7 +79,6 @@ const FoodThisWeek = () => {
                     />
                 </MDBModal>
             </div>
-
         )
     }
     )
