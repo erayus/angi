@@ -11,9 +11,9 @@ export abstract class UserService {
       return;
     }
 
-    const data = JSON.parse(localStorage.getItem(userId)!);
-    data['menu'] =  menu;
-    localStorage.setItem(userId, JSON.stringify(data));
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    user['menu'] =  menu;
+    localStorage.setItem(userId, JSON.stringify(user));
   }
 
   public static GetMenu(userId: string): IFood[] | null {
