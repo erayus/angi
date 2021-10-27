@@ -4,10 +4,10 @@ export abstract class UserService {
 
   public static SaveMenu(userId: string, menu: IFood[]): void {
     if (localStorage.getItem(userId) == null) {
-      const data = {
+      const user = {
         menu: menu,
       }
-      localStorage.setItem(userId, JSON.stringify(data));
+      localStorage.setItem(userId, JSON.stringify(user));
       return;
     }
 
@@ -21,30 +21,30 @@ export abstract class UserService {
       return null;
     }
 
-    const data = JSON.parse(localStorage.getItem(userId)!);
-    return data['menu'];
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    return user['menu'];
   }
 
   public static SaveRenewDate(userId: string, renewDate: string): void {
     if (localStorage.getItem(userId) == null) {
-      const data = {
+      const user = {
         renewDate: renewDate,
       }
-      localStorage.setItem(userId, JSON.stringify(data));
+      localStorage.setItem(userId, JSON.stringify(user));
       return;
     }
 
-    const data = JSON.parse(localStorage.getItem(userId)!);
-    data['renewDate'] =  renewDate;
-    localStorage.setItem(userId, JSON.stringify(data));
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    user['renewDate'] =  renewDate;
+    localStorage.setItem(userId, JSON.stringify(user));
   }
 
   public static GetRenewDate(userId: string): string | null {
     if (localStorage.getItem(userId) == null) {
       return null;
     }
-    const data = JSON.parse(localStorage.getItem(userId)!);
-    return data["renewDate"];
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    return user["renewDate"];
   }
 
   public static IsMenuSaved(userId: string): boolean {
@@ -52,8 +52,36 @@ export abstract class UserService {
       return false;
     }
 
-    const data = JSON.parse(localStorage.getItem(userId)!);
-    return data["menu"] !== undefined || data["menu"] !== null;
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    return user["menu"] !== undefined || user["menu"] !== null;
   };
 
+  public static ResetListOfCheckedIngredientIds() : void {
+    if (localStorage.getItem("1") == null) {
+      return;
+    }
+    this.SaveListOfCheckedIngredientIds("1", [])
+  }
+
+  public static GetListOfCheckedIngredientIds(userId: string) : number[] {
+    if (localStorage.getItem(userId) == null) {
+      return [];
+    }
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    return user["listOfCheckedIngredientIds"] ?? [];
+  }
+
+  public static SaveListOfCheckedIngredientIds(userId: string, listOfCheckedIngredientIds: number[] ) : void {
+    if (localStorage.getItem(userId) == null) {
+      const user = {
+        listOfCheckedIngredientIds: listOfCheckedIngredientIds,
+      }
+      localStorage.setItem(userId, JSON.stringify(user));
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem(userId)!);
+    user['listOfCheckedIngredientIds'] =  listOfCheckedIngredientIds;
+    localStorage.setItem(userId, JSON.stringify(user));
+  }
 }

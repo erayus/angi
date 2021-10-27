@@ -211,7 +211,7 @@ export default class FoodStore {
 
   private resetListOfCheckedIngredients = () => {
     this.listOfCheckedIngredientIds = [];
-    localStorage.removeItem("listOfCheckedIngredientIds");
+    UserService.ResetListOfCheckedIngredientIds();
   };
 
   updateFoodThisWeek = (newFood: IFood[], category: IFoodCategory) => {
@@ -230,13 +230,7 @@ export default class FoodStore {
 
   //TODO: need rework after database implementing
   loadListOfCheckedIngredientIds = () => {
-    if (!localStorage.getItem("listOfCheckedIngredientIds")) {
-      this.listOfCheckedIngredientIds = [];
-    }
-    const listOfCheckedIngredientIds = JSON.parse(
-      localStorage.getItem("listOfCheckedIngredientIds")!
-    );
-    this.listOfCheckedIngredientIds = listOfCheckedIngredientIds || [];
+    this.listOfCheckedIngredientIds = UserService.GetListOfCheckedIngredientIds("1");
   };
 
   //TODO
@@ -403,9 +397,7 @@ export default class FoodStore {
     } else {
       this.listOfCheckedIngredientIds.push(ingredientId);
     }
-    localStorage.setItem(
-      "listOfCheckedIngredientIds",
-      JSON.stringify(this.listOfCheckedIngredientIds)
-    ); //TODO: rework after database
+
+    UserService.SaveListOfCheckedIngredientIds("1", this.listOfCheckedIngredientIds)
   };
 }
