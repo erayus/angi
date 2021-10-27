@@ -7,7 +7,7 @@ import {
 } from "../models/food";
 import { IIngredient, IIngredientCategory, IUnit } from "../models/ingredient";
 import { ingredientTable } from "../utils/ingredientTable";
-import { UserService } from "../services/user.service";
+import { UserService } from '../services/user.service';
 import axiosApi from "../utils/axios-api";
 const clone = require("rfdc/default");
 
@@ -34,7 +34,7 @@ export type ToBuyIngredient = {
   isChecked: boolean;
 };
 export default class FoodStore {
-  private foodThisWeek: IFood[] | null = null;
+  private menu: IFood[] | null = null;
   private listOfCheckedIngredientIds: number[] = [];
 
   allFood: IFood[] | null = null;
@@ -53,9 +53,9 @@ export default class FoodStore {
   }
 
   get menuProjection() {
-    if (this.foodThisWeek) {
+    if (this.menu) {
       return [
-        ...this.foodThisWeek!.map((food) =>
+        ...this.menu!.map((food) =>
           this.convertFoodToFoodProjection(food)
         ),
       ];
@@ -65,7 +65,7 @@ export default class FoodStore {
 
   get toBuyList() :ToBuyIngredient[] {
     let allIngredientsThisWeek: IFoodIngredient[] = [];
-    this.foodThisWeek?.forEach((food) => {
+    this.menu?.forEach((food) => {
       allIngredientsThisWeek = [
         ...allIngredientsThisWeek.slice(),
         ...food.food_ingredients,
@@ -122,11 +122,7 @@ export default class FoodStore {
       return this.renewDate;
     }
 
-    if (!localStorage.getItem("renewDate")) {
-      return null;
-    }
-
-    return localStorage.getItem("renewDate")!;
+    return UserService.GetRenewDate("1");
   };
 
   private setRenewDate = (renewDate: Date) => {
@@ -137,7 +133,7 @@ export default class FoodStore {
     };
     const todayDateFormat = renewDate.toLocaleDateString("en-AU", options);
     this.renewDate = todayDateFormat;
-    localStorage.setItem("renewDate", todayDateFormat);
+    UserService.SaveRenewDate("1", todayDateFormat);
   };
 
   initializeFoodThisWeek = async () => {
@@ -152,12 +148,12 @@ export default class FoodStore {
       }
 
       if (this.isTimeToRenewFood()) {
-        this.loadNewFoodThisWeek();
+        this.loadNewMenu();
       } else {
-        if (this.IsFoodThisWeekLoaded()) {
-          this.loadExistingFoodThisWeek();
+        if (UserService.IsMenuSaved("1")) {
+          this.loadExistingMenu();
         } else {
-          this.loadNewFoodThisWeek();
+          this.loadNewMenu();
         }
       }
       this.loading = false;
@@ -202,14 +198,13 @@ export default class FoodStore {
     this.allIngredients = ingredientTable;
   };
 
-  private loadNewFoodThisWeek = async () => {
+  private loadNewMenu = async () => {
     this.resetListOfCheckedIngredients();
     this.availableFoodCategories.forEach((foodCategory) => {
       const newFood = this.getRandomFoodForCategory(
         foodCategory.category,
         foodCategory.quantity
       );
-//
       this.updateFoodThisWeek(newFood, foodCategory.category);
     });
   };
@@ -221,16 +216,16 @@ export default class FoodStore {
 
   updateFoodThisWeek = (newFood: IFood[], category: IFoodCategory) => {
     const foodThisWeekWithoutUpdatingFood =
-      this.foodThisWeek !== null
-        ? this.foodThisWeek!.filter((curFood) => curFood.food_category !== category)
+      this.menu !== null
+        ? this.menu!.filter((curFood) => curFood.food_category !== category)
         : [];
 
-    this.foodThisWeek = [...foodThisWeekWithoutUpdatingFood, ...newFood];
+    this.menu = [...foodThisWeekWithoutUpdatingFood, ...newFood];
     this.saveFoodThisWeek();
   };
 
-  loadExistingFoodThisWeek = () => {
-    this.foodThisWeek = JSON.parse(localStorage.getItem("foodThisWeek")!);
+  loadExistingMenu = () => {
+    this.menu = UserService.GetMenu("1");
   };
 
   //TODO: need rework after database implementing
@@ -242,13 +237,6 @@ export default class FoodStore {
       localStorage.getItem("listOfCheckedIngredientIds")!
     );
     this.listOfCheckedIngredientIds = listOfCheckedIngredientIds || [];
-  };
-
-  IsFoodThisWeekLoaded = () => {
-    if (localStorage.getItem("foodThisWeek")) {
-      return true;
-    }
-    return false;
   };
 
   //TODO
@@ -278,10 +266,10 @@ export default class FoodStore {
   };
 
   saveFoodThisWeek = () => {
-    if (!this.foodThisWeek) {
+    if (!this.menu) {
       return;
     }
-    UserService.SaveFoodThisWeekToDb(this.foodThisWeek!);
+    UserService.SaveMenu("1", this.menu!);
   };
 
   setQuantityForCategory = (category: IFoodCategory, quantityToShow: number) => {
@@ -363,7 +351,7 @@ export default class FoodStore {
   };
 
   changeFood = () => {
-    this.foodThisWeek = this.foodThisWeek!.map((food) => {
+    this.menu = this.menu!.map((food) => {
       if (food.food_id === this.targetFoodToChangeId) {
         return this.getFoodForId(this.newFoodToChangeId)!;
       }

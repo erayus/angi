@@ -3,9 +3,9 @@ import { APIGatewayProxyEventV2 } from "aws-lambda";
 
 const dynClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: 'ap-southeast-2' });
 
-const tableName = process.env.TABLE_NAME;
+const tableName = "smartmenu-food-table-dev"//process.env.TABLE_NAME;
 
-export async function getAllFoodHandler(event: APIGatewayProxyEventV2) {
+export async function getAllFoodHandler() {
   if (!tableName) {
     return {
       statusCode: 500,
@@ -25,7 +25,7 @@ export async function getAllFoodHandler(event: APIGatewayProxyEventV2) {
       items.Items?.forEach((item) => scanResults.push(item));
       params.ExclusiveStartKey  = items.LastEvaluatedKey;
     } while(typeof items.LastEvaluatedKey !== "undefined");
-
+    console.log(scanResults);
     return {
       statusCode: 200,
       headers: {
@@ -43,3 +43,7 @@ export async function getAllFoodHandler(event: APIGatewayProxyEventV2) {
     };
   }
 }
+
+(async() => {
+  await getAllFoodHandler();
+})()
