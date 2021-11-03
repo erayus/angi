@@ -112,9 +112,7 @@ export default class FoodStore {
   private getFoodCategoryQuantityForCategory = (
     category: IFoodCategory
   ): number | null => {
-    return localStorage.getItem(`${category}-quantity`)
-      ? +localStorage.getItem(`${category}-quantity`)!
-      : null;
+    return UserService.GetFoodCategoryQuantityForCategory("1", category);
   };
 
   private getRenewDate = (): string | null => {
@@ -295,11 +293,11 @@ export default class FoodStore {
     return category.map((category) => {
       let quantity: number;
       const defaultQuantity = 7; //TODO
-      if (!this.getFoodCategoryQuantityForCategory(category)) {
+      if (!UserService.GetFoodCategoryQuantityForCategory("1", category)) {
         quantity = defaultQuantity;
-        this.setQuantityForCategory(category, defaultQuantity);
+        UserService.SaveFoodCategoryQuantityForCategroy("1", category, defaultQuantity);
       } else {
-        quantity = this.getFoodCategoryQuantityForCategory(category)!;
+        quantity = UserService.GetFoodCategoryQuantityForCategory("1", category)!;
       }
 
       return {

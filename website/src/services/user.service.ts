@@ -1,4 +1,4 @@
-import { IFood } from "../models/food";
+import { IFood, IFoodCategory } from '../models/food';
 
 export abstract class UserService {
 
@@ -84,4 +84,36 @@ export abstract class UserService {
     user['listOfCheckedIngredientIds'] =  listOfCheckedIngredientIds;
     localStorage.setItem(userId, JSON.stringify(user));
   }
+
+  public static GetFoodCategoryQuantityForCategory(userId: string, category: IFoodCategory): number | null {
+    if (localStorage.getItem(userId) == null) {
+      return null;
+    };
+
+    const user =  JSON.parse(localStorage.getItem(userId)!);
+    return +user["category_quantity"][category];
+  }
+
+  public static SaveFoodCategoryQuantityForCategroy(userId: string, category: IFoodCategory, quantityToShow: number) {
+    if (!quantityToShow || quantityToShow < 0) {
+      return;
+    }
+    if (localStorage.getItem(userId) == null) {
+      return null; //Throw error
+    };
+
+    let user = JSON.parse(localStorage.getItem(userId)!);
+    let categoryQuantity = user["category_quantity"];
+    let newCategoryQuantity = {
+      ...categoryQuantity,
+      [category]: quantityToShow
+    }
+
+    let newUser = {
+      ...user,
+      category_quantity: newCategoryQuantity
+    }
+    localStorage.setItem(userId, JSON.stringify(newUser));
+  }
+
 }

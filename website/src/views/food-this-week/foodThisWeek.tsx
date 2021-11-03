@@ -6,6 +6,7 @@ import './foodThisWeek.styles.scss';
 import { IFoodCategory } from '../../models/food';
 import { MDBIcon, MDBInput, MDBModal, MDBSpinner } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
+import { UserService } from '../../services/user.service';
 
 
 const FoodThisWeek = () => {
@@ -29,7 +30,7 @@ const FoodThisWeek = () => {
             e.preventDefault();
             return;
         };
-        foodStore.setQuantityForCategory(category, newQuantity);
+        UserService.SaveFoodCategoryQuantityForCategroy("1", category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
         foodStore.updateFoodThisWeek(newFood, category);
     }
