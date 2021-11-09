@@ -15,8 +15,8 @@ const Header = () => {
     useEffect(() => {
         let backBtnFlag = false;
 
-        if (location.pathname.includes(NavPath.FoodThisWeek)) {
-            setHeaderTitle('Menu This Week')
+        if (location.pathname.includes(NavPath.Menu)) {
+            setHeaderTitle('Menu')
         } else if (location.pathname.includes(NavPath.FoodDetails)) {
             backBtnFlag = true;
             setHeaderTitle('Food Details')

@@ -36,7 +36,7 @@
 
 - After ticking the ToBuyList ingredients and the user navigate to different views, on page reload => the state of to-buy-list ingredients should be remained the same.
 
-- When the the user modifies the FoodThisWeek list => refresh the page => go to ToBuyList view => a new ToBuyList should be generated.
+- When the the user modifies the Menu list => refresh the page => go to ToBuyList view => a new ToBuyList should be generated.
 
 ## Making a Progressive Web App
 

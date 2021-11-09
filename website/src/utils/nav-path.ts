@@ -1,5 +1,5 @@
 export enum NavPath {
-    FoodThisWeek = 'food-this-week',
+    Menu = 'menu',
     ToBuyList = 'to-buy-list',
     FoodDetails = 'food-details',
     Settings = 'settings',

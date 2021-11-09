@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import {
   IFoodCategoryQuantiy,
   IFood,
@@ -7,8 +7,8 @@ import {
 } from "../models/food";
 import { IIngredient, IIngredientCategory, IUnit } from "../models/ingredient";
 import { ingredientTable } from "../utils/ingredientTable";
-import { UserService } from '../services/user.service';
 import axiosApi from "../utils/axios-api";
+import UserStore from "./user-store";
 const clone = require("rfdc/default");
 
 export type IFoodProjection = {
@@ -37,6 +37,7 @@ export default class FoodStore {
   private menu: IFood[] | null = null;
   private listOfCheckedIngredientIds: number[] = [];
 
+  userStore: UserStore;
   allFood: IFood[] | null = null;
   allIngredients: IIngredient[] | null = null;
   availableFoodCategories: IFoodCategoryQuantiy[] = [];
@@ -48,8 +49,9 @@ export default class FoodStore {
   renewDate: string | null = null;
   private renewPeriod: number = 7;
 
-  constructor() {
+  constructor(user: UserStore) {
     makeAutoObservable(this);
+    this.userStore = user;
   }
 
   get menuProjection() {
@@ -79,7 +81,7 @@ export default class FoodStore {
           const curIng = this.getIngredientById(cur.id);
 
           if (curIng === undefined) {
-            alert(`Can't find ingredient's details of ${cur.id}`); //TODO: log this
+            throw new Error(`Can't find ingredient's details of ${cur.id}`); //TODO: log this
           }
 
           const index = accIngredients.findIndex(
@@ -109,18 +111,12 @@ export default class FoodStore {
     return aggregateIngredients;
   }
 
-  private getFoodCategoryQuantityForCategory = (
-    category: IFoodCategory
-  ): number | null => {
-    return UserService.GetFoodCategoryQuantityForCategory("1", category);
-  };
-
   private getRenewDate = (): string | null => {
     if (this.renewDate !== null) {
       return this.renewDate;
     }
 
-    return UserService.GetRenewDate("1");
+    return this.userStore.getRenewDate();
   };
 
   private setRenewDate = (renewDate: Date) => {
@@ -131,7 +127,7 @@ export default class FoodStore {
     };
     const todayDateFormat = renewDate.toLocaleDateString("en-AU", options);
     this.renewDate = todayDateFormat;
-    UserService.SaveRenewDate("1", todayDateFormat);
+    this.userStore.saveRenewDate(todayDateFormat);
   };
 
   initializeFoodThisWeek = async () => {
@@ -141,14 +137,13 @@ export default class FoodStore {
       if (this.allFood == null) { //TODO: check if the user has menu yet
         this.loadIngredients();
         this.allFood = await this.retrieveAllFood();
-
         this.availableFoodCategories = this.getAvailableCategories(); //TODO: query Dynamodb to get distinct value of Category column in the food table
       }
 
       if (this.isTimeToRenewFood()) {
         this.loadNewMenu();
       } else {
-        if (UserService.IsMenuSaved("1")) {
+        if (this.userStore.isMenuSaved()) {
           this.loadExistingMenu();
         } else {
           this.loadNewMenu();
@@ -209,7 +204,7 @@ export default class FoodStore {
 
   private resetListOfCheckedIngredients = () => {
     this.listOfCheckedIngredientIds = [];
-    UserService.ResetListOfCheckedIngredientIds();
+    this.userStore.resetListOfCheckedIngredientIds();
   };
 
   updateFoodThisWeek = (newFood: IFood[], category: IFoodCategory) => {
@@ -223,12 +218,12 @@ export default class FoodStore {
   };
 
   loadExistingMenu = () => {
-    this.menu = UserService.GetMenu("1");
+    this.menu = this.userStore.getMenu();
   };
 
   //TODO: need rework after database implementing
   loadListOfCheckedIngredientIds = () => {
-    this.listOfCheckedIngredientIds = UserService.GetListOfCheckedIngredientIds("1");
+    this.listOfCheckedIngredientIds = this.userStore.getListOfCheckedIngredientIds();
   };
 
   //TODO
@@ -261,7 +256,7 @@ export default class FoodStore {
     if (!this.menu) {
       return;
     }
-    UserService.SaveMenu("1", this.menu!);
+    this.userStore.saveMenu(this.menu!);
   };
 
   setQuantityForCategory = (category: IFoodCategory, quantityToShow: number) => {
@@ -293,11 +288,11 @@ export default class FoodStore {
     return category.map((category) => {
       let quantity: number;
       const defaultQuantity = 7; //TODO
-      if (!UserService.GetFoodCategoryQuantityForCategory("1", category)) {
+      if (!this.userStore.getFoodCategoryQuantityForCategory(category)) {
         quantity = defaultQuantity;
-        UserService.SaveFoodCategoryQuantityForCategroy("1", category, defaultQuantity);
+        this.userStore.saveFoodCategoryQuantityForCategroy(category, defaultQuantity);
       } else {
-        quantity = UserService.GetFoodCategoryQuantityForCategory("1", category)!;
+        quantity = this.userStore.getFoodCategoryQuantityForCategory(category)!;
       }
 
       return {
@@ -357,7 +352,7 @@ export default class FoodStore {
 
   getIngredientById = (id: number): IIngredient | undefined => {
     if (!this.allIngredients) {
-      alert("No ingredients");
+      throw new Error("No ingredients");
     }
     return this.allIngredients!.slice().find((ing) => ing.id == id);
   };
@@ -396,6 +391,6 @@ export default class FoodStore {
       this.listOfCheckedIngredientIds.push(ingredientId);
     }
 
-    UserService.SaveListOfCheckedIngredientIds("1", this.listOfCheckedIngredientIds)
+    this.userStore.saveListOfCheckedIngredientIds(this.listOfCheckedIngredientIds)
   };
 }

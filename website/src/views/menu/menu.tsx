@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from '../../store/root-store';
-import './foodThisWeek.styles.scss';
+import './menu.styles.scss';
 import { IFoodCategory } from '../../models/food';
 import { MDBIcon, MDBInput, MDBModal, MDBSpinner } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
-import { UserService } from '../../services/user.service';
 
 
-const FoodThisWeek = () => {
-    const { foodStore } = useStore();
+const Menu = () => {
+    const { foodStore, userStore } = useStore();
     const { menuProjection, loading, error } = foodStore;
-    const [foodChangeModalState, setFoodChangeModalState] = useState(false);
+    const [ foodChangeModalState, setFoodChangeModalState ] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -30,7 +29,7 @@ const FoodThisWeek = () => {
             e.preventDefault();
             return;
         };
-        UserService.SaveFoodCategoryQuantityForCategroy("1", category, newQuantity);
+        userStore.saveFoodCategoryQuantityForCategroy(category, newQuantity);
         const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
         foodStore.updateFoodThisWeek(newFood, category);
     }
@@ -48,7 +47,7 @@ const FoodThisWeek = () => {
 
     const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
 
-    const foodToDisplay = foodStore.availableFoodCategories.map(foodCategory => {
+    const foodToDisplay = !loading && foodStore.availableFoodCategories.map(foodCategory => {
         const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category} className="mb-4">
@@ -109,4 +108,4 @@ const FoodThisWeek = () => {
     )
 }
 
-export default observer(FoodThisWeek);
+export default observer(Menu);
