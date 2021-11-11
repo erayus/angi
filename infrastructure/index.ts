@@ -4,8 +4,8 @@ import * as cdk from "@aws-cdk/core";
 
 import { HostingStack } from "./src/stacks/hosting-stack";
 import { NameGenerator } from "./src/utils/name-generator";
-import { ConfigProvider } from "./src/utils/config-provider";
 import { DatabaseStack } from "./src/stacks/database-stack";
+import { AuthenticationStack } from './src/stacks/authentication-stack';
 
 const app = new cdk.App();
 const env = {
@@ -18,7 +18,6 @@ const dbStack = new DatabaseStack(
   NameGenerator.generateConstructName(
     app,
     "database-stack",
-    ConfigProvider.Context(app).IsDevelopment
   ),
   { env }
 );
@@ -27,7 +26,15 @@ new HostingStack(
   NameGenerator.generateConstructName(
     app,
     "hosting-stack",
-    ConfigProvider.Context(app).IsDevelopment
   ),
   { env }
 ).addDependency(dbStack);
+
+new AuthenticationStack(
+  app,
+  NameGenerator.generateConstructName(
+    app,
+    "authentation-stack",
+  ),
+  { env }
+)

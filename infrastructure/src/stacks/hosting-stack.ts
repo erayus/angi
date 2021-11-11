@@ -19,7 +19,7 @@ export class HostingStack extends cdk.Stack {
     new Commnads(this, `${appName}-Commands`, props);
 
     const imgBucket = new aws_s3.Bucket(this, 'Images-Bucket', {
-      bucketName: NameGenerator.generateConstructName(scope, 'erayus-images', isDevelopment),
+      bucketName: NameGenerator.generateConstructName(scope, 'erayus-images'),
       publicReadAccess: true,
       cors: [
         {
@@ -60,11 +60,11 @@ export class HostingStack extends cdk.Stack {
         { bucket: webBucket }
       );
 
-      new Route53ARecord(this, NameGenerator.generateConstructName(scope, 'Route53-ARecord', isDevelopment), {
+      new Route53ARecord(this, NameGenerator.generateConstructName(scope, 'Route53-ARecord'), {
         distribution: cloudfrontDistribution.distribution,
       }).node.addDependency(webBucket, cloudfrontDistribution);
 
-      new aws_s3_deployment.BucketDeployment(this, NameGenerator.generateConstructName(scope, 'Web-Bucket-Deployment', isDevelopment), {
+      new aws_s3_deployment.BucketDeployment(this, NameGenerator.generateConstructName(scope, 'Web-Bucket-Deployment'), {
         sources: [aws_s3_deployment.Source.asset("../website/build")],
         destinationBucket: webBucket,
         distribution: cloudfrontDistribution.distribution || undefined,
@@ -74,8 +74,7 @@ export class HostingStack extends cdk.Stack {
       new cdk.CfnOutput(this, `Output-bucketName`, {
         exportName: NameGenerator.generateConstructName(
           scope,
-          "bucket-name-output",
-          isDevelopment
+          "bucket-name-output"
         ),
         value: webBucket.bucketName,
       });
@@ -83,8 +82,7 @@ export class HostingStack extends cdk.Stack {
       new cdk.CfnOutput(this, `Output-BucketDomainName`, {
         exportName: NameGenerator.generateConstructName(
           scope,
-          "bucket-domain-name-ouput",
-          isDevelopment
+          "bucket-domain-name-ouput"
         ),
         value: `https://${webBucket.bucketDomainName}`,
       });

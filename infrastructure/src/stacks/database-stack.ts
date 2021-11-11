@@ -20,7 +20,6 @@ export class DatabaseStack extends cdk.Stack {
       tableName: NameGenerator.generateConstructName(
         scope,
         "food-table",
-        isDevelopment
       ),
       billingMode: isDevelopment ?
         dynamodb.BillingMode.PROVISIONED :
@@ -36,7 +35,6 @@ export class DatabaseStack extends cdk.Stack {
       exportName: NameGenerator.generateConstructName(
         scope,
         "food-table-name",
-        isDevelopment
       ),
       value: foodTable.tableName,
     });

@@ -3,6 +3,8 @@ export enum NavPath {
     ToBuyList = 'to-buy-list',
     FoodDetails = 'food-details',
     Settings = 'settings',
+    SignUp = 'sign-up',
+    Login = 'login'
 }
 
 export type NavItem  = {

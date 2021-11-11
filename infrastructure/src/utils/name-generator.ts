@@ -1,11 +1,11 @@
 import { IConstruct } from "@aws-cdk/core";
 import { ConfigProvider } from "./config-provider";
+import { ContextConfig } from '../models/context-config';
 
 export class NameGenerator {
   public static generateConstructName(
     scope: IConstruct,
     constructName: string,
-    isDev?: boolean,
     separator?: string
   ): string {
     if (constructName === undefined || constructName.length < 1) {
@@ -13,7 +13,7 @@ export class NameGenerator {
     }
 
     separator = separator || "-";
-    isDev = isDev || false;
+    const isDev = ConfigProvider.Context(scope).IsDevelopment;
     const appNamePrefix = ConfigProvider.Context(scope).AppName;
 
     if (isDev) {

@@ -6,6 +6,7 @@ import './menu.styles.scss';
 import { IFoodCategory } from '../../models/food';
 import { MDBIcon, MDBInput, MDBModal, MDBSpinner } from 'mdb-react-ui-kit';
 import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
+import Loader from '../../components/loader/loader';
 
 
 const Menu = () => {
@@ -83,15 +84,6 @@ const Menu = () => {
     }
     )
 
-    const loadingView =
-        (
-            <div className='d-flex justify-content-center align-items-center' style={{ height: "100vh" }}  >
-                <MDBSpinner color='success' style={{ width: '3rem', height: '3rem' }}>
-                    <span className='visually-hidden'>Loading...</span>
-                </MDBSpinner>
-            </div>
-        )
-
     const errorView = (
         <div className='d-flex flex-column align-items-center mt-5 text-center' style={{ height: '100vh' }} >
             <MDBIcon className='my-2' fas icon='exclamation-triangle' size='4x' style={{ color: '#FFA900'}}/>
@@ -101,7 +93,7 @@ const Menu = () => {
 
     return (
         <div className="food-list-container">
-            {loading && !error && loadingView}
+            {loading && !error && <Loader/>}
             {!loading && error && errorView}
             {!loading && !error && foodToDisplay}
         </div>

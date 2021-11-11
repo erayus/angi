@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import Menu from './views/menu/menu';
 import FoodDetail from './views/food-detail/foodDetail';
 import './App.styles.scss';
@@ -10,16 +10,41 @@ import Header from './components/header/header.component';
 import { NavPath } from './utils/nav-path';
 import Settings from './views/settings/settings.component';
 import { useStore } from './store/root-store';
+import SignUp from './components/sign-up/sign-up.component';
+import Login from './components/log-in/log-in.component';
+import Loader from './components/loader/loader';
 
 const App: React.FC = () => {
     const {foodStore, userStore} = useStore();
+    const {userLoading, loadAuthenticatedUser, isAuthenticated} = userStore;
 
     useEffect(() => {
-        userStore.authenticate("Raymond", "123");
-        foodStore.initializeFoodThisWeek();
+        // userStore.authenticate("Raymond", "123");
+        loadAuthenticatedUser();
     }, []);
 
-    return (
+    useEffect(() => {
+        if (isAuthenticated) {
+            foodStore.initializeFoodThisWeek();
+        }
+    }, [foodStore, isAuthenticated])
+
+        /**
+     * Returns a redirect to login page with the current path in its state
+     * User will be redirected to current path after loging in
+     */
+    const getRedirectToLogin = (props: RouteComponentProps) => (
+            <Redirect
+                push
+                to={{
+                    pathname: NavPath.Login,
+                    state: { fromPathName: props.location.pathname }
+                }}
+            />
+    );
+
+
+    return !userLoading ? (
         <React.Fragment>
             <Header />
             {/* {appStore.showToBuyListButton
@@ -30,16 +55,25 @@ const App: React.FC = () => {
             } */}
             <div className="main" >
                 <Switch>
-                    <Route exact path={'/' + NavPath.Menu} component={Menu} />
+                    <Route
+                        exact
+                        path={'/' + NavPath.Menu}
+                        render={ props =>  isAuthenticated ? <Menu/> : getRedirectToLogin(props)}/>
                     <Route path={`/${NavPath.FoodDetails}/:foodId`} component={FoodDetail} />
-                    <Route path={`/${NavPath.ToBuyList}`} component={ToBuyList} />
-                    <Route path={`/${NavPath.Settings}`} component={Settings} />
-                    <Redirect from="/" to={NavPath.Menu} />
+                    <Route
+                        path={`/${NavPath.ToBuyList}`}
+                        render={ props =>  isAuthenticated ? <ToBuyList/> : getRedirectToLogin(props)}/>
+                    <Route
+                        path={`/${NavPath.Settings}`}
+                        render={ props =>  isAuthenticated ? <Settings/> : getRedirectToLogin(props)} />
+                    <Route exact path={'/' + NavPath.SignUp}  component={SignUp} />
+                    <Route exact path={'/' + NavPath.Login} component={Login} />
+                <Redirect from="/" to={NavPath.Menu} />
                 </Switch>
             </div>
             <NavFooter />
         </React.Fragment>
-    )
+    ) : <Loader/>
 }
 
 export default observer(App)

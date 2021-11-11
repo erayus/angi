@@ -12,16 +12,17 @@ import { foodTablePartitionKey } from "../stacks/database-stack";
 
 export default class Commnads extends cdk.Construct {
   public readonly distribution: aws_cloudfront.CloudFrontWebDistribution;
-    constructor(scope: cdk.Stack, id: string, props: cdk.StackProps) {
+  constructor(scope: cdk.Stack, id: string, props: cdk.StackProps) {
     super(scope, id);
-    const isDevelopment: boolean = ConfigProvider.Context(scope).IsDevelopment;
 
-    const foodTableName = cdk.Fn.importValue(NameGenerator.generateConstructName(
-      scope,
-      "food-table-name",
-      isDevelopment
-    ));
-    const importedFoodTable = dynamodb.Table.fromTableName(this, 'Imported-Food-Table',foodTableName);
+    const foodTableName = cdk.Fn.importValue(
+      NameGenerator.generateConstructName(scope, "food-table-name")
+    );
+    const importedFoodTable = dynamodb.Table.fromTableName(
+      this,
+      "Imported-Food-Table",
+      foodTableName
+    );
 
     const schemasLayer = new lambda.LayerVersion(this, "Schema-Layer", {
       compatibleRuntimes: [
@@ -38,8 +39,7 @@ export default class Commnads extends cdk.Construct {
       {
         functionName: NameGenerator.generateConstructName(
           scope,
-          "get-all-food-function",
-          isDevelopment
+          "get-all-food-function"
         ),
         runtime: lambda.Runtime.NODEJS_12_X,
         // name of the exported function
@@ -51,7 +51,7 @@ export default class Commnads extends cdk.Construct {
         },
         bundling: {
           minify: false,
-          externalModules: ['aws-sdk'],
+          externalModules: ["aws-sdk"],
         },
         layers: [schemasLayer],
       }
@@ -65,7 +65,6 @@ export default class Commnads extends cdk.Construct {
         functionName: NameGenerator.generateConstructName(
           scope,
           "import-food-function",
-          isDevelopment
         ),
         runtime: lambda.Runtime.NODEJS_12_X,
         // name of the exported function
@@ -78,7 +77,7 @@ export default class Commnads extends cdk.Construct {
         },
         bundling: {
           minify: false,
-          externalModules: ['aws-sdk'],
+          externalModules: ["aws-sdk"],
         },
         layers: [schemasLayer],
       }
@@ -86,11 +85,7 @@ export default class Commnads extends cdk.Construct {
     importedFoodTable.grantReadWriteData(importFoodFunc);
 
     const api = new apigateway.RestApi(this, `Api`, {
-      restApiName: NameGenerator.generateConstructName(
-        scope,
-        "api-service",
-        isDevelopment
-      ),
+      restApiName: NameGenerator.generateConstructName(scope, "api-service"),
     });
 
     const importFoodApi = api.root.addResource(ApiPath.IMPORT_FOOD);

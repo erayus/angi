@@ -141,11 +141,14 @@ export default class FoodStore {
       }
 
       if (this.isTimeToRenewFood()) {
+        alert('hello?');
+
         this.loadNewMenu();
       } else {
         if (this.userStore.isMenuSaved()) {
           this.loadExistingMenu();
         } else {
+          alert('hello?');
           this.loadNewMenu();
         }
       }
@@ -354,7 +357,7 @@ export default class FoodStore {
     if (!this.allIngredients) {
       throw new Error("No ingredients");
     }
-    return this.allIngredients!.slice().find((ing) => ing.id == id);
+    return this.allIngredients!.slice().find((ing) => ing.id === id);
   };
 
   convertFoodToFoodProjection = (food: IFood): IFoodProjection => {
