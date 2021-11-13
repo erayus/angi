@@ -141,14 +141,11 @@ export default class FoodStore {
       }
 
       if (this.isTimeToRenewFood()) {
-        alert('hello?');
-
         this.loadNewMenu();
       } else {
         if (this.userStore.isMenuSaved()) {
           this.loadExistingMenu();
         } else {
-          alert('hello?');
           this.loadNewMenu();
         }
       }

@@ -15,8 +15,8 @@ import Login from './components/log-in/log-in.component';
 import Loader from './components/loader/loader';
 
 const App: React.FC = () => {
-    const {foodStore, userStore} = useStore();
-    const {userLoading, loadAuthenticatedUser, isAuthenticated} = userStore;
+    const { foodStore, userStore } = useStore();
+    const { userLoading, loadAuthenticatedUser, isAuthenticated } = userStore;
 
     useEffect(() => {
         // userStore.authenticate("Raymond", "123");
@@ -29,18 +29,18 @@ const App: React.FC = () => {
         }
     }, [foodStore, isAuthenticated])
 
-        /**
-     * Returns a redirect to login page with the current path in its state
-     * User will be redirected to current path after loging in
-     */
+    /**
+ * Returns a redirect to login page with the current path in its state
+ * User will be redirected to current path after loging in
+ */
     const getRedirectToLogin = (props: RouteComponentProps) => (
-            <Redirect
-                push
-                to={{
-                    pathname: NavPath.Login,
-                    state: { fromPathName: props.location.pathname }
-                }}
-            />
+        <Redirect
+            push
+            to={{
+                pathname: NavPath.Login,
+                state: { fromPathName: props.location.pathname }
+            }}
+        />
     );
 
 
@@ -58,22 +58,40 @@ const App: React.FC = () => {
                     <Route
                         exact
                         path={'/' + NavPath.Menu}
-                        render={ props =>  isAuthenticated ? <Menu/> : getRedirectToLogin(props)}/>
+                        render={props => isAuthenticated ? <Menu /> : getRedirectToLogin(props)} />
                     <Route path={`/${NavPath.FoodDetails}/:foodId`} component={FoodDetail} />
                     <Route
                         path={`/${NavPath.ToBuyList}`}
-                        render={ props =>  isAuthenticated ? <ToBuyList/> : getRedirectToLogin(props)}/>
+                        render={props => isAuthenticated ? <ToBuyList /> : getRedirectToLogin(props)} />
                     <Route
                         path={`/${NavPath.Settings}`}
-                        render={ props =>  isAuthenticated ? <Settings/> : getRedirectToLogin(props)} />
-                    <Route exact path={'/' + NavPath.SignUp}  component={SignUp} />
-                    <Route exact path={'/' + NavPath.Login} component={Login} />
-                <Redirect from="/" to={NavPath.Menu} />
+                        render={props => isAuthenticated ? <Settings /> : getRedirectToLogin(props)} />
+                    <Route
+                        exact
+                        path={'/' + NavPath.SignUp}
+                        render={() => !isAuthenticated
+                            ? <SignUp />
+                            : <Redirect
+                                push
+                                to={{ pathname: NavPath.Menu }} />}
+                    />
+                    <Route
+                        exact
+                        path={'/' + NavPath.Login}
+                        render={() => !isAuthenticated
+                            ? <Login />
+                            : <Redirect
+                                push
+                                to={{
+                                    pathname: NavPath.Menu
+                                }} />}
+                    />
+                    <Redirect from="/" to={NavPath.Menu} />
                 </Switch>
             </div>
-            <NavFooter />
+            {isAuthenticated ? <NavFooter /> : null}
         </React.Fragment>
-    ) : <Loader/>
+    ) : <Loader />
 }
 
 export default observer(App)

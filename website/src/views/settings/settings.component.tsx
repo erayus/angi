@@ -5,17 +5,18 @@ import { useStore } from '../../store/root-store';
 const Settings = () => {
     const history = useHistory();
     const {userStore} = useStore();
+    const {userId} = userStore;
 
     return (
         <MDBContainer className="pt-3">
-            <MDBBtn rounded size="lg" className='my-2 w-100' color='danger'
+            {/* <MDBBtn rounded size="lg" className='my-2 w-100' color='warning'
                 onClick={() => {
-                    localStorage.clear();
+                    localStorage.removeItem(userId!);
                     history.push("/");
                     window.location.reload();
                 }}>
                 Refresh
-            </MDBBtn>
+            </MDBBtn> */}
         { userStore.isAuthenticated &&
             <MDBBtn rounded size="lg" className='my-2 w-100' color='danger'
                 onClick={() => {

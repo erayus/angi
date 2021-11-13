@@ -8,7 +8,8 @@ import { observer } from 'mobx-react-lite';
 const Header = () => {
     const [headerTitle, setHeaderTitle] = useState<string>();
     const [displayBackBtn, setDisplayBackBtn] = useState(false);
-    const {foodStore} = useStore();
+    const { foodStore, userStore } = useStore();
+    const { isAuthenticated } = userStore;
     const location = useLocation();
     const history = useHistory();
 
@@ -33,6 +34,8 @@ const Header = () => {
         }
     }, [location])
 
+    const renewDate = isAuthenticated && (<p>Renew date: {foodStore.renewDate}</p>);
+
     return (
         <header className="header pt-2">
             {
@@ -43,11 +46,12 @@ const Header = () => {
                         icon="arrow-left"
                         size='2x'
                         onClick={() => history.goBack()}
-                        />
+                    />
                     : null
             }
             <h1>{headerTitle}</h1>
-            <p>Renew date: {foodStore.renewDate}</p>
+            {renewDate}
+
         </header>
     )
 }
