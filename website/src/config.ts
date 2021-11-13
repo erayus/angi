@@ -1,5 +1,5 @@
 import { ApiPath } from './models/api-path';
-import { CognitoUserPool, ICognitoUserPoolData } from 'amazon-cognito-identity-js';
+import { ICognitoUserPoolData } from 'amazon-cognito-identity-js';
 
 const apiBaseUrl = {
     development: "https://xog1qed10d.execute-api.ap-southeast-2.amazonaws.com/prod/",

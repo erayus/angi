@@ -29,12 +29,12 @@ export default class UserStore {
 
   loadAuthenticatedUser = async () => {
     this.userLoading = true;
-     await this.getAuthenticatedUser()
+    await this.getAuthenticatedUser()
       .then((user) => {
         this.user = user as User;
       })
       .catch((err) => {
-        console.log(err);
+        console.trace(err);
       })
       .then(() => {
         this.userLoading = false;
@@ -63,7 +63,7 @@ export default class UserStore {
           if (localStorage.getItem(this.user!.sub) == null) {
             localStorage.setItem(this.user!.sub, JSON.stringify({}));
           }
-          console.log("onSuccess: ", data);
+          console.log("Authenticated Successfully");
           resolve(data);
         },
         onFailure: (err) => {
@@ -71,7 +71,7 @@ export default class UserStore {
           reject(err);
         },
         newPasswordRequired: (data) => {
-          //TODO
+          //TODO: what is this for?
           console.log("newPasswordRequired: ", data);
           resolve(data);
         },
@@ -82,6 +82,7 @@ export default class UserStore {
   logout = () => {
     if (this.user) {
       this.user.current.signOut(() => {
+        window.location.href = '/login';
         this.user = null;
       });
     }
@@ -91,39 +92,42 @@ export default class UserStore {
   getAuthenticatedUser = async () => {
     return new Promise((resolve, reject) => {
       const user = this.userPool.getCurrentUser();
-      console.log(user);
       if (user) {
         user.getSession(
           async (err: Error | null, session: CognitoUserSession | null) => {
             if (err) {
               reject(err.message);
             } else {
-              const attributes: Record<string, string> = await new Promise(
-                (resolve, reject) => {
-                  user.getUserAttributes((err, attributes) => {
-                    if (err) {
-                      reject(err.message);
-                    } else {
-                      let results: Record<string, string> = {};
-
-                      for (let attribute of attributes!) {
-                        const { Name, Value } = attribute;
-                        results = { ...results, [Name]: Value };
-                      }
-
-                      resolve(results);
-                    }
-                  });
-                }
-              );
-
-              resolve({ current: user, ...session, ...attributes });
+              try {
+                const attributes: Record<string, string> = await this.getUserAttributes(user);
+                resolve({ current: user, ...session, ...attributes });
+              } catch (err) {
+                reject(err);
+              }
             }
           }
         );
       } else {
-        reject('There is no user.');
+        reject("There is no user.");
       }
+    });
+  };
+
+  getUserAttributes = (user: CognitoUser): Promise<Record<string, string>> => {
+    return new Promise((resolve, reject) => {
+      user.getUserAttributes((err, attributes) => {
+        if (err) {
+          reject(err);
+        } else {
+          let results: Record<string, string> = {};
+
+          for (let attribute of attributes!) {
+            const { Name, Value } = attribute;
+            results = { ...results, [Name]: Value };
+          }
+          resolve(results);
+        }
+      });
     });
   };
 

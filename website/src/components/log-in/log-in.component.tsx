@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from "../../store/root-store";
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { NavPath } from "../../utils/nav-path";
@@ -17,12 +17,13 @@ const Login: React.FC = () => {
   const history = useHistory();
   const [error, setError] = useState<string>();
 
+0
 
   const onSubmit = (event: any) => {
     event.preventDefault();
 
     userStore.authenticate(email, password)
-      .then((data) => {
+      .then(() => {
         if (state.fromPathName) {
           history.replace(state.fromPathName);
         } else {

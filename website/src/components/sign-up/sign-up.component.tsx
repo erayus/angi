@@ -1,6 +1,6 @@
 
 import { MDBBtn, MDBInput } from 'mdb-react-ui-kit';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../../store/root-store';
 import { Link, useHistory } from 'react-router-dom';
 import { NavPath } from '../../utils/nav-path';
