@@ -17,7 +17,6 @@ const Login: React.FC = () => {
   const history = useHistory();
   const [error, setError] = useState<string>();
 
-0
 
   const onSubmit = (event: any) => {
     event.preventDefault();
