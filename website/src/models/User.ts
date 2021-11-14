@@ -1,10 +1,9 @@
-import { CognitoAccessToken, CognitoRefreshToken, CognitoUser } from "amazon-cognito-identity-js";
+import {CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
 
 export type User = {
   email: string,
   sub: string,
-  accessToken: CognitoAccessToken,
-  refreshToken: CognitoRefreshToken,
   email_verified: boolean,
+  session: CognitoUserSession,
   current: CognitoUser
 };

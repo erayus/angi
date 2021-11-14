@@ -21,6 +21,7 @@ const App: React.FC = () => {
     useEffect(() => {
         // userStore.authenticate("Raymond", "123");
         loadAuthenticatedUser();
+        // debugger;
     }, []);
 
     useEffect(() => {

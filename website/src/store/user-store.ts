@@ -5,7 +5,7 @@ import {
   CognitoUserSession,
   ISignUpResult,
 } from "amazon-cognito-identity-js";
-import { makeAutoObservable, toJS } from "mobx";
+import { makeAutoObservable, runInAction, toJS } from "mobx";
 import config from "../config";
 import { IFood, IFoodCategory } from "../models/food";
 import { User } from "../models/User";
@@ -27,18 +27,24 @@ export default class UserStore {
     makeAutoObservable(this);
   }
 
+  setUserLoading = (value: boolean) => {
+    this.userLoading = value;
+  }
+
+  setUser = (user: User)=>  {
+    this.user = user;
+  }
+
   loadAuthenticatedUser = async () => {
-    this.userLoading = true;
-    await this.getAuthenticatedUser()
-      .then((user) => {
-        this.user = user as User;
-      })
-      .catch((err) => {
-        console.trace(err);
-      })
-      .then(() => {
-        this.userLoading = false;
-      });
+    try {
+      this.setUserLoading(true);
+      const user = await this.getAuthenticatedUser() as User;
+      this.setUser(user);
+      this.setUserLoading(false);
+    } catch (e: any) {
+      console.trace(e);
+      this.setUserLoading(false);
+    }
   };
 
   authenticate = async (username: string, password: string) => {
@@ -60,10 +66,6 @@ export default class UserStore {
       user.authenticateUser(authDetails, {
         onSuccess: async (data) => {
           await this.loadAuthenticatedUser();
-          if (localStorage.getItem(this.user!.sub) == null) {
-            localStorage.setItem(this.user!.sub, JSON.stringify({}));
-          }
-          console.log("Authenticated Successfully");
           resolve(data);
         },
         onFailure: (err) => {
@@ -79,17 +81,25 @@ export default class UserStore {
     });
   };
 
-  logout = () => {
-    if (this.user) {
-      this.user.current.signOut(() => {
-        window.location.href = '/login';
-        this.user = null;
-      });
-    }
+
+
+  logout = async () => {
+    return new Promise((resolve, reject) => {
+      if (this.user) {
+        this.user.current.signOut(() => {
+          this.user = null;
+          resolve('Signed out successfully!');
+        });
+      } else {
+        console.error('There is no user.');
+        reject()
+      }
+    })
+
     //TODO: throw error to appStore
   };
 
-  getAuthenticatedUser = async () => {
+  getAuthenticatedUser = async ()  => {
     return new Promise((resolve, reject) => {
       const user = this.userPool.getCurrentUser();
       if (user) {
@@ -100,7 +110,7 @@ export default class UserStore {
             } else {
               try {
                 const attributes: Record<string, string> = await this.getUserAttributes(user);
-                resolve({ current: user, ...session, ...attributes });
+                resolve({ current: user, session: session!, ...attributes });
               } catch (err) {
                 reject(err);
               }

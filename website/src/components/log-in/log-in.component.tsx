@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useStore } from "../../store/root-store";
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { NavPath } from "../../utils/nav-path";
+import { NavPath } from '../../utils/nav-path';
 import { observer } from "mobx-react-lite";
 import { MDBInput, MDBBtn } from 'mdb-react-ui-kit';
 
@@ -13,25 +13,23 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { userStore } = useStore();
-  const { state } = useLocation<LocationState>();
+  const {state} = useLocation<LocationState>();
   const history = useHistory();
   const [error, setError] = useState<string>();
 
-
-  const onSubmit = (event: any) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault();
+    try {
+      await userStore.authenticate(email, password);
 
-    userStore.authenticate(email, password)
-      .then(() => {
-        if (state.fromPathName) {
-          history.replace(state.fromPathName);
-        } else {
-          history.replace(NavPath.Menu);
-        }
-      })
-      .catch((e: any) => {
-        setError(e.message)
-      });
+      if (state?.fromPathName) {
+        history.replace(state.fromPathName);
+      } else {
+        history.replace(NavPath.Menu);
+      }
+    } catch (e:any) {
+      setError(e.message)
+    }
   };
 
   const formFeedbackMessage = error && (
