@@ -112,7 +112,7 @@ export class AuthenticationStack extends cdk.Stack {
     const userPoolDomain = new cognito.UserPoolDomain(this, "Userpool-Domain", {
       userPool,
       cognitoDomain: {
-         domainPrefix: `${appName}-erayus`
+         domainPrefix: NameGenerator.generateConstructName(this, 'userpool-erayus')
       }
     })
 

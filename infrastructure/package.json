@@ -6,7 +6,7 @@
     "test": "jest",
     "cdk": "cdk",
     "local-deploy": "ts-node ./src/utils/schema-generator.ts && cdk deploy * -c environment=development",
-    "production-deploy": "ts-node ./src/utils/schema-generator.ts && cdk deploy * -c environment=production"
+    "prod-deploy": "ts-node ./src/utils/schema-generator.ts && cdk deploy * -c environment=production"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
