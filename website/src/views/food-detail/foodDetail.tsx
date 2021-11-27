@@ -16,7 +16,7 @@ type Params = {
 
 const FoodDetail: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const { foodStore } = useStore();
-    const targetFoodId = +match.params.foodId;
+    const targetFoodId = match.params.foodId;
     const targetFood = foodStore.getFoodProjectionById(targetFoodId);
 
     return (

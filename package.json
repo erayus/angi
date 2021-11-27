@@ -5,7 +5,7 @@
     "build": "lerna run --stream build",
     "lint": "lerna run --stream lint",
     "test": "lerna run --stream test",
-    "deploy": "lerna run --stream build && lerna run --stream cdk -- -- synth * && lerna run --stream cdk -- -- deploy * --require-approval never",
+    "deploy": "lerna run --stream build && lerna run --stream cdk -- -- synth * && lerna run --stream cdk -- -- deploy * -c environment=production --require-approval never",
     "clean": "lerna run --stream clean && lerna clean",
     "update": "ncu -u && lerna run --concurrency 1 --stream update",
     "cdk": "lerna run --stream cdk -- --"

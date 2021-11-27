@@ -16,8 +16,6 @@ export class HostingStack extends cdk.Stack {
     const appName = ConfigProvider.Context(scope).AppName;
     const isDevelopment = ConfigProvider.Context(scope).IsDevelopment;
 
-    new Commnads(this, `${appName}-Commands`, props);
-
     const imgBucket = new aws_s3.Bucket(this, 'Images-Bucket', {
       bucketName: NameGenerator.generateConstructName(scope, 'erayus-images'),
       publicReadAccess: true,

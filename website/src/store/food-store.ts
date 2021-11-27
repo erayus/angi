@@ -12,12 +12,12 @@ import UserStore from "./user-store";
 const clone = require("rfdc/default");
 
 export type IFoodProjection = {
-  id: number;
+  id: string;
   name: string;
   category: IFoodCategory;
   imgUrl: string;
   ingredients: {
-    id: number;
+    id: string;
     category: IIngredientCategory;
     name: string;
     unit: IUnit;
@@ -26,7 +26,7 @@ export type IFoodProjection = {
 };
 
 export type ToBuyIngredient = {
-  id: number;
+  id: string;
   name: string;
   category: IIngredientCategory;
   quantity: number;
@@ -35,14 +35,14 @@ export type ToBuyIngredient = {
 };
 export default class FoodStore {
   private menu: IFood[] | null = null;
-  private listOfCheckedIngredientIds: number[] = [];
+  private listOfCheckedIngredientIds: string[] = [];
 
   userStore: UserStore;
   allFood: IFood[] | null = null;
   allIngredients: IIngredient[] | null = null;
   availableFoodCategories: IFoodCategoryQuantiy[] = [];
-  targetFoodToChangeId: number = 0;
-  newFoodToChangeId: number = 0;
+  targetFoodToChangeId: string = "";
+  newFoodToChangeId: string = "";
   error: any;
   loading: boolean = false;
 
@@ -193,6 +193,7 @@ export default class FoodStore {
 
   private loadNewMenu = async () => {
     this.resetListOfCheckedIngredients();
+
     this.availableFoodCategories.forEach((foodCategory) => {
       const newFood = this.getRandomFoodForCategory(
         foodCategory.category,
@@ -266,11 +267,11 @@ export default class FoodStore {
     localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
   };
 
-  private getFoodForId = (id: number): IFood | null => {
+  private getFoodForId = (id: string): IFood | null => {
     return this.allFood?.find((item) => item.food_id === id) || null;
   };
 
-  getFoodProjectionById = (id: number): IFoodProjection | null => {
+  getFoodProjectionById = (id: string): IFoodProjection | null => {
     const food = this.getFoodForId(id);
     if (!food) {
       return null
@@ -329,11 +330,11 @@ export default class FoodStore {
     return foodToReturn;
   };
 
-  setFoodToChangeId = (id: number) => {
+  setFoodToChangeId = (id: string) => {
     this.newFoodToChangeId = id;
   };
 
-  setTargetFoodIdToChange = (id: number) => {
+  setTargetFoodIdToChange = (id: string) => {
     this.targetFoodToChangeId = id;
   };
 
@@ -346,11 +347,11 @@ export default class FoodStore {
     });
 
     //Resetting the foodchange-related values
-    this.targetFoodToChangeId = 0;
-    this.newFoodToChangeId = 0;
+    this.targetFoodToChangeId = "";
+    this.newFoodToChangeId = "";
   };
 
-  getIngredientById = (id: number): IIngredient | undefined => {
+  getIngredientById = (id: string): IIngredient | undefined => {
     if (!this.allIngredients) {
       throw new Error("No ingredients");
     }
@@ -383,7 +384,7 @@ export default class FoodStore {
     return foodProjection;
   };
 
-  toggleIngredientState = (ingredientId: number) => {
+  toggleIngredientState = (ingredientId: string) => {
     const index = this.listOfCheckedIngredientIds.indexOf(ingredientId);
     if (index >= 0) {
       this.listOfCheckedIngredientIds.splice(index, 1);

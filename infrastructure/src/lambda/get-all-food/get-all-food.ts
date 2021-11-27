@@ -1,9 +1,10 @@
 import * as AWS from "aws-sdk";
-import { APIGatewayProxyEventV2 } from "aws-lambda";
+import {Environment} from "/opt/nodejs/constants";
 
 const dynClient = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: 'ap-southeast-2' });
 
-const tableName = "smartmenu-food-table-dev"//process.env.TABLE_NAME;
+const tableName = process.env.TABLE_NAME;
+const env = process.env.ENVIRONMENT;
 
 export async function getAllFoodHandler() {
   if (!tableName) {
@@ -30,7 +31,7 @@ export async function getAllFoodHandler() {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Headers" : "application/json",
-        "Access-Control-Allow-Origin" : "http://localhost:3000", // Required for CORS support to work,
+        "Access-Control-Allow-Origin" : env ===  Environment.DEV ? "http://localhost:3000" : "https://smartmenu.erayus.com", // Required for CORS support to work,
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
         // "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
       },
@@ -43,7 +44,3 @@ export async function getAllFoodHandler() {
     };
   }
 }
-
-(async() => {
-  await getAllFoodHandler();
-})()

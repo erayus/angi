@@ -6,6 +6,7 @@ import { HostingStack } from "./src/stacks/hosting-stack";
 import { NameGenerator } from "./src/utils/name-generator";
 import { DatabaseStack } from "./src/stacks/database-stack";
 import { AuthenticationStack } from './src/stacks/authentication-stack';
+import { CommandsStack } from "./src/stacks/commands-stack";
 
 const app = new cdk.App();
 const env = {
@@ -21,6 +22,7 @@ const dbStack = new DatabaseStack(
   ),
   { env }
 );
+
 new HostingStack(
   app,
   NameGenerator.generateConstructName(
@@ -28,6 +30,14 @@ new HostingStack(
     "hosting-stack",
   ),
   { env }
+);
+
+new CommandsStack(
+  app,
+  NameGenerator.generateConstructName(
+    app,
+    "commands-stack",
+  ),{ env }
 ).addDependency(dbStack);
 
 new AuthenticationStack(

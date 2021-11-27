@@ -17,11 +17,11 @@ const FoodChangeModal: React.FC<IProps> = ({ toggleShow, foodAvailableForChange 
   const [changeBtnDisabled, setChangeBtnDisabled] = useState(true);
 
   useEffect(() => {
-    const shouldChangeBtnDisabled = foodAvailableForChange.length === 0 || foodStore.newFoodToChangeId === 0
+    const shouldChangeBtnDisabled = foodAvailableForChange.length === 0 || foodStore.newFoodToChangeId === ""
     setChangeBtnDisabled(shouldChangeBtnDisabled);
   }, [foodAvailableForChange.length, foodStore.newFoodToChangeId])
 
-  const onFoodItemSelectedHandler = (id: number) => {
+  const onFoodItemSelectedHandler = (id: string) => {
     foodStore.setFoodToChangeId(id);
   }
 

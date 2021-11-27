@@ -33,6 +33,15 @@ export default class Commnads extends cdk.Construct {
       description: "Json Schemas for validating lambda input",
     });
 
+    const sharedLayer = new lambda.LayerVersion(this, "Shared-Layer", {
+      compatibleRuntimes: [
+        lambda.Runtime.NODEJS_12_X,
+        lambda.Runtime.NODEJS_14_X,
+      ],
+      code: lambda.Code.fromAsset("src/layers/shared"),
+      description: "Shared files",
+    });
+
     const getAllFoodFunc = new lambdaNode.NodejsFunction(
       this,
       "Get-All-Food-Function",
@@ -48,12 +57,13 @@ export default class Commnads extends cdk.Construct {
         entry: "./src/lambda/get-all-food/get-all-food.ts",
         environment: {
           TABLE_NAME: importedFoodTable.tableName,
+          ENVIRONMENT: ConfigProvider.Context(this).Environment
         },
         bundling: {
           minify: false,
           externalModules: ["aws-sdk"],
         },
-        layers: [schemasLayer],
+        layers: [schemasLayer, sharedLayer],
       }
     );
     importedFoodTable.grantReadData(getAllFoodFunc);

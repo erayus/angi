@@ -2,5 +2,6 @@
     "files.exclude": {
         "**/constructs/*.js": true,
         "**/stacks/*.js": true
-    }
+    },
+    "prettier.tabWidth": 4
 }

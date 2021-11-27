@@ -5,7 +5,7 @@ import {
   CognitoUserSession,
   ISignUpResult,
 } from "amazon-cognito-identity-js";
-import { makeAutoObservable, runInAction, toJS } from "mobx";
+import { makeAutoObservable } from "mobx";
 import config from "../config";
 import { IFood, IFoodCategory } from "../models/food";
 import { User } from "../models/User";
@@ -29,17 +29,24 @@ export default class UserStore {
 
   setUserLoading = (value: boolean) => {
     this.userLoading = value;
-  }
+  };
 
-  setUser = (user: User)=>  {
+  setUser = (user: User) => {
     this.user = user;
-  }
+  };
 
   loadAuthenticatedUser = async () => {
     try {
       this.setUserLoading(true);
-      const user = await this.getAuthenticatedUser() as User;
+
+      const user = (await this.getAuthenticatedUser()) as User;
       this.setUser(user);
+
+      //Check if this is the first time the user login
+      if (localStorage.getItem(this.user!.sub) == null) {
+        localStorage.setItem(this.user!.sub, JSON.stringify({}));
+      }
+
       this.setUserLoading(false);
     } catch (e: any) {
       console.trace(e);
@@ -81,25 +88,23 @@ export default class UserStore {
     });
   };
 
-
-
   logout = async () => {
     return new Promise((resolve, reject) => {
       if (this.user) {
         this.user.current.signOut(() => {
           this.user = null;
-          resolve('Signed out successfully!');
+          resolve("Signed out successfully!");
         });
       } else {
-        console.error('There is no user.');
-        reject()
+        console.error("There is no user.");
+        reject();
       }
-    })
+    });
 
     //TODO: throw error to appStore
   };
 
-  getAuthenticatedUser = async ()  => {
+  getAuthenticatedUser = async () => {
     return new Promise((resolve, reject) => {
       const user = this.userPool.getCurrentUser();
       if (user) {
@@ -109,7 +114,8 @@ export default class UserStore {
               reject(err.message);
             } else {
               try {
-                const attributes: Record<string, string> = await this.getUserAttributes(user);
+                const attributes: Record<string, string> =
+                  await this.getUserAttributes(user);
                 resolve({ current: user, session: session!, ...attributes });
               } catch (err) {
                 reject(err);
@@ -226,7 +232,7 @@ export default class UserStore {
     this.saveListOfCheckedIngredientIds([]);
   };
 
-  getListOfCheckedIngredientIds = (): number[] => {
+  getListOfCheckedIngredientIds = (): string[] => {
     // this.validateUserStatus();
     if (localStorage.getItem(this.userId!) == null) {
       return [];
@@ -236,7 +242,7 @@ export default class UserStore {
   };
 
   saveListOfCheckedIngredientIds = (
-    listOfCheckedIngredientIds: number[]
+    listOfCheckedIngredientIds: string[]
   ): void => {
     // this.validateUserStatus();
 
@@ -256,8 +262,8 @@ export default class UserStore {
   getFoodCategoryQuantityForCategory = (
     category: IFoodCategory
   ): number | null => {
-    // this.validateUserStatus();
     const user = JSON.parse(localStorage.getItem(this.userId!)!);
+
     return user["category_quantity"]
       ? +user["category_quantity"][category]
       : null;
@@ -267,12 +273,12 @@ export default class UserStore {
     category: IFoodCategory,
     quantityToShow: number
   ) => {
-    // this.validateUserStatus();
     if (!quantityToShow || quantityToShow < 0) {
       return;
     }
 
     let user = JSON.parse(localStorage.getItem(this.userId!)!);
+
     let categoryQuantity = user["category_quantity"];
     let newCategoryQuantity = {
       ...categoryQuantity,

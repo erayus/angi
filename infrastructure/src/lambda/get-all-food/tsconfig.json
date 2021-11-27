@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "/opt/nodejs/foodSchema.json": ["../../layers/schemas/nodejs/foodSchema.json"],
+      "/opt/nodejs/constants": ["../../layers/shared/nodejs/constants"],
     },
     /* Basic Options */
     "incremental": true,                   /* Enable incremental compilation */

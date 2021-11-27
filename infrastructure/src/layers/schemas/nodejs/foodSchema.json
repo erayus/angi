@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "food_id": {
-      "type": "number"
+      "type": "string"
     },
     "food_name": {
       "type": "string"
@@ -19,7 +19,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "string"
           },
           "quantity": {
             "type": "number"
@@ -42,9 +42,9 @@
   "definitions": {
     "IFoodCategory": {
       "enum": [
-        "Các món phụ",
-        "Món chính",
-        "Món súp"
+        "Main",
+        "Sidies",
+        "Soup"
       ],
       "type": "string"
     }

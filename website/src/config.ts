@@ -2,7 +2,7 @@ import { ApiPath } from './models/api-path';
 import { ICognitoUserPoolData } from 'amazon-cognito-identity-js';
 
 const apiBaseUrl = {
-    development: "https://xog1qed10d.execute-api.ap-southeast-2.amazonaws.com/prod/",
+    development: "https://gim649qs6l.execute-api.ap-southeast-2.amazonaws.com/prod/",
     production: "https://e233e9k6f2.execute-api.ap-southeast-2.amazonaws.com/prod/",
 }
 
@@ -33,8 +33,8 @@ const getUserPoolConfig = () : ICognitoUserPoolData => {
     switch(process.env.NODE_ENV) {
         case "development":
             return {
-                UserPoolId: "ap-southeast-2_9moqkmThg",
-                ClientId: "2qjvvqakthonevf61lgfdo4ed6"
+                UserPoolId: "ap-southeast-2_oypK8OC8k",
+                ClientId: "5653uabeot37c69jgr7j8c2ia"
             }
         case "production":
             return {

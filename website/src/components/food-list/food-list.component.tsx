@@ -6,8 +6,8 @@ export type FoodListOptionalProps = {
   enableIngredientChipsDisplay?: boolean;
   enableViewDetails?: boolean;
   enableFoodChange?: boolean;
-  onFoodItemSelected?: (id: number) => void;
-  onFoodChangeBtnClicked?: (foodId: number) => void
+  onFoodItemSelected?: (id: string) => void;
+  onFoodChangeBtnClicked?: (foodId: string) => void
 }
 
 

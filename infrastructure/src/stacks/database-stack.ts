@@ -15,7 +15,7 @@ export class DatabaseStack extends cdk.Stack {
     const foodTable = new dynamodb.Table(this, "Food-Table", {
       partitionKey: {
         name: foodTablePartitionKey,
-        type: dynamodb.AttributeType.NUMBER,
+        type: dynamodb.AttributeType.STRING,
       },
       tableName: NameGenerator.generateConstructName(
         scope,

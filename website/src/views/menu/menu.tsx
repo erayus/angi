@@ -41,7 +41,7 @@ const Menu = () => {
         }
     };
 
-    const onFoodChangeBtnClickedHandler = (foodId: number) => {
+    const onFoodChangeBtnClickedHandler = (foodId: string) => {
         foodStore.setTargetFoodIdToChange(foodId);
         toggleFoodChangeModalState();
     }

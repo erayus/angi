@@ -1,5 +1,5 @@
 export type IFood = {
-    food_id: number
+    food_id: string
     food_name: string
     food_category: IFoodCategory;
     img_url: string
@@ -7,15 +7,22 @@ export type IFood = {
 }
 
 export type IFoodIngredient = {
-    id: number
+    id: string
     quantity: number
 }
 
-export type IFoodCategory = "Món chính" | "Món súp" | "Các món phụ";
+export type IFoodCategory = "Main" | "Soup" | "Sidies";
 
 export type IFoodCategoryQuantiy = {
     category: IFoodCategory
     quantity: number
+}
+
+
+export type ICategoryQuantity = {
+    Main: number,
+    Soup: number,
+    Sidies: number
 }
 
 
