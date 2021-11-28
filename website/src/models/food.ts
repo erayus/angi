@@ -13,7 +13,7 @@ export type IFoodIngredient = {
 
 export type IFoodCategory = "Main" | "Soup" | "Sidies";
 
-export type IFoodCategoryQuantiy = {
+export type IUserFoodCategoryQuantity = {
     category: IFoodCategory
     quantity: number
 }

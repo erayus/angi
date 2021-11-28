@@ -7,7 +7,7 @@ import {
 } from "amazon-cognito-identity-js";
 import { makeAutoObservable } from "mobx";
 import config from "../config";
-import { IFood, IFoodCategory } from "../models/food";
+import { IFood, IFoodCategory, IUserFoodCategoryQuantity as IUserFoodCategoriesQuantities } from '../models/food';
 import { User } from "../models/User";
 
 export default class UserStore {
@@ -259,17 +259,33 @@ export default class UserStore {
     localStorage.setItem(this.userId!, JSON.stringify(user));
   };
 
-  getFoodCategoryQuantityForCategory = (
-    category: IFoodCategory
-  ): number | null => {
+  getFoodCategoriesQuantities = (): IUserFoodCategoriesQuantities[] => {
     const user = JSON.parse(localStorage.getItem(this.userId!)!);
 
-    return user["category_quantity"]
-      ? +user["category_quantity"][category]
-      : null;
+    if (!user["food_categories_quantities"]) { //TODO: constant the key
+      const defaultUserFoodCategoryQuantity: IUserFoodCategoriesQuantities[] = [
+        {
+          category: 'Main',
+          quantity: 7
+        },
+        {
+          category: 'Soup',
+          quantity: 7,
+        },
+        {
+          category: 'Sidies',
+          quantity: 4
+        }
+      ];
+      user["food_categories_quantities"] = defaultUserFoodCategoryQuantity;
+      localStorage.setItem(this.userId!, JSON.stringify(user));
+      return defaultUserFoodCategoryQuantity;
+    }
+
+    return user["food_categories_quantities"]
   };
 
-  saveFoodCategoryQuantityForCategroy = (
+  saveQuantityForFoodCategory = (
     category: IFoodCategory,
     quantityToShow: number
   ) => {
@@ -279,11 +295,13 @@ export default class UserStore {
 
     let user = JSON.parse(localStorage.getItem(this.userId!)!);
 
-    let categoryQuantity = user["category_quantity"];
-    let newCategoryQuantity = {
-      ...categoryQuantity,
-      [category]: quantityToShow,
-    };
+    let categoriesQuantities = user["food_categories_quantities"] as IUserFoodCategoriesQuantities[];
+    let newCategoryQuantity = categoriesQuantities.map(item => {
+      if (item.category === category) {
+          item.quantity = quantityToShow;
+      }
+      return item
+  });
 
     let newUser = {
       ...user,

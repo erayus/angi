@@ -3,32 +3,30 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../../store/root-store';
 import FoodList from '../food-list/food-list.component';
+import Loader from '../loader/loader';
 import styles from "./food-change-modal.module.css";
-import { IFoodProjection } from '../../store/food-store';
-
 
 type IProps = {
-  foodAvailableForChange: IFoodProjection[];
   toggleShow: () => void;
 }
 
-const FoodChangeModal: React.FC<IProps> = ({ toggleShow, foodAvailableForChange }) => {
+const FoodChangeModal: React.FC<IProps> = ({ toggleShow }) => {
   const { foodStore } = useStore();
   const [changeBtnDisabled, setChangeBtnDisabled] = useState(true);
 
   useEffect(() => {
-    const shouldChangeBtnDisabled = foodAvailableForChange.length === 0 || foodStore.newFoodToChangeId === ""
+    const shouldChangeBtnDisabled = foodStore.foodAvailableForChange.length === 0 || foodStore.newFoodToChangeId === ""
     setChangeBtnDisabled(shouldChangeBtnDisabled);
-  }, [foodAvailableForChange.length, foodStore.newFoodToChangeId])
+  }, [foodStore.foodAvailableForChange.length, foodStore.newFoodToChangeId]);
 
   const onFoodItemSelectedHandler = (id: string) => {
-    foodStore.setFoodToChangeId(id);
+    foodStore.setNewFoodToChangeId(id);
   }
 
   const onChangedHandler = () => {
     toggleShow();
     setTimeout(() => {
-      foodStore.changeFood();
+      foodStore.changeFood(foodStore.targetFoodToBeChangedId, foodStore.newFoodToChangeId!);
     }, 200)
   }
 
@@ -40,11 +38,13 @@ const FoodChangeModal: React.FC<IProps> = ({ toggleShow, foodAvailableForChange 
           <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
         </MDBModalHeader>
         <MDBModalBody style={{ maxHeight: '500px', overflowY: 'scroll' }}>
-          <FoodList
-            foodList={foodAvailableForChange}
-            enableIngredientChipsDisplay={true}
-            onFoodItemSelected={onFoodItemSelectedHandler}
-          />
+          { foodStore.isFoodAvailableForChangeLoading
+            ? <Loader/>
+            : <FoodList
+              foodList={foodStore.foodAvailableForChange}
+              enableIngredientChipsDisplay={true}
+              onFoodItemSelected={onFoodItemSelectedHandler}
+          />}
         </MDBModalBody>
 
         <MDBModalFooter>

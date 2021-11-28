@@ -21,7 +21,7 @@ const Menu = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, menuProjection]);
 
-    const onQuantityForCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
+    const onQuantityForCategoryChange = async (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
         const newQuantity = +e.target.value;
         const minQuantityAllowed = +e.target.min;
         const maxQuantityAllowed = +e.target.max;
@@ -30,8 +30,8 @@ const Menu = () => {
             e.preventDefault();
             return;
         };
-        userStore.saveFoodCategoryQuantityForCategroy(category, newQuantity);
-        const newFood = foodStore.getRandomFoodForCategory(category, newQuantity);
+        userStore.saveQuantityForFoodCategory(category, newQuantity);
+        const newFood = await foodStore.getRandomFoodForCategory(category, newQuantity);
         foodStore.updateFoodThisWeek(newFood, category);
     }
 
@@ -42,7 +42,8 @@ const Menu = () => {
     };
 
     const onFoodChangeBtnClickedHandler = (foodId: string) => {
-        foodStore.setTargetFoodIdToChange(foodId);
+        foodStore.setTargetFoodIdToBeChanged(foodId);
+        foodStore.loadFoodAvailableForChange(foodId);
         toggleFoodChangeModalState();
     }
 
@@ -75,7 +76,6 @@ const Menu = () => {
                     getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
                     <FoodChangeModal
                         // selectedFoodIdToChange={selectedFoodIdToChange!}
-                        foodAvailableForChange={foodStore.getFoodAvailableForChange()}
                         toggleShow={toggleFoodChangeModalState}
                     />
                 </MDBModal>
