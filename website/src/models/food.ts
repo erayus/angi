@@ -17,13 +17,3 @@ export type IUserFoodCategoryQuantity = {
     category: IFoodCategory
     quantity: number
 }
-
-
-export type ICategoryQuantity = {
-    Main: number,
-    Soup: number,
-    Sidies: number
-}
-
-
-
