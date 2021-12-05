@@ -7,12 +7,12 @@ import {
 } from "amazon-cognito-identity-js";
 import { makeAutoObservable } from "mobx";
 import config from "../config";
-import { IFood, IFoodCategory, IUserFoodCategoryQuantity as IUserFoodCategoriesQuantities } from '../models/food';
-import { User } from "../models/User";
+import { IFood, IFoodCategory, IUserFoodCategoryQuantity} from '../models/food';
+import { AuthUser, User } from '../models/User';
 
 export default class UserStore {
   userLoading: boolean = true;
-  user: User | null = null;
+  user: AuthUser | null = null;
   userPool = new CognitoUserPool(config.getUserPoolConfig());
 
   get isAuthenticated(): boolean {
@@ -31,7 +31,7 @@ export default class UserStore {
     this.userLoading = value;
   };
 
-  setUser = (user: User) => {
+  setUser = (user: AuthUser) => {
     this.user = user;
   };
 
@@ -39,12 +39,19 @@ export default class UserStore {
     try {
       this.setUserLoading(true);
 
-      const user = (await this.getAuthenticatedUser()) as User;
+      const user = (await this.getAuthenticatedUser()) as AuthUser;
       this.setUser(user);
 
       //Check if this is the first time the user login
       if (localStorage.getItem(this.user!.sub) == null) {
-        localStorage.setItem(this.user!.sub, JSON.stringify({}));
+        const user: User = {
+          pk: this.user!.sub,
+          menu: [],
+          renewDate: null,
+          food_categories_quantities: null,
+          to_buy_list: null
+        }
+        localStorage.setItem(this.user!.sub, JSON.stringify(user));
       }
 
       this.setUserLoading(false);
@@ -161,42 +168,19 @@ export default class UserStore {
     });
   };
 
-  // //TODO: considering the need of this
-  // private validateUserStatus = () : void => {
-  //   if (!this.isAuthenticated) {
-  //     throw new Error("You are no longer authenticated"); //TODO: set error state here
-  //   };
-  //   //TODO: considering the need of this
-  //   if (localStorage.getItem(this.userId!) == null) {
-  //     throw new Error("No data exist in the table");
-  //   };
-  // }
-
   saveMenu = (menu: IFood[]): void => {
-    // this.validateUserStatus();
-
-    if (localStorage.getItem(this.userId!) == null) {
-      const user = {
-        menu: menu,
-      };
-      localStorage.setItem(this.userId!, JSON.stringify(user));
-      return;
-    }
-
     const user = JSON.parse(localStorage.getItem(this.userId!)!);
     user["menu"] = menu;
     localStorage.setItem(this.userId!, JSON.stringify(user));
   };
 
   getMenu = (): IFood[] | null => {
-    // this.validateUserStatus();
 
     const user = JSON.parse(localStorage.getItem(this.userId!)!);
     return user["menu"];
   };
 
   saveRenewDate = (renewDate: string): void => {
-    // this.validateUserStatus();
     if (localStorage.getItem(this.userId!) == null) {
       const user = {
         renewDate: renewDate,
@@ -211,14 +195,12 @@ export default class UserStore {
   };
 
   getRenewDate = (): string | null => {
-    // this.validateUserStatus();
 
     const user = JSON.parse(localStorage.getItem(this.userId!)!);
     return user["renewDate"];
   };
 
   isMenuSaved = (): boolean => {
-    // this.validateUserStatus();
     if (localStorage.getItem(this.userId!) == null) {
       return false;
     }
@@ -228,12 +210,10 @@ export default class UserStore {
   };
 
   resetListOfCheckedIngredientIds = (): void => {
-    // this.validateUserStatus();
     this.saveListOfCheckedIngredientIds([]);
   };
 
   getListOfCheckedIngredientIds = (): string[] => {
-    // this.validateUserStatus();
     if (localStorage.getItem(this.userId!) == null) {
       return [];
     }
@@ -244,8 +224,6 @@ export default class UserStore {
   saveListOfCheckedIngredientIds = (
     listOfCheckedIngredientIds: string[]
   ): void => {
-    // this.validateUserStatus();
-
     if (localStorage.getItem(this.userId!) == null) {
       const user = {
         listOfCheckedIngredientIds: listOfCheckedIngredientIds,
@@ -259,11 +237,11 @@ export default class UserStore {
     localStorage.setItem(this.userId!, JSON.stringify(user));
   };
 
-  getFoodCategoriesQuantities = (): IUserFoodCategoriesQuantities[] => {
+  getFoodCategoriesQuantities = (): IUserFoodCategoryQuantity[] => {
     const user = JSON.parse(localStorage.getItem(this.userId!)!);
 
     if (!user["food_categories_quantities"]) { //TODO: constant the key
-      const defaultUserFoodCategoryQuantity: IUserFoodCategoriesQuantities[] = [
+      const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] = [
         {
           category: 'Main',
           quantity: 7
@@ -295,7 +273,7 @@ export default class UserStore {
 
     let user = JSON.parse(localStorage.getItem(this.userId!)!);
 
-    let categoriesQuantities = user["food_categories_quantities"] as IUserFoodCategoriesQuantities[];
+    let categoriesQuantities = user["food_categories_quantities"] as IUserFoodCategoryQuantity[];
     let newCategoryQuantity = categoriesQuantities.map(item => {
       if (item.category === category) {
           item.quantity = quantityToShow;

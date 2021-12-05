@@ -15,30 +15,32 @@
 
 - user_id: string
 
-- menu: IFood
+- menu: IFood[]
 
 ```ts
-    food_id: string,
-    food_name: string,
-    food_category: IFoodCategory,
-    img_url: string,
-    food_ingredients: {
-      id: number,
-      category: IIngredientCategory,
-      name: string,
-      unit: IUnit,
+    type IFood = {
+      food_id: string,
+      food_name: string,
+      food_category: IFoodCategory,
+      img_url: string,
+      food_ingredients: {
+        id: number,
+        category: IIngredientCategory,
+        name: string,
+        unit: IUnit,
     }
 
 ```
 
 - renew_date: string
 
-- category_quantity:
+- food_categories_quantities: IUserFoodCategoriesQuantities[]
 
   ```ts
-    category1: number,
-    category2: number,
-    category3: number
+    type IUserFoodCategoryQuantity = {
+      category: IFoodCategory
+      quantity: number
+    }
   ```
 
 - to_buy_list : ToBuyIngredient[]
