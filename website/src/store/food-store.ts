@@ -43,7 +43,7 @@ export default class FoodStore {
     };
     foodAvailableForChange: IFoodProjection[] = [];
     error: any;
-    loading: boolean = false;
+    loadingFood: boolean = false;
     isFoodAvailableForChangeLoading = false;
 
     renewDate: string | null = null;
@@ -135,7 +135,7 @@ export default class FoodStore {
 
     initializeFoodThisWeek = async () => {
         try {
-            this.loading = true;
+            this.loadingFood = true;
 
             // if (this.allFood == null) { //TODO: check if the user has menu yet
             this.loadIngredients();
@@ -153,9 +153,9 @@ export default class FoodStore {
                     this.loadNewMenu();
                 }
             }
-            this.loading = false;
+            this.loadingFood = false;
         } catch (e: any) {
-            this.loading = false;
+            this.loadingFood = false;
             this.error = e.message;
         }
     };
@@ -255,9 +255,11 @@ export default class FoodStore {
 
         this.foodAvailableForChange = allFood
             .filter(
-                (eachFoodInAllFood) => {
+                async (eachFoodInAllFood) => {
                     if (targetFoodToChangeId) {
-                        return eachFoodInAllFood.food_category === this.getFoodForId(targetFoodToChangeId!)!.food_category
+                        const targetFood = await this.getFoodForId(targetFoodToChangeId!);
+
+                        return eachFoodInAllFood.food_category === targetFood?.food_category
                     } else {
                         return eachFoodInAllFood.food_category === targetFoodCategory
                     }
@@ -292,16 +294,35 @@ export default class FoodStore {
         localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
     };
 
-    private getFoodForId = (id: string): IFood | null => {
-        return this.allFood?.find((item) => item.food_id === id) || null;
+    private getFoodForId = async (id: string): Promise<IFood> => {
+        if (!this.allFood) {
+            this.allFood = await this.retrieveAllFood()
+        }
+        const result = this.allFood.find((item) => item.food_id === id);
+
+        if (!result){
+            throw new Error(`Can't find food for id: ${id}`)
+        }
+        return result;
     };
 
-    getFoodProjectionById = (id: string): IFoodProjection | null => {
-        const food = this.getFoodForId(id);
-        if (!food) {
+    getFoodProjectionById = async (id: string): Promise<IFoodProjection | null> => {
+        try {
+            this.loadingFood = true;
+
+            const food = await this.getFoodForId(id);
+            if (!food) {
+                this.loadingFood = false;
+                return null;
+            }
+            this.loadingFood = false;
+            return this.convertFoodToFoodProjection(food!);
+        } catch(e) {
+            this.error = e;
+            this.loadingFood = false;
             return null;
         }
-        return this.convertFoodToFoodProjection(food!);
+
     };
 
     // private getAvailableCategories = () => {
@@ -360,20 +381,23 @@ export default class FoodStore {
     //   this.targetFoodToChangeId = id;
     // };
 
-    changeFood = (foodIdToBeChanged: string, foodIdToChange: string) => {
-        this.menu = this.menu!.map((food) => {
+    changeFood =  async (foodIdToBeChanged: string, foodIdToChange: string) => {
+        this.menu = await Promise.all(this.menu!.map(async (food) => {
             if (food.food_id === foodIdToBeChanged) {
-                return this.getFoodForId(foodIdToChange)!;
+                const food =  await this.getFoodForId(foodIdToChange)!;
+
+                return food;
             }
             return food;
-        });
+        }));
+
 
         //Resetting the foodchange-related values
         this.newFoodToActionOnId = '';
     };
 
-    addFood = (foodToAddId: string) => {
-        const foodToAdd = this.getFoodForId(foodToAddId)
+    addFood = async (foodToAddId: string) => {
+        const foodToAdd = await this.getFoodForId(foodToAddId)
 
         if (!foodToAdd) {
             throw new Error('Can not find food to add');

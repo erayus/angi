@@ -8,11 +8,19 @@
         // position: absolute;
         // top: 8px;
         // right: 5px;
-        font-size: '10px'; 
-        padding: '4px 8px';
+        // font-size: 10px;
         z-index: 10;
         color: white;
         background-color: #FF6F00;
+    }
+    .remove-btn{
+        position: absolute;
+
+        top: 5px;
+        right: 5px;
+        color: white;
+        font-size: 15px;
+
     }
     .ingredient-chip-btn{
         font-size: 10px;

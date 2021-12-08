@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
-// import img from '../../assets/spaghetti.jpg';
+import { MDBCard, MDBCardTitle, MDBBtn, MDBCardBody, MDBRow, MDBCol, MDBIcon, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdb-react-ui-kit';
 import { useHistory } from 'react-router-dom';
 import './food-item.styles.scss';
 import { FoodListOptionalProps } from '../food-list.component';
@@ -68,13 +67,38 @@ const FoodItem: React.FC<IProps> = ({
     const displayFoodChangeBtn = (
       <MDBBtn
         className="change-modal-btn mx-1"
+        // floating
+        // rounded
+        onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
+      >
+        <MDBIcon className="mx-2" fas icon="sync" />
+        Change Food
+      </MDBBtn>
+    );
+    const displayFoodRemoveBtn = (
+      <MDBBtn
+        className="remove-btn mx-1"
+        color="danger"
         floating
         size="md"
         rounded
         onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
       >
-        <MDBIcon fas icon="sync" />
+        <MDBIcon fas icon="times" />
       </MDBBtn>
+    );
+
+    const displaySettingsBtn = (
+      <MDBDropdown>
+        <MDBDropdownToggle>
+          <MDBIcon fas icon="ellipsis-h" />
+        </MDBDropdownToggle>
+        <MDBDropdownMenu>
+          <MDBDropdownItem style={{opacity: '0'}}>
+             {displayFoodChangeBtn}
+          </MDBDropdownItem>
+        </MDBDropdownMenu>
+      </MDBDropdown>
     );
 
   return (
@@ -96,7 +120,7 @@ const FoodItem: React.FC<IProps> = ({
             {enableIngredientChipsDisplay && displayIngredientsChips}
             {enableIngredientChipsDisplay && displayNoOfExtraIngredients}
             {enableViewDetails && displayViewDetailsBtn}
-            {enableFoodChange && displayFoodChangeBtn}
+            {enableFoodChange && displaySettingsBtn}
           </MDBCardBody>
         </MDBCol>
       </MDBRow>

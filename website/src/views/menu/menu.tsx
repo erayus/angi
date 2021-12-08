@@ -11,7 +11,7 @@ import Loader from '../../components/loader/loader';
 
 const Menu = () => {
     const { foodStore, userStore } = useStore();
-    const { menuProjection, loading, error } = foodStore;
+    const { menuProjection, loadingFood: loading, error } = foodStore;
     const [ foodChangeModalState, setFoodChangeModalState ] = useState(false);
     const [ foodAddModalState, setFoodAddModalState ] = useState(false);
     const [ foodToBeChangedId, setTargetFoodToBeChangedId ] = useState('');
@@ -53,10 +53,8 @@ const Menu = () => {
 
     const onFoodChangedHandler = () => {
         toggleFoodChangeModalStateHandler();
-        setTimeout(() => {
-          foodStore.changeFood(foodToBeChangedId, foodStore.newFoodToActionOnId!);
-          setTargetFoodToBeChangedId(''); //Reset
-        }, 200)
+        foodStore.changeFood(foodToBeChangedId, foodStore.newFoodToActionOnId!);
+        setTargetFoodToBeChangedId(''); //Reset
       }
 
 
@@ -67,12 +65,9 @@ const Menu = () => {
 
     const onFoodAddedHandler = () => {
         toggleFoodAddModalStateHandler();
-        setTimeout(() => {
-            foodStore.addFood(foodStore.newFoodToActionOnId!);
-            setTargetFoodToBeChangedId(''); //Reset
-        }, 200)
+        foodStore.addFood(foodStore.newFoodToActionOnId!);
+        setTargetFoodToBeChangedId(''); //Reset
     }
-
 
     const toggleFoodAddModalStateHandler = () => setFoodAddModalState(!foodAddModalState);
 
