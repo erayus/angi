@@ -4,8 +4,8 @@ import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from '../../store/root-store';
 import './menu.styles.scss';
 import { IFoodCategory } from '../../models/food';
-import { MDBIcon, MDBInput, MDBModal } from 'mdb-react-ui-kit';
-import FoodChangeModal from '../../components/food-change-modal/food-change-modal.compenent';
+import { MDBIcon, MDBInput, MDBModal, MDBBtn } from 'mdb-react-ui-kit';
+import FoodActionModal from '../../components/food-change-modal/food-change-modal.compenent';
 import Loader from '../../components/loader/loader';
 
 
@@ -13,13 +13,15 @@ const Menu = () => {
     const { foodStore, userStore } = useStore();
     const { menuProjection, loading, error } = foodStore;
     const [ foodChangeModalState, setFoodChangeModalState ] = useState(false);
-
+    const [ foodAddModalState, setFoodAddModalState ] = useState(false);
+    const [ foodToBeChangedId, setTargetFoodToBeChangedId ] = useState('');
     useEffect(() => {
         return () => {
             foodStore.saveFoodThisWeek();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, menuProjection]);
+
 
     const onQuantityForCategoryChange = async (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
         const newQuantity = +e.target.value;
@@ -42,12 +44,37 @@ const Menu = () => {
     };
 
     const onFoodChangeBtnClickedHandler = (foodId: string) => {
-        foodStore.setTargetFoodIdToBeChanged(foodId);
+        setTargetFoodToBeChangedId(foodId);
         foodStore.loadFoodAvailableForChange(foodId);
-        toggleFoodChangeModalState();
+        toggleFoodChangeModalStateHandler();
     }
 
-    const toggleFoodChangeModalState = () => setFoodChangeModalState(!foodChangeModalState);
+    const toggleFoodChangeModalStateHandler = () => setFoodChangeModalState(!foodChangeModalState);
+
+    const onFoodChangedHandler = () => {
+        toggleFoodChangeModalStateHandler();
+        setTimeout(() => {
+          foodStore.changeFood(foodToBeChangedId, foodStore.newFoodToActionOnId!);
+          setTargetFoodToBeChangedId(''); //Reset
+        }, 200)
+      }
+
+
+    const onFoodAddModalOpenHandler = (targetFoodCategory: IFoodCategory) => {
+        toggleFoodAddModalStateHandler();
+        foodStore.loadFoodAvailableForChange(undefined, targetFoodCategory);
+    }
+
+    const onFoodAddedHandler = () => {
+        toggleFoodAddModalStateHandler();
+        setTimeout(() => {
+            foodStore.addFood(foodStore.newFoodToActionOnId!);
+            setTargetFoodToBeChangedId(''); //Reset
+        }, 200)
+    }
+
+
+    const toggleFoodAddModalStateHandler = () => setFoodAddModalState(!foodAddModalState);
 
     const foodToDisplay = !loading && foodStore.availableFoodCategories.map(foodCategory => {
         const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
@@ -69,16 +96,17 @@ const Menu = () => {
                         />
                         : "Loading"
                 }
-
-                <MDBModal
-                    staticBackdrop={true}
-                    show={foodChangeModalState}
-                    getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
-                    <FoodChangeModal
-                        // selectedFoodIdToChange={selectedFoodIdToChange!}
-                        toggleShow={toggleFoodChangeModalState}
+                <MDBBtn
+                    className="btn-block btn btn-success"
+                    onClick={() => onFoodAddModalOpenHandler(foodCategory.category)}
+                >
+                    <MDBIcon
+                        fas
+                        icon="plus"
+                        className="mx-2"
                     />
-                </MDBModal>
+                    Add
+                </MDBBtn>
             </div>
         )
     }
@@ -96,6 +124,29 @@ const Menu = () => {
             {loading && !error && <Loader/>}
             {!loading && error && errorView}
             {!loading && !error && foodToDisplay}
+            <MDBModal
+                    staticBackdrop={true}
+                    show={foodChangeModalState}
+                    getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
+                    <FoodActionModal
+                        title="List Of Available Food"
+                        submitBtnLabel="Change"
+                        toggleShowHandler={toggleFoodChangeModalStateHandler}
+                        onSubmitHandler={onFoodChangedHandler}
+                    />
+            </MDBModal>
+
+            <MDBModal
+                    staticBackdrop={true}
+                    show={foodAddModalState}
+                    getOpenState={(e: any) => setFoodAddModalState(e)} tabIndex='-1'>
+                    <FoodActionModal
+                        title="Food To Add List"
+                        submitBtnLabel="Add"
+                        toggleShowHandler={toggleFoodAddModalStateHandler}
+                        onSubmitHandler={onFoodAddedHandler}
+                    />
+            </MDBModal>
         </div>
     )
 }

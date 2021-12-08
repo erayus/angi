@@ -7,35 +7,31 @@ import Loader from '../loader/loader';
 import styles from "./food-change-modal.module.css";
 
 type IProps = {
-  toggleShow: () => void;
+  title: string;
+  submitBtnLabel: string;
+  toggleShowHandler: () => void;
+  onSubmitHandler: () => void;
 }
 
-const FoodChangeModal: React.FC<IProps> = ({ toggleShow }) => {
+const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, toggleShowHandler, onSubmitHandler }) => {
   const { foodStore } = useStore();
-  const [changeBtnDisabled, setChangeBtnDisabled] = useState(true);
+  const [submitBtnDisabled, setChangeBtnDisabled] = useState(true);
 
   useEffect(() => {
-    const shouldChangeBtnDisabled = foodStore.foodAvailableForChange.length === 0 || foodStore.newFoodToChangeId === ""
+    const shouldChangeBtnDisabled = foodStore.foodAvailableForChange.length === 0 || foodStore.newFoodToActionOnId === ""
     setChangeBtnDisabled(shouldChangeBtnDisabled);
-  }, [foodStore.foodAvailableForChange.length, foodStore.newFoodToChangeId]);
+  }, [foodStore.foodAvailableForChange.length, foodStore.newFoodToActionOnId]);
 
   const onFoodItemSelectedHandler = (id: string) => {
-    foodStore.setNewFoodToChangeId(id);
-  }
-
-  const onChangedHandler = () => {
-    toggleShow();
-    setTimeout(() => {
-      foodStore.changeFood(foodStore.targetFoodToBeChangedId, foodStore.newFoodToChangeId!);
-    }, 200)
+    foodStore.setNewFoodToActionOnId(id);
   }
 
   return (
     <MDBModalDialog centered>
       <MDBModalContent>
         <MDBModalHeader className="text-center">
-          <MDBModalTitle >List of Available Food</MDBModalTitle>
-          <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
+          <MDBModalTitle>{ title }</MDBModalTitle>
+          <MDBBtn className='btn-close' color='none' onClick={toggleShowHandler}></MDBBtn>
         </MDBModalHeader>
         <MDBModalBody style={{ maxHeight: '500px', overflowY: 'scroll' }}>
           { foodStore.isFoodAvailableForChangeLoading
@@ -48,14 +44,14 @@ const FoodChangeModal: React.FC<IProps> = ({ toggleShow }) => {
         </MDBModalBody>
 
         <MDBModalFooter>
-          <MDBBtn color='success' outline onClick={toggleShow}>
+          <MDBBtn color='success' outline onClick={toggleShowHandler}>
             Close
           </MDBBtn>
           <MDBBtn
-            className={styles.changeBtn}
-            disabled={changeBtnDisabled}
-            onClick={() => onChangedHandler()}
-          >Change</MDBBtn>
+            className={styles.submitBtn}
+            disabled={submitBtnDisabled}
+            onClick={() => onSubmitHandler()}
+          >{ submitBtnLabel }</MDBBtn>
         </MDBModalFooter>
       </MDBModalContent>
     </MDBModalDialog>

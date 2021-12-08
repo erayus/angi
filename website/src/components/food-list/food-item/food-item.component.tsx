@@ -30,12 +30,12 @@ const FoodItem: React.FC<IProps> = ({
 
 
   useEffect(() => {
-    if (foodStore.newFoodToChangeId === id) {
+    if (foodStore.newFoodToActionOnId === id) {
       setIsSelected(!isSelected);
     } else {
       setIsSelected(false);
     }
-  }, [foodStore.newFoodToChangeId])
+  }, [foodStore.newFoodToActionOnId])
 
   const displayNoOfExtraIngredients = noOfMoreThanTwo !== 0
     ? (<MDBBtn className="no-of-extra-ingredients-chip m-1" size="sm" rounded>+ {noOfMoreThanTwo}</MDBBtn>)

@@ -37,13 +37,9 @@ export default class FoodStore {
     allFood: IFood[] | null = null;
     allIngredients: IIngredient[] | null = null;
     availableFoodCategories: IUserFoodCategoryQuantity[] = [];
-    targetFoodToBeChangedId: string = '';
-    setTargetFoodIdToBeChanged = (foodId: string) =>{
-      this.targetFoodToBeChangedId = foodId
-    }
-    newFoodToChangeId: string = '';
-    setNewFoodToChangeId = (id: string) => {
-      this.newFoodToChangeId = id;
+    newFoodToActionOnId: string = '';
+    setNewFoodToActionOnId = (id: string) => {
+      this.newFoodToActionOnId = id;
     };
     foodAvailableForChange: IFoodProjection[] = [];
     error: any;
@@ -250,21 +246,28 @@ export default class FoodStore {
     };
 
     loadFoodAvailableForChange = async (
-        targetFoodToChangeId: string
+        targetFoodToChangeId?: string,
+        targetFoodCategory?: IFoodCategory
     ): Promise<void> => {
         this.setLoadingFoodAvailableForChange(true);
+
         let allFood = await this.retrieveAllFood();
+
         this.foodAvailableForChange = allFood
             .filter(
-                (eachFoodInAllFood) =>
-                    eachFoodInAllFood.food_category ===
-                    this.getFoodForId(targetFoodToChangeId)?.food_category
+                (eachFoodInAllFood) => {
+                    if (targetFoodToChangeId) {
+                        return eachFoodInAllFood.food_category === this.getFoodForId(targetFoodToChangeId!)!.food_category
+                    } else {
+                        return eachFoodInAllFood.food_category === targetFoodCategory
+                    }
+                }
             )
             .filter(
                 (eachFoodInAllFood) =>
                     !this.menuProjection?.some(
-                        (eachFoodInFoodThisWeek) =>
-                            eachFoodInFoodThisWeek.id ===
+                        (eachFoodInMenu) =>
+                            eachFoodInMenu.id ===
                             eachFoodInAllFood.food_id
                     )
             )
@@ -366,9 +369,18 @@ export default class FoodStore {
         });
 
         //Resetting the foodchange-related values
-        this.targetFoodToBeChangedId = '';
-        this.newFoodToChangeId = '';
+        this.newFoodToActionOnId = '';
     };
+
+    addFood = (foodToAddId: string) => {
+        const foodToAdd = this.getFoodForId(foodToAddId)
+
+        if (!foodToAdd) {
+            throw new Error('Can not find food to add');
+        }
+        this.menu = [...this.menu!, foodToAdd];
+        this.newFoodToActionOnId = '';
+    }
 
     getIngredientById = (id: string): IIngredient | undefined => {
         if (!this.allIngredients) {
