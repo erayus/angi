@@ -43,9 +43,9 @@ const Menu = () => {
         }
     };
 
-    const onFoodChangeBtnClickedHandler = (foodId: string) => {
+    const onFoodChangeBtnClickedHandler = async (foodId: string) => {
         setTargetFoodToBeChangedId(foodId);
-        foodStore.loadFoodAvailableForChange(foodId);
+        await foodStore.loadFoodAvailableForUpdate(foodId);
         toggleFoodChangeModalStateHandler();
     }
 
@@ -58,9 +58,9 @@ const Menu = () => {
       }
 
 
-    const onFoodAddModalOpenHandler = (targetFoodCategory: IFoodCategory) => {
+    const onFoodAddModalOpenHandler = async (targetFoodCategory: IFoodCategory) => {
+        await foodStore.loadFoodAvailableForUpdate(undefined, targetFoodCategory);
         toggleFoodAddModalStateHandler();
-        foodStore.loadFoodAvailableForChange(undefined, targetFoodCategory);
     }
 
     const onFoodAddedHandler = () => {

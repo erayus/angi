@@ -41,7 +41,7 @@ export default class FoodStore {
     setNewFoodToActionOnId = (id: string) => {
       this.newFoodToActionOnId = id;
     };
-    foodAvailableForChange: IFoodProjection[] = [];
+    foodAvailableForUpdate: IFoodProjection[] = [];
     error: any;
     loadingFood: boolean = false;
     isFoodAvailableForChangeLoading = false;
@@ -227,7 +227,7 @@ export default class FoodStore {
         this.saveFoodThisWeek();
     };
 
-    setLoadingFoodAvailableForChange = (state: boolean) => {
+    setLoadingFoodAvailableForUpdate = (state: boolean) => {
         this.isFoodAvailableForChangeLoading = state;
     };
     loadExistingMenu = () => {
@@ -245,36 +245,39 @@ export default class FoodStore {
         return clone(this.menuProjection);
     };
 
-    loadFoodAvailableForChange = async (
+    loadFoodAvailableForUpdate = async (
         targetFoodToChangeId?: string,
         targetFoodCategory?: IFoodCategory
     ): Promise<void> => {
-        this.setLoadingFoodAvailableForChange(true);
+        this.setLoadingFoodAvailableForUpdate(true);
 
         let allFood = await this.retrieveAllFood();
 
-        this.foodAvailableForChange = allFood
-            .filter(
-                async (eachFoodInAllFood) => {
-                    if (targetFoodToChangeId) {
-                        const targetFood = await this.getFoodForId(targetFoodToChangeId!);
+        let targetFood: IFood | null = null;
+        if (targetFoodToChangeId) {
+            targetFood = await this.getFoodForId(targetFoodToChangeId!);
+        }
 
-                        return eachFoodInAllFood.food_category === targetFood?.food_category
+        const foodUnderTargetCategory = allFood.filter(eachFoodInAllFood => {
+                    if (targetFood) {
+                        return eachFoodInAllFood.food_category === targetFood.food_category
                     } else {
                         return eachFoodInAllFood.food_category === targetFoodCategory
                     }
                 }
-            )
-            .filter(
-                (eachFoodInAllFood) =>
-                    !this.menuProjection?.some(
-                        (eachFoodInMenu) =>
-                            eachFoodInMenu.id ===
-                            eachFoodInAllFood.food_id
-                    )
-            )
-            .map((food) => this.convertFoodToFoodProjection(food));
-        this.setLoadingFoodAvailableForChange(false);
+            );
+
+        this.foodAvailableForUpdate = foodUnderTargetCategory.filter(
+            (eachFoodInAllFood) =>
+                !this.menuProjection?.some(
+                    (eachFoodInMenu) =>
+                        eachFoodInMenu.id ===
+                        eachFoodInAllFood.food_id
+                )
+        )
+        .map((food) => this.convertFoodToFoodProjection(food));
+
+        this.setLoadingFoodAvailableForUpdate(false);
     };
 
     saveFoodThisWeek = () => {

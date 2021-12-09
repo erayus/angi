@@ -18,9 +18,9 @@ const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, toggleShowHa
   const [submitBtnDisabled, setChangeBtnDisabled] = useState(true);
 
   useEffect(() => {
-    const shouldChangeBtnDisabled = foodStore.foodAvailableForChange.length === 0 || foodStore.newFoodToActionOnId === ""
+    const shouldChangeBtnDisabled = foodStore.foodAvailableForUpdate.length === 0 || foodStore.newFoodToActionOnId === ""
     setChangeBtnDisabled(shouldChangeBtnDisabled);
-  }, [foodStore.foodAvailableForChange.length, foodStore.newFoodToActionOnId]);
+  }, [foodStore.foodAvailableForUpdate.length, foodStore.newFoodToActionOnId]);
 
   const onFoodItemSelectedHandler = (id: string) => {
     foodStore.setNewFoodToActionOnId(id);
@@ -37,7 +37,7 @@ const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, toggleShowHa
           { foodStore.isFoodAvailableForChangeLoading
             ? <Loader/>
             : <FoodList
-              foodList={foodStore.foodAvailableForChange}
+              foodList={foodStore.foodAvailableForUpdate}
               enableIngredientChipsDisplay={true}
               onFoodItemSelected={onFoodItemSelectedHandler}
           />}
