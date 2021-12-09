@@ -252,7 +252,7 @@ export default class FoodStore {
         this.setLoadingFoodAvailableForUpdate(true);
 
         let allFood = await this.retrieveAllFood();
-
+        console.log('heyyy');
         let targetFood: IFood | null = null;
         if (targetFoodToChangeId) {
             targetFood = await this.getFoodForId(targetFoodToChangeId!);

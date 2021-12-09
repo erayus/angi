@@ -44,15 +44,13 @@ const Menu = () => {
     };
 
     const onFoodChangeBtnClickedHandler = async (foodId: string) => {
-        setTargetFoodToBeChangedId(foodId);
         await foodStore.loadFoodAvailableForUpdate(foodId);
-        toggleFoodChangeModalStateHandler();
+        setTargetFoodToBeChangedId(foodId);
+        setFoodChangeModalState(true);
     }
 
-    const toggleFoodChangeModalStateHandler = () => setFoodChangeModalState(!foodChangeModalState);
-
     const onFoodChangedHandler = () => {
-        toggleFoodChangeModalStateHandler();
+        setFoodChangeModalState(false);
         foodStore.changeFood(foodToBeChangedId, foodStore.newFoodToActionOnId!);
         setTargetFoodToBeChangedId(''); //Reset
       }
@@ -60,16 +58,14 @@ const Menu = () => {
 
     const onFoodAddModalOpenHandler = async (targetFoodCategory: IFoodCategory) => {
         await foodStore.loadFoodAvailableForUpdate(undefined, targetFoodCategory);
-        toggleFoodAddModalStateHandler();
+        setFoodAddModalState(true);
     }
 
     const onFoodAddedHandler = () => {
-        toggleFoodAddModalStateHandler();
+        setFoodAddModalState(false);
         foodStore.addFood(foodStore.newFoodToActionOnId!);
-        setTargetFoodToBeChangedId(''); //Reset
     }
 
-    const toggleFoodAddModalStateHandler = () => setFoodAddModalState(!foodAddModalState);
 
     const foodToDisplay = !loading && foodStore.availableFoodCategories.map(foodCategory => {
         const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
@@ -121,12 +117,11 @@ const Menu = () => {
             {!loading && !error && foodToDisplay}
             <MDBModal
                     staticBackdrop={true}
-                    show={foodChangeModalState}
-                    getOpenState={(e: any) => setFoodChangeModalState(e)} tabIndex='-1'>
+                    show={foodChangeModalState}>
                     <FoodActionModal
                         title="List Of Available Food"
                         submitBtnLabel="Change"
-                        toggleShowHandler={toggleFoodChangeModalStateHandler}
+                        onClosedHandler={() => setFoodChangeModalState(false)}
                         onSubmitHandler={onFoodChangedHandler}
                     />
             </MDBModal>
@@ -134,11 +129,11 @@ const Menu = () => {
             <MDBModal
                     staticBackdrop={true}
                     show={foodAddModalState}
-                    getOpenState={(e: any) => setFoodAddModalState(e)} tabIndex='-1'>
+                    >
                     <FoodActionModal
                         title="Food To Add List"
                         submitBtnLabel="Add"
-                        toggleShowHandler={toggleFoodAddModalStateHandler}
+                        onClosedHandler={() => setFoodAddModalState(false)}
                         onSubmitHandler={onFoodAddedHandler}
                     />
             </MDBModal>

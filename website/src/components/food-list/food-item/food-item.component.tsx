@@ -94,7 +94,7 @@ const FoodItem: React.FC<IProps> = ({
           <MDBIcon fas icon="ellipsis-h" />
         </MDBDropdownToggle>
         <MDBDropdownMenu>
-          <MDBDropdownItem style={{opacity: '0'}}>
+          <MDBDropdownItem style={{}}>
              {displayFoodChangeBtn}
           </MDBDropdownItem>
         </MDBDropdownMenu>
@@ -120,7 +120,7 @@ const FoodItem: React.FC<IProps> = ({
             {enableIngredientChipsDisplay && displayIngredientsChips}
             {enableIngredientChipsDisplay && displayNoOfExtraIngredients}
             {enableViewDetails && displayViewDetailsBtn}
-            {enableFoodChange && displaySettingsBtn}
+            {enableFoodChange && displayFoodChangeBtn}
           </MDBCardBody>
         </MDBCol>
       </MDBRow>

@@ -9,11 +9,11 @@ import styles from "./food-change-modal.module.css";
 type IProps = {
   title: string;
   submitBtnLabel: string;
-  toggleShowHandler: () => void;
+  onClosedHandler: () => void;
   onSubmitHandler: () => void;
 }
 
-const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, toggleShowHandler, onSubmitHandler }) => {
+const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, onClosedHandler, onSubmitHandler }) => {
   const { foodStore } = useStore();
   const [submitBtnDisabled, setChangeBtnDisabled] = useState(true);
 
@@ -31,7 +31,7 @@ const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, toggleShowHa
       <MDBModalContent>
         <MDBModalHeader className="text-center">
           <MDBModalTitle>{ title }</MDBModalTitle>
-          <MDBBtn className='btn-close' color='none' onClick={toggleShowHandler}></MDBBtn>
+          <MDBBtn className='btn-close' color='none' onClick={onClosedHandler}></MDBBtn>
         </MDBModalHeader>
         <MDBModalBody style={{ maxHeight: '500px', overflowY: 'scroll' }}>
           { foodStore.isFoodAvailableForChangeLoading
@@ -44,7 +44,7 @@ const FoodChangeModal: React.FC<IProps> = ({ title, submitBtnLabel, toggleShowHa
         </MDBModalBody>
 
         <MDBModalFooter>
-          <MDBBtn color='success' outline onClick={toggleShowHandler}>
+          <MDBBtn color='success' outline onClick={onClosedHandler}>
             Close
           </MDBBtn>
           <MDBBtn
