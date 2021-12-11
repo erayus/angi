@@ -66,6 +66,15 @@ const Menu = () => {
         foodStore.addFood(foodStore.newFoodToActionOnId!);
     }
 
+    const onFoodRemoveBtnClickedHandler = async (foodId: string) => {
+        const deletingFood = await foodStore.getFoodProjectionById(foodId);
+
+        if (window.confirm(`Are you sure you want to delete ${deletingFood?.name}?`)) {
+            foodStore.removeFood(foodId);
+        }
+    }
+
+
 
     const foodToDisplay = !loading && foodStore.availableFoodCategories.map(foodCategory => {
         const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
@@ -82,8 +91,9 @@ const Menu = () => {
                             key={foodCategory.category}
                             foodList={foodThisWeekUnderCategory}
                             enableViewDetails
-                            enableFoodChange
+                            enableFoodAction
                             onFoodChangeBtnClicked={onFoodChangeBtnClickedHandler}
+                            onFoodRemoveBtnClicked={onFoodRemoveBtnClickedHandler}
                         />
                         : "Loading"
                 }

@@ -3,11 +3,12 @@ import FoodItem from './food-item/food-item.component';
 import { IFoodProjection } from '../../store/food-store';
 
 export type FoodListOptionalProps = {
-  enableIngredientChipsDisplay?: boolean;
-  enableViewDetails?: boolean;
-  enableFoodChange?: boolean;
-  onFoodItemSelected?: (id: string) => void;
+  enableIngredientChipsDisplay?: boolean
+  enableViewDetails?: boolean
+  enableFoodAction?: boolean
+  onFoodItemSelected?: (id: string) => void
   onFoodChangeBtnClicked?: (foodId: string) => void
+  onFoodRemoveBtnClicked?: (foodId: string) => void
 }
 
 
@@ -33,8 +34,9 @@ const FoodList: React.FC<IProps> = (props) => {
                     ingredients={food.ingredients}
                     enableViewDetails={props.enableViewDetails}
                     onFoodItemSelected={props.onFoodItemSelected}
-                    enableFoodChange={props.enableFoodChange}
+                    enableFoodAction={props.enableFoodAction}
                     onFoodChangeBtnClicked={props.onFoodChangeBtnClicked}
+                    onFoodRemoveBtnClicked={props.onFoodRemoveBtnClicked}
                     enableIngredientChipsDisplay={props.enableIngredientChipsDisplay}
                   />
               </div>
@@ -50,7 +52,7 @@ const FoodList: React.FC<IProps> = (props) => {
 FoodList.defaultProps = {
   enableIngredientChipsDisplay: false,
   enableViewDetails: false,
-  enableFoodChange: false
+  enableFoodAction: false
 }
 
 export default FoodList;

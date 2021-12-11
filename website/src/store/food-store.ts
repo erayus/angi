@@ -454,4 +454,8 @@ export default class FoodStore {
             this.listOfCheckedIngredientIds
         );
     };
+
+    removeFood = (foodId: string) => {
+        this.menu = this.menu!.filter(food => food.food_id !== foodId);
+    }
 }
