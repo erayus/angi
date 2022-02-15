@@ -47,7 +47,7 @@ const SignUp: React.FC<IProps> = (props) => {
   )
 
   const signUpForm = (
-    <form className="border border-1 rounded-3 p-3 shadow-5" onSubmit={onSubmit}>
+    <form className="border border-1 rounded-3 p-3 shadow-5 mx-auto" style={{'maxWidth': '400px'}} onSubmit={onSubmit}>
       <h1 className="mb-4">Sign Up</h1>
 
       {formFeedbackMessage}
