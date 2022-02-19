@@ -5,6 +5,8 @@ import './header.styles.scss';
 import { NavPath } from '../../utils/nav-path';
 import { useStore } from '../../store/root-store';
 import { observer } from 'mobx-react-lite';
+import { generateStringFormatDate } from '../../utils/renewTime'
+
 const Header = () => {
     const [headerTitle, setHeaderTitle] = useState<string>();
     const [displayBackBtn, setDisplayBackBtn] = useState(false);
@@ -34,7 +36,7 @@ const Header = () => {
         }
     }, [location])
 
-    const renewDate = isAuthenticated && (<p>Renew date: {foodStore.renewDate}</p>);
+    const renewDate = isAuthenticated && (<p>Renew date: {generateStringFormatDate(userStore.renewDateTimestamp!)}</p>);
 
     return (
         <header className="header pt-2">

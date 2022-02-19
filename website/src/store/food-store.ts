@@ -5,7 +5,7 @@ import { IIngredient, IIngredientCategory, IUnit } from '../models/ingredient';
 import { ingredientTable } from '../utils/ingredientTable';
 import axiosApi from '../utils/axios-api';
 import UserStore from './user-store';
-import { isTimeToRenewFood, getRenewDate } from '../utils/renewTime';
+import { isTimeToRenewFood, generateRenewDate } from '../utils/renewTime';
 const clone = require('rfdc/default');
 
 export type IFoodProjection = {
@@ -46,9 +46,6 @@ export default class FoodStore {
     error: any;
     loadingFood: boolean = false;
     isFoodAvailableForChangeLoading = false;
-
-    renewDate: string | null = null;
-    private renewPeriod: number = 7; //TODO: let the user configure this value
 
     constructor(user: UserStore) {
         makeAutoObservable(this);
@@ -115,29 +112,10 @@ export default class FoodStore {
         return aggregateIngredients;
     }
 
-    private getRenewDate = (): string | null => {
-        if (this.renewDate !== null) {
-            return this.renewDate;
-        }
-
-        return this.userStore.getRenewDate();
-    };
-
-    private setRenewDate = (renewDate: Date) => {
-        const options: Intl.DateTimeFormatOptions = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        };
-        const todayDateFormat = renewDate.toLocaleDateString('en-AU', options);
-        this.renewDate = todayDateFormat;
-        this.userStore.saveRenewDate(todayDateFormat);
-    };
-
     initializeFoodThisWeek = async () => {
         try {
             this.loadingFood = true;
-            this.renewDate = this.getRenewDate();
+            const renewDateTimestamp = this.userStore.getRenewDate();
 
             // if (this.allFood == null) { //TODO: check if the user has menu yet
             this.loadIngredients();
@@ -146,8 +124,11 @@ export default class FoodStore {
                 this.userStore.getFoodCategoriesQuantities(); //TODO: query Dynamodb to get distinct value of Category column in the food table
             // }
 
-            if (isTimeToRenewFood(new Date().toDateString(), this.renewDate)) {
-                this.renewDate = getRenewDate(this.renewPeriod);
+            if (isTimeToRenewFood(Date.now(), renewDateTimestamp)) {
+                const newRenewDateTimestamp = generateRenewDate(
+                    this.userStore.renewPeriod
+                );
+                this.userStore.saveRenewDate(newRenewDateTimestamp);
                 this.loadNewMenu();
             } else {
                 if (this.userStore.isMenuSaved()) {
