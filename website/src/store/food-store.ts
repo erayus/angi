@@ -115,7 +115,6 @@ export default class FoodStore {
     initializeFoodThisWeek = async () => {
         try {
             this.loadingFood = true;
-            const renewDateTimestamp = this.userStore.getRenewDate();
 
             // if (this.allFood == null) { //TODO: check if the user has menu yet
             this.loadIngredients();
@@ -124,7 +123,12 @@ export default class FoodStore {
                 this.userStore.getFoodCategoriesQuantities(); //TODO: query Dynamodb to get distinct value of Category column in the food table
             // }
 
-            if (isTimeToRenewFood(Date.now(), renewDateTimestamp)) {
+            if (
+                isTimeToRenewFood(
+                    Date.now(),
+                    this.userStore.user!.renewDateTimestamp!
+                )
+            ) {
                 const newRenewDateTimestamp = generateRenewDate(
                     this.userStore.renewPeriod
                 );
