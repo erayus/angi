@@ -1,19 +1,21 @@
-export type IFood = {
-    food_id: string
-    food_name: string
-    food_category: IFoodCategory;
-    img_url: string
-    food_ingredients: IFoodIngredient[]
-}
+export type Food = {
+    foodId: string;
+    foodName: string;
+    foodCategory: FoodCategory;
+    imgUrl: string;
+    foodIngredients: IFoodIngredient[];
+    isPublic: boolean;
+};
 
 export type IFoodIngredient = {
-    id: string
-    quantity: number
-}
+    ingredientId: string;
+    ingredientQuantity: number;
+};
 
-export type IFoodCategory = "Main" | "Soup" | "Sidies";
+export type FoodCategory = 'entree' | 'main' | 'soup' | 'dessert';
+export type FoodCusine = 'vietnamese' | 'italian' | 'chinese';
 
 export type IUserFoodCategoryQuantity = {
-    category: IFoodCategory
-    quantity: number
-}
+    category: FoodCategory;
+    quantity: number;
+};

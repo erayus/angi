@@ -1,19 +1,9 @@
-import {CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
-import { IFood, IUserFoodCategoryQuantity } from "./food";
-import { ToBuyIngredient } from '../store/food-store';
+import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
 
 export type AuthUser = {
-  email: string,
-  sub: string,
-  email_verified: boolean,
-  session: CognitoUserSession,
-  current: CognitoUser
-};
-
-export type User = {
-  pk: string,
-  menu?: IFood[] | null;
-  renewDate?: string | null,
-  food_categories_quantities?: IUserFoodCategoryQuantity[] | null;
-  to_buy_list?: ToBuyIngredient[] | null,
+    email: string;
+    sub: string;
+    email_verified: boolean;
+    session: CognitoUserSession;
+    current: CognitoUser;
 };

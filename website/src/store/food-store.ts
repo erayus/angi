@@ -1,7 +1,11 @@
-import { IUserFoodCategoryQuantity } from './../models/food';
 import { makeAutoObservable, toJS } from 'mobx';
-import { IFood, IFoodCategory, IFoodIngredient } from '../models/food';
-import { IIngredient, IIngredientCategory, IUnit } from '../models/ingredient';
+import {
+    Food,
+    FoodCategory,
+    IFoodIngredient,
+    IUserFoodCategoryQuantity,
+} from '../models/Food';
+import { Ingredient, IIngredientCategory, IUnit } from '../models/Ingredient';
 import { ingredientTable } from '../utils/ingredientTable';
 import axiosApi from '../utils/axios-api';
 import UserStore from './user-store';
@@ -11,7 +15,7 @@ const clone = require('rfdc/default');
 export type IFoodProjection = {
     id: string;
     name: string;
-    category: IFoodCategory;
+    category: FoodCategory;
     imgUrl: string;
     ingredients: {
         id: string;
@@ -31,12 +35,12 @@ export type ToBuyIngredient = {
     isChecked: boolean;
 };
 export default class FoodStore {
-    private menu: IFood[] | null = null;
+    private menu: Food[] | null = null;
     private listOfCheckedIngredientIds: string[] = [];
 
     userStore: UserStore;
-    allFood: IFood[] | null = null;
-    allIngredients: IIngredient[] | null = null;
+    allFood: Food[] | null = null;
+    allIngredients: Ingredient[] | null = null;
     availableFoodCategories: IUserFoodCategoryQuantity[] = [];
     newFoodToActionOnId: string = '';
     setNewFoodToActionOnId = (id: string) => {
@@ -68,7 +72,7 @@ export default class FoodStore {
         this.menu?.forEach((food) => {
             allIngredientsThisWeek = [
                 ...allIngredientsThisWeek.slice(),
-                ...food.food_ingredients,
+                ...food.foodIngredients,
             ];
         });
 
@@ -76,32 +80,34 @@ export default class FoodStore {
             allIngredientsThisWeek.reduce(
                 (accIngredients: ToBuyIngredient[], cur: IFoodIngredient) => {
                     //check if object is already in the acc array.
-                    const curIng = this.getIngredientById(cur.id);
+                    const curIng = this.getIngredientById(cur.ingredientId);
 
                     if (curIng === undefined) {
                         throw new Error(
-                            `Can't find ingredient's details of ${cur.id}`
+                            `Can't find ingredient's details of ${cur.ingredientId}`
                         ); //TODO: log this
                     }
 
                     const index = accIngredients.findIndex(
-                        (x) => x.name === curIng!.name
+                        (x) => x.name === curIng!.ingredientName
                     );
                     if (index === -1) {
                         const toBuyIngredient = {
-                            id: cur.id,
-                            name: curIng?.name || 'No name',
-                            category: curIng?.category ?? '',
-                            quantity: Math.round(cur.quantity * 10) / 10,
+                            id: cur.ingredientId,
+                            name: curIng?.ingredientName || 'No name',
+                            category: curIng?.ingredientCategory ?? '',
+                            quantity:
+                                Math.round(cur.ingredientQuantity * 10) / 10,
                             unit: curIng?.unit || null,
                             isChecked: this.listOfCheckedIngredientIds?.some(
-                                (checkedIngId) => checkedIngId === curIng!.id
+                                (checkedIngId) =>
+                                    checkedIngId === curIng!.ingredientId
                             ),
                         };
                         accIngredients.push(toBuyIngredient);
                     } else {
                         accIngredients[index]['quantity'] +=
-                            Math.round(cur.quantity * 10) / 10;
+                            Math.round(cur.ingredientQuantity * 10) / 10;
                     }
 
                     return accIngredients;
@@ -144,7 +150,7 @@ export default class FoodStore {
         }
     };
 
-    private retrieveAllFood = async (): Promise<IFood[]> => {
+    private retrieveAllFood = async (): Promise<Food[]> => {
         try {
             if (this.allFood) {
                 return clone(this.allFood);
@@ -178,11 +184,11 @@ export default class FoodStore {
         this.userStore.resetListOfCheckedIngredientIds();
     };
 
-    updateFoodThisWeek = (newFood: IFood[], category: IFoodCategory) => {
+    updateFoodThisWeek = (newFood: Food[], category: FoodCategory) => {
         const foodThisWeekWithoutUpdatingFood =
             this.menu !== null
                 ? this.menu!.filter(
-                      (curFood) => curFood.food_category !== category
+                      (curFood) => curFood.foodCategory !== category
                   )
                 : [];
 
@@ -204,18 +210,18 @@ export default class FoodStore {
     };
 
     //TODO
-    clonedMenu = (): IFood[] => {
+    clonedMenu = (): Food[] => {
         return clone(this.menuProjection);
     };
 
     loadFoodAvailableForUpdate = async (
         targetFoodToChangeId?: string,
-        targetFoodCategory?: IFoodCategory
+        targetFoodCategory?: FoodCategory
     ): Promise<void> => {
         this.setLoadingFoodAvailableForUpdate(true);
 
         let allFood = await this.retrieveAllFood();
-        let targetFood: IFood | null = null;
+        let targetFood: Food | null = null;
         if (targetFoodToChangeId) {
             targetFood = await this.getFoodForId(targetFoodToChangeId!);
         }
@@ -223,10 +229,10 @@ export default class FoodStore {
         const foodUnderTargetCategory = allFood.filter((eachFoodInAllFood) => {
             if (targetFood) {
                 return (
-                    eachFoodInAllFood.food_category === targetFood.food_category
+                    eachFoodInAllFood.foodCategory === targetFood.foodCategory
                 );
             } else {
-                return eachFoodInAllFood.food_category === targetFoodCategory;
+                return eachFoodInAllFood.foodCategory === targetFoodCategory;
             }
         });
 
@@ -235,7 +241,7 @@ export default class FoodStore {
                 (eachFoodInAllFood) =>
                     !this.menuProjection?.some(
                         (eachFoodInMenu) =>
-                            eachFoodInMenu.id === eachFoodInAllFood.food_id
+                            eachFoodInMenu.id === eachFoodInAllFood.foodId
                     )
             )
             .map((food) => this.convertFoodToFoodProjection(food));
@@ -251,7 +257,7 @@ export default class FoodStore {
     };
 
     setQuantityForCategory = (
-        category: IFoodCategory,
+        category: FoodCategory,
         quantityToShow: number
     ) => {
         if (!quantityToShow || quantityToShow < 0) {
@@ -260,11 +266,11 @@ export default class FoodStore {
         localStorage.setItem(`${category}-quantity`, quantityToShow.toString());
     };
 
-    private getFoodForId = async (id: string): Promise<IFood> => {
+    private getFoodForId = async (id: string): Promise<Food> => {
         if (!this.allFood) {
             this.allFood = await this.retrieveAllFood();
         }
-        const result = this.allFood.find((item) => item.food_id === id);
+        const result = this.allFood.find((item) => item.foodId === id);
 
         if (!result) {
             throw new Error(`Can't find food for id: ${id}`);
@@ -316,12 +322,12 @@ export default class FoodStore {
     // };
 
     getRandomFoodForCategory = async (
-        category: IFoodCategory,
+        category: FoodCategory,
         quantityToShow: number
-    ): Promise<IFood[]> => {
+    ): Promise<Food[]> => {
         const allFood = await this.retrieveAllFood();
         let foodUnderGivenCategory = allFood.filter(
-            (food) => food.food_category === category
+            (food) => food.foodCategory === category
         );
 
         if (quantityToShow > foodUnderGivenCategory.length) {
@@ -331,7 +337,7 @@ export default class FoodStore {
             quantityToShow = foodUnderGivenCategory.length;
         }
 
-        const foodToReturn: IFood[] = [];
+        const foodToReturn: Food[] = [];
         for (let i = 0; i < quantityToShow; i++) {
             const randomIndex = Math.floor(
                 Math.random() * foodUnderGivenCategory.length
@@ -349,7 +355,7 @@ export default class FoodStore {
     changeFood = async (foodIdToBeChanged: string, foodIdToChange: string) => {
         this.menu = await Promise.all(
             this.menu!.map(async (food) => {
-                if (food.food_id === foodIdToBeChanged) {
+                if (food.foodId === foodIdToBeChanged) {
                     const food = await this.getFoodForId(foodIdToChange)!;
 
                     return food;
@@ -372,33 +378,39 @@ export default class FoodStore {
         this.newFoodToActionOnId = '';
     };
 
-    getIngredientById = (id: string): IIngredient | undefined => {
+    getIngredientById = (id: string): Ingredient | undefined => {
         if (!this.allIngredients) {
             throw new Error('No ingredients');
         }
-        return this.allIngredients!.slice().find((ing) => ing.id === id);
+        return this.allIngredients!.slice().find(
+            (ing) => ing.ingredientId === id
+        );
     };
 
-    convertFoodToFoodProjection = (food: IFood): IFoodProjection => {
+    convertFoodToFoodProjection = (food: Food): IFoodProjection => {
         let foodProjection: IFoodProjection = {
-            id: food.food_id,
-            name: food.food_name,
-            category: food.food_category,
-            imgUrl: food.img_url,
+            id: food.foodId,
+            name: food.foodName,
+            category: food.foodCategory,
+            imgUrl: food.imgUrl,
             ingredients: [],
         };
-
-        food.food_ingredients.forEach((foodIngredient) => {
-            const ingredient = this.getIngredientById(foodIngredient.id);
+        console.log(toJS(food));
+        food.foodIngredients.forEach((foodIngredient) => {
+            const ingredient = this.getIngredientById(
+                foodIngredient.ingredientId
+            );
             if (!ingredient) {
-                alert(`Can't find the ingredient!${foodIngredient.id}`);
+                alert(
+                    `Can't find the ingredient!${foodIngredient.ingredientId}`
+                );
                 return;
             }
             foodProjection.ingredients.push({
-                id: ingredient!.id,
-                name: ingredient!.name,
-                category: ingredient!.category,
-                quantity: foodIngredient.quantity,
+                id: ingredient!.ingredientId,
+                name: ingredient!.ingredientName,
+                category: ingredient!.ingredientCategory,
+                quantity: foodIngredient.ingredientQuantity,
                 unit: ingredient!.unit,
             });
         });
@@ -419,6 +431,6 @@ export default class FoodStore {
     };
 
     removeFood = (foodId: string) => {
-        this.menu = this.menu!.filter((food) => food.food_id !== foodId);
+        this.menu = this.menu!.filter((food) => food.foodId !== foodId);
     };
 }

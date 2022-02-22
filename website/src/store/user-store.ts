@@ -7,12 +7,9 @@ import {
 } from 'amazon-cognito-identity-js';
 import { makeAutoObservable } from 'mobx';
 import config from '../config';
-import {
-    IFood,
-    IFoodCategory,
-    IUserFoodCategoryQuantity,
-} from '../models/food';
-import { AuthUser, User } from '../models/User';
+import { Food, FoodCategory, IUserFoodCategoryQuantity } from '../models/Food';
+import { Menu } from '../models/Menu';
+import { AuthUser } from '../models/User';
 
 export default class UserStore {
     userLoading: boolean = true;
@@ -50,12 +47,12 @@ export default class UserStore {
 
             //Check if this is the first time the user login
             if (localStorage.getItem(this.user!.sub) == null) {
-                const user: User = {
-                    pk: this.user!.sub,
-                    menu: [],
+                const user: Menu = {
+                    menuId: this.user!.sub,
+                    food: [],
                     renewDate: null,
-                    food_categories_quantities: null,
-                    to_buy_list: null,
+                    foodCategoriesQuantities: null,
+                    toBuyList: null,
                 };
                 localStorage.setItem(this.user!.sub, JSON.stringify(user));
             }
@@ -183,13 +180,13 @@ export default class UserStore {
         });
     };
 
-    saveMenu = (menu: IFood[]): void => {
+    saveMenu = (menu: Food[]): void => {
         const user = JSON.parse(localStorage.getItem(this.userId!)!);
         user['menu'] = menu;
         localStorage.setItem(this.userId!, JSON.stringify(user));
     };
 
-    getMenu = (): IFood[] | null => {
+    getMenu = (): Food[] | null => {
         const user = JSON.parse(localStorage.getItem(this.userId!)!);
         return user['menu'];
     };
@@ -263,15 +260,15 @@ export default class UserStore {
             const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] =
                 [
                     {
-                        category: 'Main',
+                        category: 'main',
                         quantity: 7,
                     },
                     {
-                        category: 'Soup',
+                        category: 'soup',
                         quantity: 7,
                     },
                     {
-                        category: 'Sidies',
+                        category: 'dessert',
                         quantity: 4,
                     },
                 ];
@@ -285,7 +282,7 @@ export default class UserStore {
     };
 
     saveQuantityForFoodCategory = (
-        category: IFoodCategory,
+        category: FoodCategory,
         quantityToShow: number
     ) => {
         if (!quantityToShow || quantityToShow < 0) {

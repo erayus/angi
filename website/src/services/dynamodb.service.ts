@@ -1,5 +1,3 @@
-export class dynamodbService {
-  public static getAllFood() {
-
-  }
+export interface DatabaseClient {
+    // getMenu: (): Menu => {}
 }

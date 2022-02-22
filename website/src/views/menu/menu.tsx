@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from '../../store/root-store';
 import './menu.styles.scss';
-import { IFoodCategory } from '../../models/food';
+import { FoodCategory } from '../../models/Food';
 import { MDBIcon, MDBInput, MDBModal, MDBBtn } from 'mdb-react-ui-kit';
 import FoodActionModal from '../../components/food-change-modal/food-change-modal.compenent';
 import Loader from '../../components/loader/loader';
@@ -12,9 +12,9 @@ import Loader from '../../components/loader/loader';
 const Menu = () => {
     const { foodStore, userStore } = useStore();
     const { menuProjection, loadingFood: loading, error } = foodStore;
-    const [ foodChangeModalState, setFoodChangeModalState ] = useState(false);
-    const [ foodAddModalState, setFoodAddModalState ] = useState(false);
-    const [ foodToBeChangedId, setTargetFoodToBeChangedId ] = useState('');
+    const [foodChangeModalState, setFoodChangeModalState] = useState(false);
+    const [foodAddModalState, setFoodAddModalState] = useState(false);
+    const [foodToBeChangedId, setTargetFoodToBeChangedId] = useState('');
     useEffect(() => {
         return () => {
             foodStore.saveFoodThisWeek();
@@ -23,7 +23,7 @@ const Menu = () => {
     }, [foodStore, menuProjection]);
 
 
-    const onQuantityForCategoryChange = async (e: React.ChangeEvent<HTMLInputElement>, category: IFoodCategory) => {
+    const onQuantityForCategoryChange = async (e: React.ChangeEvent<HTMLInputElement>, category: FoodCategory) => {
         const newQuantity = +e.target.value;
         const minQuantityAllowed = +e.target.min;
         const maxQuantityAllowed = +e.target.max;
@@ -53,10 +53,10 @@ const Menu = () => {
         setFoodChangeModalState(false);
         foodStore.changeFood(foodToBeChangedId, foodStore.newFoodToActionOnId!);
         setTargetFoodToBeChangedId(''); //Reset
-      }
+    }
 
 
-    const onFoodAddModalOpenHandler = async (targetFoodCategory: IFoodCategory) => {
+    const onFoodAddModalOpenHandler = async (targetFoodCategory: FoodCategory) => {
         await foodStore.loadFoodAvailableForUpdate(undefined, targetFoodCategory);
         setFoodAddModalState(true);
     }
@@ -115,37 +115,37 @@ const Menu = () => {
 
     const errorView = (
         <div className='d-flex flex-column align-items-center mt-5 text-center' style={{ height: '100vh' }} >
-            <MDBIcon className='my-2' fas icon='exclamation-triangle' size='4x' style={{ color: '#FFA900'}}/>
+            <MDBIcon className='my-2' fas icon='exclamation-triangle' size='4x' style={{ color: '#FFA900' }} />
             <h4>{error}</h4>
         </div>
     )
 
     return (
         <div className="food-list-container">
-            {loading && !error && <Loader/>}
+            {loading && !error && <Loader />}
             {!loading && error && errorView}
             {!loading && !error && foodToDisplay}
             <MDBModal
-                    staticBackdrop={true}
-                    show={foodChangeModalState}>
-                    <FoodActionModal
-                        title="List Of Available Food"
-                        submitBtnLabel="Change"
-                        onClosedHandler={() => setFoodChangeModalState(false)}
-                        onSubmitHandler={onFoodChangedHandler}
-                    />
+                staticBackdrop={true}
+                show={foodChangeModalState}>
+                <FoodActionModal
+                    title="List Of Available Food"
+                    submitBtnLabel="Change"
+                    onClosedHandler={() => setFoodChangeModalState(false)}
+                    onSubmitHandler={onFoodChangedHandler}
+                />
             </MDBModal>
 
             <MDBModal
-                    staticBackdrop={true}
-                    show={foodAddModalState}
-                    >
-                    <FoodActionModal
-                        title="Food To Add List"
-                        submitBtnLabel="Add"
-                        onClosedHandler={() => setFoodAddModalState(false)}
-                        onSubmitHandler={onFoodAddedHandler}
-                    />
+                staticBackdrop={true}
+                show={foodAddModalState}
+            >
+                <FoodActionModal
+                    title="Food To Add List"
+                    submitBtnLabel="Add"
+                    onClosedHandler={() => setFoodAddModalState(false)}
+                    onSubmitHandler={onFoodAddedHandler}
+                />
             </MDBModal>
         </div>
     )

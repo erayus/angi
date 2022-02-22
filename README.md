@@ -1,78 +1,43 @@
-
-# Smart Menu
-
-## Database
-
-### **Food table**
-
-- IFood[]
-
-### **Ingredient table**
-
-- IIngredient[]
-
-### **User table**
-
-- user_id: string
-
-- menu: IFood[]
-
 ```ts
-    type IFood = {
-      food_id: string,
-      food_name: string,
-      food_category: IFoodCategory,
-      img_url: string,
-      food_ingredients: {
-        id: number,
-        category: IIngredientCategory,
-        name: string,
-        unit: IUnit,
-    }
+MySchema = {
+    version: '0.1.0',
+    format: 'onetable:1.0.0',
+    indexes: {
+        primary: {
+            hash: 'pk',
+            sort: 'sk',
+        },
+        gs1: {
+            hash: 'gs1pk',
+            sort: 'gs1sk',
+        },
+    },
+    models: {
+        Menu: {
+            pk: { value: 'menu#${userId}' },
+            sk: { value: 'menu#' },
 
+            menu: { type: String },
+        },
+        Food: {
+            pk: { value: 'food#${userId}' },
+            sk: { value: 'food#${foodId}' },
+
+            foodName: { type: String },
+            foodCategory: { type: String },
+            imgUrl: { type: String },
+            foodIngredients: { type: String },
+            isPublic: { type: BOOL },
+        },
+        Ingtedient: {
+            pk: { value: 'ingredient#${ingredientId}' },
+            sk: { value: 'ingredient#${}' },
+
+            foodName: { type: String },
+            foodCategory: { type: String },
+            imgUrl: { type: String },
+            foodIngredients: { type: String },
+        },
+    },
+};
 ```
-
-- renew_date: string
-
-- food_categories_quantities: IUserFoodCategoriesQuantities[]
-
-  ```ts
-    type IUserFoodCategoryQuantity = {
-      category: IFoodCategory
-      quantity: number
-    }
-  ```
-
-- to_buy_list : ToBuyIngredient[]
-
-## Test plan
-
-### Food This Week
-
-- Food This Week should display three categories.
-
-### To Buy List
-
-- Each ingredient should be checked when clicked on.
-
-- On page reload when user is viewing the ToBuyList page, the state of to-buy-list ingredients should be remained the same.
-
-- After ticking the ToBuyList ingredients and the user navigate to different views, on page reload => the state of to-buy-list ingredients should be remained the same.
-
-- When the the user modifies the Menu list => refresh the page => go to ToBuyList view => a new ToBuyList should be generated.
-
-## Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-- Ensure you have aws credential to the erayus account.
-- Deploy `npm run deploy`
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

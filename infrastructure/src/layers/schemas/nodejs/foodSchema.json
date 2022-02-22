@@ -1,50 +1,55 @@
 {
   "type": "object",
   "properties": {
-    "food_id": {
+    "foodId": {
       "type": "string"
     },
-    "food_name": {
+    "foodName": {
       "type": "string"
     },
-    "food_category": {
-      "$ref": "#/definitions/IFoodCategory"
+    "foodCategory": {
+      "$ref": "#/definitions/FoodCategory"
     },
-    "img_url": {
+    "imgUrl": {
       "type": "string"
     },
-    "food_ingredients": {
+    "foodIngredients": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "id": {
+          "ingredientId": {
             "type": "string"
           },
-          "quantity": {
+          "ingredientQuantity": {
             "type": "number"
           }
         },
         "required": [
-          "id",
-          "quantity"
+          "ingredientId",
+          "ingredientQuantity"
         ]
       }
+    },
+    "isPublic": {
+      "type": "boolean"
     }
   },
   "required": [
-    "food_category",
-    "food_id",
-    "food_ingredients",
-    "food_name",
-    "img_url"
+    "foodCategory",
+    "foodId",
+    "foodIngredients",
+    "foodName",
+    "imgUrl",
+    "isPublic"
   ],
   "definitions": {
-    "IFoodCategory": {
+    "FoodCategory": {
       "enum": [
-        "Main",
-        "Sidies",
-        "Soup"
+        "dessert",
+        "entree",
+        "main",
+        "soup"
       ],
       "type": "string"
     }
