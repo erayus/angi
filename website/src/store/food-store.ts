@@ -387,6 +387,7 @@ export default class FoodStore {
         );
     };
 
+    //TODO: error handling this method
     convertFoodToFoodProjection = (food: Food): IFoodProjection => {
         let foodProjection: IFoodProjection = {
             id: food.foodId,
@@ -395,7 +396,7 @@ export default class FoodStore {
             imgUrl: food.imgUrl,
             ingredients: [],
         };
-        console.log(toJS(food));
+
         food.foodIngredients.forEach((foodIngredient) => {
             const ingredient = this.getIngredientById(
                 foodIngredient.ingredientId
