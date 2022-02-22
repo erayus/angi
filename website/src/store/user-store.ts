@@ -13,9 +13,9 @@ import { AuthUser } from '../models/User';
 
 export default class UserStore {
     userLoading: boolean = true;
-    user: AuthUser | null = null;
+    auth: AuthUser | null = null;
+    user: User | null = null;
     userPool = new CognitoUserPool(config.getUserPoolConfig());
-    renewDateTimestamp: number | null = null;
     renewPeriod: number = 7; //TODO: let the user configure this value
 
     get isAuthenticated(): boolean {
@@ -34,7 +34,7 @@ export default class UserStore {
         this.userLoading = value;
     };
 
-    setUser = (user: AuthUser) => {
+    setUser = (user: User) => {
         this.user = user;
     };
 
@@ -42,9 +42,8 @@ export default class UserStore {
         try {
             this.setUserLoading(true);
 
-            const user = (await this.getAuthenticatedUser()) as AuthUser;
-            this.setUser(user);
-
+            this.auth = (await this.getAuthenticatedUser()) as AuthUser;
+            const userDataStr = localStorage.getItem(this.auth.sub);
             //Check if this is the first time the user login
             if (localStorage.getItem(this.user!.sub) == null) {
                 const user: Menu = {
@@ -54,9 +53,14 @@ export default class UserStore {
                     foodCategoriesQuantities: null,
                     toBuyList: null,
                 };
-                localStorage.setItem(this.user!.sub, JSON.stringify(user));
+                localStorage.setItem(this.user.pk, JSON.stringify(this.user));
+                this.setUserLoading(false);
+                return;
             }
-
+            this.user = {
+                ...this.auth,
+                ...JSON.parse(userDataStr),
+            };
             this.setUserLoading(false);
         } catch (e: any) {
             console.trace(e);
@@ -100,8 +104,8 @@ export default class UserStore {
 
     logout = async () => {
         return new Promise((resolve, reject) => {
-            if (this.user) {
-                this.user.current.signOut(() => {
+            if (this.auth) {
+                this.auth.current.signOut(() => {
                     this.user = null;
                     resolve('Signed out successfully!');
                 });
@@ -192,7 +196,7 @@ export default class UserStore {
     };
 
     saveRenewDate = (renewDateTimestamp: number): void => {
-        this.renewDateTimestamp = renewDateTimestamp;
+        this.user!.renewDateTimestamp = renewDateTimestamp;
         if (localStorage.getItem(this.userId!) == null) {
             const user = {
                 renewDate: renewDateTimestamp,
@@ -204,15 +208,6 @@ export default class UserStore {
         const user = JSON.parse(localStorage.getItem(this.userId!)!);
         user['renewDate'] = renewDateTimestamp;
         localStorage.setItem(this.userId!, JSON.stringify(user));
-    };
-
-    getRenewDate = (): number | null => {
-        if (this.renewDateTimestamp !== null) {
-            return this.renewDateTimestamp;
-        }
-
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        return +user['renewDate'];
     };
 
     isMenuSaved = (): boolean => {
