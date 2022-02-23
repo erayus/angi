@@ -10,36 +10,37 @@ import Loader from '../../components/loader/loader';
 
 
 const Menu = () => {
-    const { foodStore, userStore } = useStore();
+    const { foodStore } = useStore();
     const { menuProjection, loadingFood: loading, error } = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
     const [foodAddModalState, setFoodAddModalState] = useState(false);
     const [foodToBeChangedId, setTargetFoodToBeChangedId] = useState('');
     useEffect(() => {
         return () => {
-            foodStore.saveFoodThisWeek();
+            foodStore.saveMenu();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [foodStore, menuProjection]);
 
 
-    const onQuantityForCategoryChange = async (e: React.ChangeEvent<HTMLInputElement>, category: FoodCategory) => {
-        const newQuantity = +e.target.value;
-        const minQuantityAllowed = +e.target.min;
-        const maxQuantityAllowed = +e.target.max;
-        if (newQuantity > maxQuantityAllowed || newQuantity < minQuantityAllowed) {
-            //TODO: prevent the user from typing out-of-range value.
-            e.preventDefault();
-            return;
-        };
-        userStore.saveQuantityForFoodCategory(category, newQuantity);
-        const newFood = await foodStore.getRandomFoodForCategory(category, newQuantity);
-        foodStore.updateFoodThisWeek(newFood, category);
-    }
+    // const onQuantityForCategoryChange = async (e: React.ChangeEvent<HTMLInputElement>, category: FoodCategory) => {
+    //     const newQuantity = +e.target.value;
+    //     const minQuantityAllowed = +e.target.min;
+    //     const maxQuantityAllowed = +e.target.max;
+    //     if (newQuantity > maxQuantityAllowed || newQuantity < minQuantityAllowed) {
+    //         //TODO: prevent the user from typing out-of-range value.
+    //         e.preventDefault();
+    //         return;
+    //     };
+    //     foodStore.saveQuantityForFoodCategory(category, newQuantity);
+    //     const allFood = foodStore.allFood ?? foodS;
+    //     const newFood = await foodStore.getRandomFoodForCategory(allFood, category, newQuantity);
+    //     foodStore.updateFoodUnderCategory(newFood, category);
+    // }
 
     window.onbeforeunload = (event) => {
         if (!foodStore.menuProjection) {
-            foodStore.saveFoodThisWeek(); //TODO await?
+            foodStore.saveMenu(); //TODO await?
         }
     };
 
@@ -74,16 +75,14 @@ const Menu = () => {
         }
     }
 
-
-
-    const foodToDisplay = !loading && foodStore.availableFoodCategories.map(foodCategory => {
+    const foodToDisplay = !loading && foodStore.menu?.foodCategoriesQuantities?.map(foodCategory => {
         const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category} className="mb-4">
                 <div style={{ display: "flex", }}>
                     <h3 className="me-3 my-auto">{foodCategory.category}</h3>
-                    <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)} />
+                    {/* <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)} /> */}
                 </div>
                 {
                     foodThisWeekUnderCategory.length > 0 && foodThisWeekUnderCategory

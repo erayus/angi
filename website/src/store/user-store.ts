@@ -7,16 +7,13 @@ import {
 } from 'amazon-cognito-identity-js';
 import { makeAutoObservable } from 'mobx';
 import config from '../config';
-import { Food, FoodCategory, IUserFoodCategoryQuantity } from '../models/Food';
-import { Menu } from '../models/Menu';
+
 import { AuthUser } from '../models/User';
 
 export default class UserStore {
     userLoading: boolean = true;
-    auth: AuthUser | null = null;
-    user: User | null = null;
+    user: AuthUser | null = null;
     userPool = new CognitoUserPool(config.getUserPoolConfig());
-    renewPeriod: number = 7; //TODO: let the user configure this value
 
     get isAuthenticated(): boolean {
         return this.user !== null;
@@ -34,7 +31,7 @@ export default class UserStore {
         this.userLoading = value;
     };
 
-    setUser = (user: User) => {
+    setUser = (user: AuthUser) => {
         this.user = user;
     };
 
@@ -42,25 +39,25 @@ export default class UserStore {
         try {
             this.setUserLoading(true);
 
-            this.auth = (await this.getAuthenticatedUser()) as AuthUser;
-            const userDataStr = localStorage.getItem(this.auth.sub);
+            this.user = (await this.getAuthenticatedUser()) as AuthUser;
+            // const userDataStr = localStorage.getItem(this.user.sub);
             //Check if this is the first time the user login
             if (localStorage.getItem(this.user!.sub) == null) {
-                const user: Menu = {
-                    menuId: this.user!.sub,
-                    food: [],
-                    renewDate: null,
-                    foodCategoriesQuantities: null,
-                    toBuyList: null,
-                };
-                localStorage.setItem(this.user.pk, JSON.stringify(this.user));
-                this.setUserLoading(false);
-                return;
+                // const user: Menu = {
+                //     menuId: this.user!.sub,
+                //     food: [],
+                //     renewDate: null,
+                //     foodCategoriesQuantities: null,
+                //     toBuyList: null,
+                // };
+                // localStorage.setItem(this.user.pk, JSON.stringify(this.user));
+                // this.setUserLoading(false);
+                // return;
             }
-            this.user = {
-                ...this.auth,
-                ...JSON.parse(userDataStr),
-            };
+            // this.user = {
+            //     ...this.auth,
+            //     ...JSON.parse(userDataStr),
+            // };
             this.setUserLoading(false);
         } catch (e: any) {
             console.trace(e);
@@ -104,8 +101,8 @@ export default class UserStore {
 
     logout = async () => {
         return new Promise((resolve, reject) => {
-            if (this.auth) {
-                this.auth.current.signOut(() => {
+            if (this.user) {
+                this.user.current.signOut(() => {
                     this.user = null;
                     resolve('Signed out successfully!');
                 });
@@ -182,124 +179,5 @@ export default class UserStore {
                 resolve(data);
             });
         });
-    };
-
-    saveMenu = (menu: Food[]): void => {
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        user['menu'] = menu;
-        localStorage.setItem(this.userId!, JSON.stringify(user));
-    };
-
-    getMenu = (): Food[] | null => {
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        return user['menu'];
-    };
-
-    saveRenewDate = (renewDateTimestamp: number): void => {
-        this.user!.renewDateTimestamp = renewDateTimestamp;
-        if (localStorage.getItem(this.userId!) == null) {
-            const user = {
-                renewDate: renewDateTimestamp,
-            };
-            localStorage.setItem(this.userId!, JSON.stringify(user));
-            return;
-        }
-
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        user['renewDate'] = renewDateTimestamp;
-        localStorage.setItem(this.userId!, JSON.stringify(user));
-    };
-
-    isMenuSaved = (): boolean => {
-        if (localStorage.getItem(this.userId!) == null) {
-            return false;
-        }
-
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        return user['menu'] !== undefined;
-    };
-
-    resetListOfCheckedIngredientIds = (): void => {
-        this.saveListOfCheckedIngredientIds([]);
-    };
-
-    getListOfCheckedIngredientIds = (): string[] => {
-        if (localStorage.getItem(this.userId!) == null) {
-            return [];
-        }
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        return user['listOfCheckedIngredientIds'] ?? [];
-    };
-
-    saveListOfCheckedIngredientIds = (
-        listOfCheckedIngredientIds: string[]
-    ): void => {
-        if (localStorage.getItem(this.userId!) == null) {
-            const user = {
-                listOfCheckedIngredientIds: listOfCheckedIngredientIds,
-            };
-            localStorage.setItem(this.userId!, JSON.stringify(user));
-            return;
-        }
-
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-        user['listOfCheckedIngredientIds'] = listOfCheckedIngredientIds;
-        localStorage.setItem(this.userId!, JSON.stringify(user));
-    };
-
-    getFoodCategoriesQuantities = (): IUserFoodCategoryQuantity[] => {
-        const user = JSON.parse(localStorage.getItem(this.userId!)!);
-
-        if (!user['food_categories_quantities']) {
-            //TODO: constant the key
-            const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] =
-                [
-                    {
-                        category: 'main',
-                        quantity: 7,
-                    },
-                    {
-                        category: 'soup',
-                        quantity: 7,
-                    },
-                    {
-                        category: 'dessert',
-                        quantity: 4,
-                    },
-                ];
-            user['food_categories_quantities'] =
-                defaultUserFoodCategoryQuantity;
-            localStorage.setItem(this.userId!, JSON.stringify(user));
-            return defaultUserFoodCategoryQuantity;
-        }
-
-        return user['food_categories_quantities'];
-    };
-
-    saveQuantityForFoodCategory = (
-        category: FoodCategory,
-        quantityToShow: number
-    ) => {
-        if (!quantityToShow || quantityToShow < 0) {
-            return;
-        }
-
-        let user = JSON.parse(localStorage.getItem(this.userId!)!);
-
-        let categoriesQuantities = user[
-            'food_categories_quantities'
-        ] as IUserFoodCategoryQuantity[];
-        let newCategoryQuantity = categoriesQuantities.map((item) => {
-            if (item.category === category) {
-                item.quantity = quantityToShow;
-            }
-            return item;
-        });
-
-        let newUser = {
-            ...user,
-            category_quantity: newCategoryQuantity,
-        };
-        localStorage.setItem(this.userId!, JSON.stringify(newUser));
     };
 }

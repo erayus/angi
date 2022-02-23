@@ -10,6 +10,7 @@ import { ingredientTable } from '../utils/ingredientTable';
 import axiosApi from '../utils/axios-api';
 import UserStore from './user-store';
 import { isTimeToRenewFood, generateRenewDate } from '../utils/renewTime';
+import { Menu } from '../models/Menu';
 const clone = require('rfdc/default');
 
 export type IFoodProjection = {
@@ -35,13 +36,13 @@ export type ToBuyIngredient = {
     isChecked: boolean;
 };
 export default class FoodStore {
-    private menu: Food[] | null = null;
-    private listOfCheckedIngredientIds: string[] = [];
-
+    menu: Menu | null = null;
     userStore: UserStore;
+
     allFood: Food[] | null = null;
     allIngredients: Ingredient[] | null = null;
-    availableFoodCategories: IUserFoodCategoryQuantity[] = [];
+    // availableFoodCategories: IUserFoodCategoryQuantity[] = [];
+    renewPeriod: number = 7; //TODO: let the user configure this value
     newFoodToActionOnId: string = '';
     setNewFoodToActionOnId = (id: string) => {
         this.newFoodToActionOnId = id;
@@ -51,15 +52,15 @@ export default class FoodStore {
     loadingFood: boolean = false;
     isFoodAvailableForChangeLoading = false;
 
-    constructor(user: UserStore) {
+    constructor(userStore: UserStore) {
         makeAutoObservable(this);
-        this.userStore = user;
+        this.userStore = userStore;
     }
 
     get menuProjection() {
         if (this.menu) {
             return [
-                ...this.menu!.map((food) =>
+                ...this.menu.food!.map((food) =>
                     this.convertFoodToFoodProjection(food)
                 ),
             ];
@@ -69,7 +70,7 @@ export default class FoodStore {
 
     get toBuyList(): ToBuyIngredient[] {
         let allIngredientsThisWeek: IFoodIngredient[] = [];
-        this.menu?.forEach((food) => {
+        this.menu!.food!.forEach((food) => {
             allIngredientsThisWeek = [
                 ...allIngredientsThisWeek.slice(),
                 ...food.foodIngredients,
@@ -99,10 +100,11 @@ export default class FoodStore {
                             quantity:
                                 Math.round(cur.ingredientQuantity * 10) / 10,
                             unit: curIng?.unit || null,
-                            isChecked: this.listOfCheckedIngredientIds?.some(
-                                (checkedIngId) =>
-                                    checkedIngId === curIng!.ingredientId
-                            ),
+                            isChecked:
+                                this.menu!.listOfCheckedIngredientIds!.some(
+                                    (checkedIngId) =>
+                                        checkedIngId === curIng!.ingredientId
+                                ),
                         };
                         accIngredients.push(toBuyIngredient);
                     } else {
@@ -122,30 +124,24 @@ export default class FoodStore {
         try {
             this.loadingFood = true;
 
+            if (!this.isMenuSaved()) {
+                this.loadNewMenu();
+            }
+            this.menu = this.getMenu();
             // if (this.allFood == null) { //TODO: check if the user has menu yet
             this.loadIngredients();
             // this.allFood = await this.retrieveAllFood();
-            this.availableFoodCategories =
-                this.userStore.getFoodCategoriesQuantities(); //TODO: query Dynamodb to get distinct value of Category column in the food table
+            // this.availableFoodCategories = this.getFoodCategoriesQuantities(); //TODO: query Dynamodb to get distinct value of Category column in the food table
             // }
 
-            if (
-                isTimeToRenewFood(
-                    Date.now(),
-                    this.userStore.user!.renewDateTimestamp!
-                )
-            ) {
+            if (isTimeToRenewFood(Date.now(), this.menu!.renewDateTimestamp!)) {
                 const newRenewDateTimestamp = generateRenewDate(
-                    this.userStore.renewPeriod
+                    this.renewPeriod
                 );
-                this.userStore.saveRenewDate(newRenewDateTimestamp);
+                this.saveRenewDate(newRenewDateTimestamp);
                 this.loadNewMenu();
             } else {
-                if (this.userStore.isMenuSaved()) {
-                    this.loadExistingMenu();
-                } else {
-                    this.loadNewMenu();
-                }
+                this.loadExistingMenu();
             }
             this.loadingFood = false;
         } catch (e: any) {
@@ -172,46 +168,63 @@ export default class FoodStore {
     };
 
     private loadNewMenu = async () => {
-        this.resetListOfCheckedIngredients();
+        // this.resetListOfCheckedIngredients();
 
-        this.availableFoodCategories.forEach(async (foodCategory) => {
-            const newFood = await this.getRandomFoodForCategory(
+        const menuFood: Food[] = [];
+        const defaultFoodCategories = this.getFoodCategoriesQuantities();
+        this.allFood = this.allFood ?? (await this.retrieveAllFood());
+
+        defaultFoodCategories.forEach((foodCategory) => {
+            const newFood = this.getRandomFoodForCategory(
+                this.allFood!,
                 foodCategory.category,
                 foodCategory.quantity
             );
-            this.updateFoodThisWeek(newFood, foodCategory.category);
+            console.log(menuFood);
+            menuFood.push(...newFood);
+            // this.updateFoodUnderCategory(newFood, foodCategory.category);
         });
+
+        this.menu = {
+            menuId: this.userStore.userId!,
+            food: menuFood,
+            foodCategoriesQuantities: defaultFoodCategories,
+            renewDateTimestamp: generateRenewDate(this.renewPeriod),
+            toBuyList: [],
+            listOfCheckedIngredientIds: [],
+        };
+        this.saveMenu();
     };
 
     private resetListOfCheckedIngredients = () => {
-        this.listOfCheckedIngredientIds = [];
-        this.userStore.resetListOfCheckedIngredientIds();
+        this.menu!.listOfCheckedIngredientIds = [];
+        this.saveListOfCheckedIngredientIds([]);
     };
 
-    updateFoodThisWeek = (newFood: Food[], category: FoodCategory) => {
+    updateFoodUnderCategory = (newFood: Food[], category: FoodCategory) => {
         const foodThisWeekWithoutUpdatingFood =
             this.menu !== null
-                ? this.menu!.filter(
+                ? this.menu!.food!.filter(
                       (curFood) => curFood.foodCategory !== category
                   )
                 : [];
 
-        this.menu = [...foodThisWeekWithoutUpdatingFood, ...newFood];
-        this.saveFoodThisWeek();
+        this.menu!.food = [...foodThisWeekWithoutUpdatingFood, ...newFood];
+        this.saveMenu();
     };
 
     setLoadingFoodAvailableForUpdate = (state: boolean) => {
         this.isFoodAvailableForChangeLoading = state;
     };
     loadExistingMenu = () => {
-        this.menu = this.userStore.getMenu();
+        this.menu = this.getMenu();
     };
 
     //TODO: need rework after database implementing
-    loadListOfCheckedIngredientIds = () => {
-        this.listOfCheckedIngredientIds =
-            this.userStore.getListOfCheckedIngredientIds();
-    };
+    // loadListOfCheckedIngredientIds = () => {
+    //     this.menu.listOfCheckedIngredientIds =
+    //         this.getListOfCheckedIngredientIds();
+    // };
 
     //TODO
     clonedMenu = (): Food[] => {
@@ -224,21 +237,26 @@ export default class FoodStore {
     ): Promise<void> => {
         this.setLoadingFoodAvailableForUpdate(true);
 
-        let allFood = await this.retrieveAllFood();
+        this.allFood = this.allFood ?? (await this.retrieveAllFood());
         let targetFood: Food | null = null;
         if (targetFoodToChangeId) {
             targetFood = await this.getFoodForId(targetFoodToChangeId!);
         }
 
-        const foodUnderTargetCategory = allFood.filter((eachFoodInAllFood) => {
-            if (targetFood) {
-                return (
-                    eachFoodInAllFood.foodCategory === targetFood.foodCategory
-                );
-            } else {
-                return eachFoodInAllFood.foodCategory === targetFoodCategory;
+        const foodUnderTargetCategory = this.allFood.filter(
+            (eachFoodInAllFood) => {
+                if (targetFood) {
+                    return (
+                        eachFoodInAllFood.foodCategory ===
+                        targetFood.foodCategory
+                    );
+                } else {
+                    return (
+                        eachFoodInAllFood.foodCategory === targetFoodCategory
+                    );
+                }
             }
-        });
+        );
 
         this.foodAvailableForUpdate = foodUnderTargetCategory
             .filter(
@@ -251,13 +269,6 @@ export default class FoodStore {
             .map((food) => this.convertFoodToFoodProjection(food));
 
         this.setLoadingFoodAvailableForUpdate(false);
-    };
-
-    saveFoodThisWeek = () => {
-        if (!this.menu) {
-            return;
-        }
-        this.userStore.saveMenu(this.menu!);
     };
 
     setQuantityForCategory = (
@@ -325,11 +336,11 @@ export default class FoodStore {
     //   });
     // };
 
-    getRandomFoodForCategory = async (
+    getRandomFoodForCategory = (
+        allFood: Food[],
         category: FoodCategory,
         quantityToShow: number
-    ): Promise<Food[]> => {
-        const allFood = await this.retrieveAllFood();
+    ): Food[] => {
         let foodUnderGivenCategory = allFood.filter(
             (food) => food.foodCategory === category
         );
@@ -357,8 +368,8 @@ export default class FoodStore {
     // };
 
     changeFood = async (foodIdToBeChanged: string, foodIdToChange: string) => {
-        this.menu = await Promise.all(
-            this.menu!.map(async (food) => {
+        this.menu!.food = await Promise.all(
+            this.menu!.food!.map(async (food) => {
                 if (food.foodId === foodIdToBeChanged) {
                     const food = await this.getFoodForId(foodIdToChange)!;
 
@@ -378,7 +389,7 @@ export default class FoodStore {
         if (!foodToAdd) {
             throw new Error('Can not find food to add');
         }
-        this.menu = [...this.menu!, foodToAdd];
+        this.menu!.food! = [...this.menu!.food!, foodToAdd];
         this.newFoodToActionOnId = '';
     };
 
@@ -423,19 +434,163 @@ export default class FoodStore {
     };
 
     toggleIngredientState = (ingredientId: string) => {
-        const index = this.listOfCheckedIngredientIds.indexOf(ingredientId);
+        const index =
+            this.menu!.listOfCheckedIngredientIds!.indexOf(ingredientId);
         if (index >= 0) {
-            this.listOfCheckedIngredientIds.splice(index, 1);
+            this.menu!.listOfCheckedIngredientIds!.splice(index, 1);
         } else {
-            this.listOfCheckedIngredientIds.push(ingredientId);
+            this.menu!.listOfCheckedIngredientIds!.push(ingredientId);
         }
 
-        this.userStore.saveListOfCheckedIngredientIds(
-            this.listOfCheckedIngredientIds
+        this.saveListOfCheckedIngredientIds(
+            this.menu!.listOfCheckedIngredientIds!
         );
     };
 
     removeFood = (foodId: string) => {
-        this.menu = this.menu!.filter((food) => food.foodId !== foodId);
+        this.menu!.food = this.menu!.food!.filter(
+            (food) => food.foodId !== foodId
+        );
+    };
+
+    saveMenu = (): void => {
+        if (!this.menu) {
+            console.error('empty menu');
+            return;
+        }
+        let userMenu = JSON.parse(
+            localStorage.getItem(this.userStore.userId!)!
+        );
+        userMenu = this.menu;
+        localStorage.setItem(this.userStore.userId!, JSON.stringify(userMenu));
+    };
+
+    getMenu = (): Menu | null => {
+        const userMenu = JSON.parse(
+            localStorage.getItem(this.userStore.userId!)!
+        );
+        return userMenu;
+    };
+
+    saveRenewDate = (renewDateTimestamp: number): void => {
+        this.menu!.renewDateTimestamp = renewDateTimestamp;
+        if (localStorage.getItem(this.userStore.userId!) == null) {
+            const user = {
+                renewDate: renewDateTimestamp,
+            };
+            localStorage.setItem(this.userStore.userId!, JSON.stringify(user));
+            return;
+        }
+
+        const userMenu = JSON.parse(
+            localStorage.getItem(this.userStore.userId!)!
+        );
+        userMenu['renewDate'] = renewDateTimestamp;
+        localStorage.setItem(this.userStore.userId!, JSON.stringify(userMenu));
+    };
+
+    isMenuSaved = (): boolean => {
+        if (localStorage.getItem(this.userStore.userId!) == null) {
+            return false;
+        }
+
+        const userMenu = JSON.parse(
+            localStorage.getItem(this.userStore.userId!)!
+        );
+        return userMenu !== undefined;
+    };
+
+    getListOfCheckedIngredientIds = (): string[] => {
+        if (localStorage.getItem(this.userStore.userId!) == null) {
+            return [];
+        }
+        const user = JSON.parse(localStorage.getItem(this.userStore.userId!)!);
+        return user['listOfCheckedIngredientIds'] ?? [];
+    };
+
+    saveListOfCheckedIngredientIds = (
+        listOfCheckedIngredientIds: string[]
+    ): void => {
+        if (localStorage.getItem(this.userStore.userId!) == null) {
+            const userMenu = {
+                listOfCheckedIngredientIds: listOfCheckedIngredientIds,
+            };
+            localStorage.setItem(
+                this.userStore.userId!,
+                JSON.stringify(userMenu)
+            );
+            return;
+        }
+
+        const user = JSON.parse(localStorage.getItem(this.userStore.userId!)!);
+        user['listOfCheckedIngredientIds'] = listOfCheckedIngredientIds;
+        localStorage.setItem(this.userStore.userId!, JSON.stringify(user));
+    };
+
+    getFoodCategoriesQuantities = (): IUserFoodCategoryQuantity[] => {
+        const userMenu = JSON.parse(
+            localStorage.getItem(this.userStore.userId!)!
+        );
+
+        if (!userMenu || !userMenu['food_categories_quantities']) {
+            //TODO: constant the key
+            const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] =
+                [
+                    {
+                        category: 'main',
+                        quantity: 7,
+                    },
+                    {
+                        category: 'soup',
+                        quantity: 7,
+                    },
+                    {
+                        category: 'dessert',
+                        quantity: 4,
+                    },
+                ];
+            // userMenu['food_categories_quantities'] =
+            //     defaultUserFoodCategoryQuantity;
+            // localStorage.setItem(
+            //     this.userStore.userId!,
+            //     JSON.stringify(userMenu)
+            // );
+            return defaultUserFoodCategoryQuantity;
+        }
+
+        return userMenu['food_categories_quantities'];
+    };
+
+    saveQuantityForFoodCategory = (
+        category: FoodCategory,
+        quantityToShow: number
+    ) => {
+        if (!quantityToShow || quantityToShow < 0) {
+            return;
+        }
+
+        let userMenu = JSON.parse(
+            localStorage.getItem(this.userStore.userId!)!
+        );
+
+        let categoriesQuantities = userMenu[
+            'food_categories_quantities'
+        ] as IUserFoodCategoryQuantity[];
+
+        let newCategoryQuantity = categoriesQuantities.map((item) => {
+            if (item.category === category) {
+                item.quantity = quantityToShow;
+            }
+            return item;
+        });
+
+        let updatedUserMenu = {
+            ...userMenu,
+            category_quantity: newCategoryQuantity,
+        };
+        localStorage.setItem(
+            this.userStore.userId!,
+            JSON.stringify(updatedUserMenu)
+        );
     };
 }

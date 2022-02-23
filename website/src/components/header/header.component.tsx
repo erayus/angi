@@ -10,7 +10,7 @@ import { generateStringFormatDate } from '../../utils/renewTime'
 const Header = () => {
     const [headerTitle, setHeaderTitle] = useState<string>();
     const [displayBackBtn, setDisplayBackBtn] = useState(false);
-    const { userStore } = useStore();
+    const { userStore, foodStore } = useStore();
     const { isAuthenticated } = userStore;
     const location = useLocation();
     const history = useHistory();
@@ -36,7 +36,7 @@ const Header = () => {
         }
     }, [location])
 
-    const renewDate = isAuthenticated && (<p>Renew date: {generateStringFormatDate(userStore.user!.renewDateTimestamp!)}</p>);
+    const renewDate = isAuthenticated && (<p>Renew date: {generateStringFormatDate(foodStore.menu?.renewDateTimestamp!)}</p>);
 
     return (
         <header className="header pt-2">
