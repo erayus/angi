@@ -404,6 +404,7 @@ export default class FoodStore {
 
     //TODO: error handling this method
     convertFoodToFoodProjection = (food: Food): IFoodProjection => {
+        console.log(toJS(food));
         let foodProjection: IFoodProjection = {
             id: food.foodId,
             name: food.foodName,
