@@ -36,7 +36,7 @@ const Header = () => {
         }
     }, [location])
 
-    const renewDate = isAuthenticated && (<p>Renew date: {generateStringFormatDate(foodStore.menu?.renewDateTimestamp!)}</p>);
+    const renewDate = isAuthenticated && (<p>Renew date: {foodStore.menu?.renewDateTimestamp ? generateStringFormatDate(foodStore.menu?.renewDateTimestamp!) : null}</p>);
 
     return (
         <header className="header pt-2">

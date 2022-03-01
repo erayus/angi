@@ -123,16 +123,15 @@ export default class FoodStore {
     initializeFoodThisWeek = async () => {
         try {
             this.loadingFood = true;
+            this.loadIngredients(); //TODO shouldn't need this after all ingredients are added to the database
 
-            if (!this.isMenuSaved()) {
+            if (!this.userHasMenu()) {
                 this.loadNewMenu();
+                this.loadingFood = false;
+                return;
             }
+
             this.menu = this.getMenu();
-            // if (this.allFood == null) { //TODO: check if the user has menu yet
-            this.loadIngredients();
-            // this.allFood = await this.retrieveAllFood();
-            // this.availableFoodCategories = this.getFoodCategoriesQuantities(); //TODO: query Dynamodb to get distinct value of Category column in the food table
-            // }
 
             if (isTimeToRenewFood(Date.now(), this.menu!.renewDateTimestamp!)) {
                 const newRenewDateTimestamp = generateRenewDate(
@@ -146,6 +145,7 @@ export default class FoodStore {
             this.loadingFood = false;
         } catch (e: any) {
             this.loadingFood = false;
+            console.error(e);
             this.error = e.message;
         }
     };
@@ -482,7 +482,7 @@ export default class FoodStore {
         localStorage.setItem(this.userStore.userId!, JSON.stringify(userMenu));
     };
 
-    isMenuSaved = (): boolean => {
+    userHasMenu = (): boolean => {
         if (localStorage.getItem(this.userStore.userId!) == null) {
             return false;
         }

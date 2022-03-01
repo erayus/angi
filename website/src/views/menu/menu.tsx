@@ -7,6 +7,7 @@ import { FoodCategory } from '../../models/Food';
 import { MDBIcon, MDBInput, MDBModal, MDBBtn } from 'mdb-react-ui-kit';
 import FoodActionModal from '../../components/food-change-modal/food-change-modal.compenent';
 import Loader from '../../components/loader/loader';
+import startCase from 'lodash/startCase';
 
 
 const Menu = () => {
@@ -56,7 +57,6 @@ const Menu = () => {
         setTargetFoodToBeChangedId(''); //Reset
     }
 
-
     const onFoodAddModalOpenHandler = async (targetFoodCategory: FoodCategory) => {
         await foodStore.loadFoodAvailableForUpdate(undefined, targetFoodCategory);
         setFoodAddModalState(true);
@@ -80,7 +80,7 @@ const Menu = () => {
         return (
             <div key={foodCategory.category} className="mb-4">
                 <div style={{ display: "flex", }}>
-                    <h3 className="me-3 my-auto">{foodCategory.category}</h3>
+                    <h3 className="me-3 my-auto">{startCase(foodCategory.category)}</h3>
                     {/* <MDBInput label={foodThisWeekUnderCategory.length.toString()} id='formControlSm' type='number' min={1} max={6} size='sm'
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onQuantityForCategoryChange(e, foodCategory.category)} /> */}
                 </div>

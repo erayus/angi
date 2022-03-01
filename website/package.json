@@ -12,6 +12,7 @@
     "@types/react-dom": "^17.0.8",
     "amazon-cognito-identity-js": "^5.2.2",
     "axios": "^0.22.0",
+    "lodash": "4.17.21",
     "mdb-react-ui-kit": "^1.1.0",
     "mobx": "^6.3.2",
     "mobx-react-lite": "^3.2.0",
@@ -49,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.178",
     "@types/react-router-dom": "^5.1.7",
     "@types/rfdc": "^1.2.0",
     "prop-types": "^15.7.2"
