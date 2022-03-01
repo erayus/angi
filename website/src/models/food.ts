@@ -1,5 +1,5 @@
 export type Food = {
-    foodId: string;
+    id: string;
     foodName: string;
     foodCategory: FoodCategory;
     imgUrl: string;
@@ -8,7 +8,7 @@ export type Food = {
 };
 
 export type IFoodIngredient = {
-    ingredientId: string;
+    id: string;
     ingredientQuantity: number;
 };
 

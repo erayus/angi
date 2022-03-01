@@ -3,7 +3,7 @@ import { ICognitoUserPoolData } from 'amazon-cognito-identity-js';
 
 const apiBaseUrl = {
     development:
-        'https://sp0tkgqm1e.execute-api.ap-southeast-2.amazonaws.com/prod/',
+        'https://vrdrwzvt29.execute-api.ap-southeast-2.amazonaws.com/prod/',
     production:
         'https://e233e9k6f2.execute-api.ap-southeast-2.amazonaws.com/prod/',
 };

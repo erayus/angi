@@ -1,4 +1,4 @@
 export enum ApiPath {
-  IMPORT_FOOD = 'import-food',
-  GET_ALL_FOOD = 'get-all-food'
-} 
+    IMPORT_ITEM = 'import-item',
+    GET_ALL_FOOD = 'get-all-food',
+}

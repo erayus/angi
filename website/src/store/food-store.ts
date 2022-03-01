@@ -81,11 +81,11 @@ export default class FoodStore {
             allIngredientsThisWeek.reduce(
                 (accIngredients: ToBuyIngredient[], cur: IFoodIngredient) => {
                     //check if object is already in the acc array.
-                    const curIng = this.getIngredientById(cur.ingredientId);
+                    const curIng = this.getIngredientById(cur.id);
 
                     if (curIng === undefined) {
                         throw new Error(
-                            `Can't find ingredient's details of ${cur.ingredientId}`
+                            `Can't find ingredient's details of ${cur.id}`
                         ); //TODO: log this
                     }
 
@@ -94,7 +94,7 @@ export default class FoodStore {
                     );
                     if (index === -1) {
                         const toBuyIngredient = {
-                            id: cur.ingredientId,
+                            id: cur.id,
                             name: curIng?.ingredientName || 'No name',
                             category: curIng?.ingredientCategory ?? '',
                             quantity:
@@ -103,7 +103,7 @@ export default class FoodStore {
                             isChecked:
                                 this.menu!.listOfCheckedIngredientIds!.some(
                                     (checkedIngId) =>
-                                        checkedIngId === curIng!.ingredientId
+                                        checkedIngId === curIng!.id
                                 ),
                         };
                         accIngredients.push(toBuyIngredient);
@@ -263,7 +263,7 @@ export default class FoodStore {
                 (eachFoodInAllFood) =>
                     !this.menuProjection?.some(
                         (eachFoodInMenu) =>
-                            eachFoodInMenu.id === eachFoodInAllFood.foodId
+                            eachFoodInMenu.id === eachFoodInAllFood.id
                     )
             )
             .map((food) => this.convertFoodToFoodProjection(food));
@@ -285,7 +285,7 @@ export default class FoodStore {
         if (!this.allFood) {
             this.allFood = await this.retrieveAllFood();
         }
-        const result = this.allFood.find((item) => item.foodId === id);
+        const result = this.allFood.find((item) => item.id === id);
 
         if (!result) {
             throw new Error(`Can't find food for id: ${id}`);
@@ -370,7 +370,7 @@ export default class FoodStore {
     changeFood = async (foodIdToBeChanged: string, foodIdToChange: string) => {
         this.menu!.food = await Promise.all(
             this.menu!.food!.map(async (food) => {
-                if (food.foodId === foodIdToBeChanged) {
+                if (food.id === foodIdToBeChanged) {
                     const food = await this.getFoodForId(foodIdToChange)!;
 
                     return food;
@@ -397,16 +397,14 @@ export default class FoodStore {
         if (!this.allIngredients) {
             throw new Error('No ingredients');
         }
-        return this.allIngredients!.slice().find(
-            (ing) => ing.ingredientId === id
-        );
+        return this.allIngredients!.slice().find((ing) => ing.id === id);
     };
 
     //TODO: error handling this method
     convertFoodToFoodProjection = (food: Food): IFoodProjection => {
         console.log(toJS(food));
         let foodProjection: IFoodProjection = {
-            id: food.foodId,
+            id: food.id,
             name: food.foodName,
             category: food.foodCategory,
             imgUrl: food.imgUrl,
@@ -414,17 +412,13 @@ export default class FoodStore {
         };
 
         food.foodIngredients.forEach((foodIngredient) => {
-            const ingredient = this.getIngredientById(
-                foodIngredient.ingredientId
-            );
+            const ingredient = this.getIngredientById(foodIngredient.id);
             if (!ingredient) {
-                alert(
-                    `Can't find the ingredient!${foodIngredient.ingredientId}`
-                );
+                alert(`Can't find the ingredient!${foodIngredient.id}`);
                 return;
             }
             foodProjection.ingredients.push({
-                id: ingredient!.ingredientId,
+                id: ingredient!.id,
                 name: ingredient!.ingredientName,
                 category: ingredient!.ingredientCategory,
                 quantity: foodIngredient.ingredientQuantity,
@@ -449,9 +443,7 @@ export default class FoodStore {
     };
 
     removeFood = (foodId: string) => {
-        this.menu!.food = this.menu!.food!.filter(
-            (food) => food.foodId !== foodId
-        );
+        this.menu!.food = this.menu!.food!.filter((food) => food.id !== foodId);
     };
 
     saveMenu = (): void => {

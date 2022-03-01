@@ -1,5 +1,5 @@
 export type Ingredient = {
-    ingredientId: string;
+    id: string;
     ingredientCategory: IIngredientCategory;
     ingredientName: string;
     unit: IUnit;

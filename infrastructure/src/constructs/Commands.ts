@@ -18,9 +18,9 @@ export default class Commnads extends cdk.Construct {
         const tableName = cdk.Fn.importValue(
             NameGenerator.generateConstructName(scope, 'table-name')
         );
-        const importedFoodTable = dynamodb.Table.fromTableName(
+        const importedTable = dynamodb.Table.fromTableName(
             this,
-            'Imported-Food-Table',
+            'Imported-Table',
             tableName
         );
 
@@ -56,7 +56,7 @@ export default class Commnads extends cdk.Construct {
                 // file to use as entry point for our Lambda function
                 entry: './src/lambda/get-all-food/get-all-food.ts',
                 environment: {
-                    TABLE_NAME: importedFoodTable.tableName,
+                    TABLE_NAME: importedTable.tableName,
                     ENVIRONMENT: ConfigProvider.Context(this).Environment,
                 },
                 bundling: {
@@ -66,23 +66,23 @@ export default class Commnads extends cdk.Construct {
                 layers: [schemasLayer, sharedLayer],
             }
         );
-        importedFoodTable.grantReadData(getAllFoodFunc);
+        importedTable.grantReadData(getAllFoodFunc);
 
-        const importFoodFunc = new lambdaNode.NodejsFunction(
+        const importItemFunc = new lambdaNode.NodejsFunction(
             this,
-            'Import-Food-Function',
+            'Import-Item-Function',
             {
                 functionName: NameGenerator.generateConstructName(
                     scope,
-                    'import-food-function'
+                    'import-item-function'
                 ),
                 runtime: lambda.Runtime.NODEJS_12_X,
                 // name of the exported function
-                handler: 'importFoodHandler',
+                handler: 'importItemHandler',
                 // file to use as entry point for our Lambda function
-                entry: __dirname + '/../lambda/import-food/import-food.ts',
+                entry: __dirname + '/../lambda/import-item/import-item.ts',
                 environment: {
-                    TABLE_NAME: importedFoodTable.tableName,
+                    TABLE_NAME: importedTable.tableName,
                     PARTITION_KEY: tablePartitionKey,
                 },
                 bundling: {
@@ -92,7 +92,7 @@ export default class Commnads extends cdk.Construct {
                 layers: [schemasLayer],
             }
         );
-        importedFoodTable.grantReadWriteData(importFoodFunc);
+        importedTable.grantReadWriteData(importItemFunc);
 
         const api = new apigateway.RestApi(this, `Api`, {
             restApiName: NameGenerator.generateConstructName(
@@ -101,12 +101,12 @@ export default class Commnads extends cdk.Construct {
             ),
         });
 
-        const importFoodApi = api.root.addResource(ApiPath.IMPORT_FOOD);
+        const importItemApi = api.root.addResource(ApiPath.IMPORT_ITEM);
         const importFoodIntegration = new apigateway.LambdaIntegration(
-            importFoodFunc
+            importItemFunc
         );
-        importFoodApi.addMethod('POST', importFoodIntegration);
-        addCorsOptions(importFoodApi);
+        importItemApi.addMethod('POST', importFoodIntegration);
+        addCorsOptions(importItemApi);
 
         const getAllFoodApi = api.root.addResource(ApiPath.GET_ALL_FOOD);
         const getAllFoodIntegration = new apigateway.LambdaIntegration(

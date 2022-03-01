@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "payloadType": {
+      "$ref": "#/definitions/RequestItemType"
+    },
+    "payloadBody": {}
+  },
+  "required": [
+    "payloadBody",
+    "payloadType"
+  ],
+  "definitions": {
+    "RequestItemType": {
+      "enum": [
+        "food",
+        "ingredient",
+        "requestPayload"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

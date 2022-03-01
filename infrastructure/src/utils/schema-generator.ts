@@ -1,30 +1,60 @@
 import { resolve } from 'path';
 import * as TJS from 'typescript-json-schema';
 import * as fs from 'fs';
+type TypeRecords = {
+    fileName: string;
+    typeName: string;
+    exportSchemaName: string;
+}[];
 
-(async () => {
-    // optionally pass argument to schema generator
+const generateSchema = async (
+    fileName: string,
+    typeName: string,
+    exportSchemaName: string
+) => {
     const settings: TJS.PartialArgs = {
         required: true,
     };
-
+    const basePathToModels = '../website/src/models';
     // optionally pass ts compiler options
     const compilerOptions: TJS.CompilerOptions = {
         strictNullChecks: true,
     };
 
-    // as this function is called by package.json, the path is relative to infrastructure folder
-    const basePathToModels = '../website/src/models';
     const program = TJS.getProgramFromFiles(
-        [resolve(basePathToModels, 'food.ts')],
+        [resolve(basePathToModels, fileName)],
         compilerOptions
     );
 
     const basePathToSchemasLayer = './src/layers/schemas/nodejs/';
-    const foodSchema = await TJS.generateSchema(program, 'Food', settings);
+    const foodSchema = await TJS.generateSchema(program, typeName, settings);
     const foodSchemaString = JSON.stringify(foodSchema, null, 2);
     await fs.writeFileSync(
-        resolve(basePathToSchemasLayer, 'foodSchema.json'),
+        resolve(basePathToSchemasLayer, `${exportSchemaName}.json`),
         foodSchemaString
     );
+};
+
+(async () => {
+    const interfaceRecords: TypeRecords = [
+        {
+            fileName: 'Food.ts',
+            typeName: 'Food',
+            exportSchemaName: 'foodSchema',
+        },
+        {
+            fileName: 'RequestPayload.ts',
+            typeName: 'RequestPayload',
+            exportSchemaName: 'requestPayloadSchema',
+        },
+    ];
+
+    for (let record of interfaceRecords) {
+        await generateSchema(
+            record.fileName,
+            record.typeName,
+            record.exportSchemaName
+        );
+    }
+    // optionally pass argument to schema generator
 })();

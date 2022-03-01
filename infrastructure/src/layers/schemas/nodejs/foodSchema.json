@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "foodId": {
+    "id": {
       "type": "string"
     },
     "foodName": {
@@ -18,7 +18,7 @@
       "items": {
         "type": "object",
         "properties": {
-          "ingredientId": {
+          "id": {
             "type": "string"
           },
           "ingredientQuantity": {
@@ -26,7 +26,7 @@
           }
         },
         "required": [
-          "ingredientId",
+          "id",
           "ingredientQuantity"
         ]
       }
@@ -37,9 +37,9 @@
   },
   "required": [
     "foodCategory",
-    "foodId",
     "foodIngredients",
     "foodName",
+    "id",
     "imgUrl",
     "isPublic"
   ],
