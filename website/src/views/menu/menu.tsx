@@ -4,7 +4,7 @@ import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from '../../store/root-store';
 import './menu.styles.scss';
 import { FoodCategory } from '../../models/Food';
-import { MDBIcon, MDBInput, MDBModal, MDBBtn } from 'mdb-react-ui-kit';
+import { MDBIcon, MDBModal, MDBBtn } from 'mdb-react-ui-kit';
 import FoodActionModal from '../../components/food-change-modal/food-change-modal.compenent';
 import Loader from '../../components/loader/loader';
 import startCase from 'lodash/startCase';

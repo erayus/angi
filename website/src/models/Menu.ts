@@ -3,9 +3,9 @@ import { Food, IUserFoodCategoryQuantity } from './Food';
 
 export type Menu = {
     menuId: string;
-    food?: Food[] | null;
-    renewDateTimestamp?: number | null;
-    foodCategoriesQuantities?: IUserFoodCategoryQuantity[] | null;
-    toBuyList?: ToBuyIngredient[] | null;
-    listOfCheckedIngredientIds?: string[];
+    food: Food[];
+    renewDateTimestamp: number;
+    foodCategoriesQuantities: IUserFoodCategoryQuantity[];
+    toBuyList: ToBuyIngredient[];
+    listOfCheckedIngredientIds: string[];
 };

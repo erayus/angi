@@ -41,7 +41,6 @@ export default class FoodStore {
 
     allFood: Food[] | null = null;
     allIngredients: Ingredient[] | null = null;
-    // availableFoodCategories: IUserFoodCategoryQuantity[] = [];
     renewPeriod: number = 7; //TODO: let the user configure this value
     newFoodToActionOnId: string = '';
     setNewFoodToActionOnId = (id: string) => {
@@ -168,8 +167,6 @@ export default class FoodStore {
     };
 
     private loadNewMenu = async () => {
-        // this.resetListOfCheckedIngredients();
-
         const menuFood: Food[] = [];
         const defaultFoodCategories = this.getFoodCategoriesQuantities();
         this.allFood = this.allFood ?? (await this.retrieveAllFood());
@@ -180,9 +177,7 @@ export default class FoodStore {
                 foodCategory.category,
                 foodCategory.quantity
             );
-            console.log(menuFood);
             menuFood.push(...newFood);
-            // this.updateFoodUnderCategory(newFood, foodCategory.category);
         });
 
         this.menu = {
@@ -402,7 +397,6 @@ export default class FoodStore {
 
     //TODO: error handling this method
     convertFoodToFoodProjection = (food: Food): IFoodProjection => {
-        console.log(toJS(food));
         let foodProjection: IFoodProjection = {
             id: food.id,
             name: food.foodName,
@@ -542,12 +536,6 @@ export default class FoodStore {
                         quantity: 4,
                     },
                 ];
-            // userMenu['food_categories_quantities'] =
-            //     defaultUserFoodCategoryQuantity;
-            // localStorage.setItem(
-            //     this.userStore.userId!,
-            //     JSON.stringify(userMenu)
-            // );
             return defaultUserFoodCategoryQuantity;
         }
 
