@@ -3,6 +3,7 @@
     "baseUrl": "./",
     "paths": {
       "/opt/nodejs/foodSchema.json": ["../../layers/schemas/nodejs/foodSchema.json"],
+      "/opt/nodejs/ingredientSchema.json": ["../../layers/schemas/nodejs/ingredientSchema.json"],
     },
     /* Basic Options */
     "incremental": true,                   /* Enable incremental compilation */

@@ -17,12 +17,12 @@ export type IFoodProjection = {
     id: string;
     name: string;
     category: FoodCategory;
-    imgUrl: string;
+    imgUrl?: string;
     ingredients: {
         id: string;
         category: IIngredientCategory;
         name: string;
-        unit: IUnit;
+        ingredientUnit?: IUnit;
         quantity: number;
     }[];
 };
@@ -32,7 +32,7 @@ export type ToBuyIngredient = {
     name: string;
     category: IIngredientCategory;
     quantity: number;
-    unit: IUnit;
+    ingredientUnit: IUnit;
     isChecked: boolean;
 };
 export default class FoodStore {
@@ -94,11 +94,11 @@ export default class FoodStore {
                     if (index === -1) {
                         const toBuyIngredient = {
                             id: cur.id,
-                            name: curIng?.ingredientName || 'No name',
+                            name: curIng?.ingredientName ?? 'No name',
                             category: curIng?.ingredientCategory ?? '',
                             quantity:
                                 Math.round(cur.ingredientQuantity * 10) / 10,
-                            unit: curIng?.unit || null,
+                            ingredientUnit: curIng?.ingredientUnit ?? '',
                             isChecked:
                                 this.menu!.listOfCheckedIngredientIds!.some(
                                     (checkedIngId) =>
@@ -401,7 +401,7 @@ export default class FoodStore {
             id: food.id,
             name: food.foodName,
             category: food.foodCategory,
-            imgUrl: food.imgUrl,
+            imgUrl: food.foodImgUrl,
             ingredients: [],
         };
 
@@ -416,7 +416,7 @@ export default class FoodStore {
                 name: ingredient!.ingredientName,
                 category: ingredient!.ingredientCategory,
                 quantity: foodIngredient.ingredientQuantity,
-                unit: ingredient!.unit,
+                ingredientUnit: ingredient!.ingredientUnit,
             });
         });
         return foodProjection;

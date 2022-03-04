@@ -2,7 +2,8 @@ export type Food = {
     id: string;
     foodName: string;
     foodCategory: FoodCategory;
-    imgUrl: string;
+    foodImgUrl?: string;
+    foodDescription?: string;
     foodIngredients: IFoodIngredient[];
     isPublic: boolean;
 };

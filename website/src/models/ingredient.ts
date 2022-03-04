@@ -1,8 +1,10 @@
 export type Ingredient = {
     id: string;
-    ingredientCategory: IIngredientCategory;
     ingredientName: string;
-    unit: IUnit;
+    ingredientCategory: IIngredientCategory;
+    ingredientImgUrl?: string;
+    ingredientDescription?: string;
+    ingredientUnit?: IUnit;
 };
 
 export type IIngredientCategory =
@@ -31,4 +33,4 @@ export type IUnit =
     | 'chai'
     | 'bông'
     | 'hộp'
-    | null;
+    | '';

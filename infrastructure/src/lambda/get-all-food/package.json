@@ -1,5 +1,5 @@
 {
-  "name": "import-food",
+  "name": "get-all-item",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",

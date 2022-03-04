@@ -10,7 +10,10 @@
     "foodCategory": {
       "$ref": "#/definitions/FoodCategory"
     },
-    "imgUrl": {
+    "foodImgUrl": {
+      "type": "string"
+    },
+    "foodDescription": {
       "type": "string"
     },
     "foodIngredients": {
@@ -40,7 +43,6 @@
     "foodIngredients",
     "foodName",
     "id",
-    "imgUrl",
     "isPublic"
   ],
   "definitions": {

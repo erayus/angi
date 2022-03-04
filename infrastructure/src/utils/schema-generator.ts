@@ -43,9 +43,9 @@ const generateSchema = async (
             exportSchemaName: 'foodSchema',
         },
         {
-            fileName: 'RequestPayload.ts',
-            typeName: 'RequestPayload',
-            exportSchemaName: 'requestPayloadSchema',
+            fileName: 'Ingredient.ts',
+            typeName: 'Ingredient',
+            exportSchemaName: 'ingredientSchema',
         },
     ];
 
