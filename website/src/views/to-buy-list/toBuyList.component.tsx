@@ -24,7 +24,7 @@ const ToBuyList: React.FC = () => {
                             onClick={() => foodStore.toggleIngredientState(ingredient.id)}
                         >
                             <MDBCheckbox style={{ width: '1.5rem', height: '1.5rem', padding: '0.2rem' }} label={ingredient.name} checked={ingredient.isChecked} onChange={() => { }} />
-                            <MDBBadge pill className="quantityUnit" >{ingredient.quantity} {ingredient.unit}</MDBBadge>
+                            <MDBBadge pill className="quantityUnit" >{ingredient.quantity} {ingredient.ingredientUnit}</MDBBadge>
                         </MDBListGroupItem>
                     ))
                     : "No food generated for this week yet."

@@ -4,6 +4,8 @@ import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as lambdaNode from '@aws-cdk/aws-lambda-nodejs';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import * as iam from '@aws-cdk/aws-iam';
+import * as s3 from '@aws-cdk/aws-s3';
 
 import { ConfigProvider } from '../utils/config-provider';
 import { NameGenerator } from '../utils/name-generator';
@@ -94,6 +96,49 @@ export default class Commnads extends cdk.Construct {
         );
         importedTable.grantReadWriteData(importItemFunc);
 
+        let imgBucketName = cdk.Fn.importValue(
+            NameGenerator.generateConstructName(
+                scope,
+                'image-bucket-name-output'
+            )
+        );
+        const getPresignedUrlFunc = new lambdaNode.NodejsFunction(
+            this,
+            'Get-Presigned-Url-Function',
+            {
+                functionName: NameGenerator.generateConstructName(
+                    scope,
+                    'get-presigned-url-function'
+                ),
+                runtime: lambda.Runtime.NODEJS_12_X,
+                // name of the exported function
+                handler: 'getPresignedUrlHandler',
+                // file to use as entry point for our Lambda function
+                entry:
+                    __dirname +
+                    '/../lambda/get-presigned-url/get-presigned-url.ts',
+                environment: {
+                    S3_BUCKET_NAME: imgBucketName,
+                },
+                bundling: {
+                    minify: false,
+                    externalModules: ['aws-sdk'],
+                },
+            }
+        );
+
+        let importedImageBucket = s3.Bucket.fromBucketName(
+            scope,
+            'Imported-Img-Bucket-Name',
+            imgBucketName
+        );
+        let lambdaS3PolicyStatement = new iam.PolicyStatement();
+        lambdaS3PolicyStatement.addActions('s3:PutObject', 's3:GetObject');
+        lambdaS3PolicyStatement.addResources(
+            importedImageBucket.bucketArn + '/*'
+        );
+        getPresignedUrlFunc.addToRolePolicy(lambdaS3PolicyStatement);
+
         const api = new apigateway.RestApi(this, `Api`, {
             restApiName: NameGenerator.generateConstructName(
                 scope,
@@ -101,23 +146,30 @@ export default class Commnads extends cdk.Construct {
             ),
         });
 
-        const importItemApi = api.root.addResource(ApiPath.IMPORT_ITEM);
+        const importItemApiEndpoint = api.root.addResource(ApiPath.IMPORT_ITEM);
         const importFoodIntegration = new apigateway.LambdaIntegration(
             importItemFunc
         );
-        importItemApi.addMethod('POST', importFoodIntegration);
-        addCorsOptions(importItemApi);
+        importItemApiEndpoint.addMethod('POST', importFoodIntegration);
+        addCorsOptions(importItemApiEndpoint);
 
-        const getAllFoodApi = api.root.addResource(ApiPath.GET_ALL_FOOD);
+        const getAllFoodApiEndpoint = api.root.addResource(
+            ApiPath.GET_ALL_FOOD
+        );
         const getAllFoodIntegration = new apigateway.LambdaIntegration(
             getAllFoodFunc
         );
-        getAllFoodApi.addMethod('GET', getAllFoodIntegration);
-        addCorsOptions(getAllFoodApi);
+        getAllFoodApiEndpoint.addMethod('GET', getAllFoodIntegration);
+        addCorsOptions(getAllFoodApiEndpoint);
 
-        // const singleItem = cars.addResource('{id}');
-        // const getOneIntegration = new apigateway.LambdaIntegration(getOneLambda);
-        // singleItem.addMethod('GET', getOneIntegration);
+        const getPresignedUrlApiEndpoint = api.root.addResource(
+            ApiPath.GET_PRESIGNED_URL
+        );
+        const getPresignedUrlntegration = new apigateway.LambdaIntegration(
+            getPresignedUrlFunc
+        );
+        getPresignedUrlApiEndpoint.addMethod('GET', getPresignedUrlntegration);
+        addCorsOptions(getPresignedUrlApiEndpoint);
 
         // const updateOneIntegration = new apigateway.LambdaIntegration(updateOne);
         // singleItem.addMethod('PATCH', updateOneIntegration);

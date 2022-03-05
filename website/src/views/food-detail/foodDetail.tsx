@@ -25,36 +25,36 @@ const FoodDetail: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     useEffect(() => {
         async function fetchData() {
-          // You can await here
-          const targetFood = await foodStore.getFoodProjectionById(targetFoodId);
-          setTargetFood(targetFood);
-          // ...
+            // You can await here
+            const targetFood = await foodStore.getFoodProjectionById(targetFoodId);
+            setTargetFood(targetFood);
+            // ...
         }
         fetchData();
-      }, []);
+    }, []);
 
-      const displayFoodDetails = (
+    const displayFoodDetails = (
         <div className="p-3">
-        <h3 className="text-center">{targetFood?.name}'s ingredients</h3>
-        <img
-            src={targetFood?.imgUrl}
-            className='figure-img img-fluid rounded shadow-3 mb-3'
-            alt='Pic of Food'
-        />
-        <MDBListGroup>
-            {targetFood ? targetFood.ingredients.map(ing => (
-                <MDBListGroupItem key={ing.id} className='d-flex justify-content-between align-items-center'>
-                    {ing.name}
-                    <MDBBadge pill color="none"  style={{backgroundColor: colors.primary }}>{Math.round(ing.quantity * 10) / 10} {ing.unit}</MDBBadge>
-                </MDBListGroupItem>
-            )) : "No ingredients found for this food."
-            }
-        </MDBListGroup>
-    </div>
-      )
+            <h3 className="text-center">{targetFood?.name}'s ingredients</h3>
+            <img
+                src={targetFood?.imgUrl}
+                className='figure-img img-fluid rounded shadow-3 mb-3'
+                alt='Pic of Food'
+            />
+            <MDBListGroup>
+                {targetFood ? targetFood.ingredients.map(ing => (
+                    <MDBListGroupItem key={ing.id} className='d-flex justify-content-between align-items-center'>
+                        {ing.name}
+                        <MDBBadge pill color="none" style={{ backgroundColor: colors.primary }}>{Math.round(ing.quantity * 10) / 10} {ing.ingredientUnit}</MDBBadge>
+                    </MDBListGroupItem>
+                )) : "No ingredients found for this food."
+                }
+            </MDBListGroup>
+        </div>
+    )
 
     return (
-        !loadingFood ? displayFoodDetails : <Loader/>
+        !loadingFood ? displayFoodDetails : <Loader />
     )
 }
 
