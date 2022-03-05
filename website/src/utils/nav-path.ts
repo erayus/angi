@@ -3,13 +3,14 @@ export enum NavPath {
     ToBuyList = 'to-buy-list',
     FoodDetails = 'food-details',
     Settings = 'settings',
+    FoodManage = 'food-manage',
     SignUp = 'signup',
-    Login = 'login'
+    Login = 'login',
 }
 
-export type NavItem  = {
-    path: string,
-    headerTitle: string,
-    navFooterIcon: string,
-    showOnNavFooter: boolean,
-}
+export type NavItem = {
+    path: string;
+    headerTitle: string;
+    navFooterIcon: string;
+    showOnNavFooter: boolean;
+};

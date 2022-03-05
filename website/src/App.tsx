@@ -13,6 +13,7 @@ import { useStore } from './store/root-store';
 import SignUp from './components/sign-up/sign-up.component';
 import Login from './components/log-in/log-in.component';
 import Loader from './components/loader/loader';
+import FoodManage from './views/food-manage/food-manage';
 
 const App: React.FC = () => {
     const { foodStore, userStore } = useStore();
@@ -67,6 +68,9 @@ const App: React.FC = () => {
                     <Route
                         path={`/${NavPath.Settings}`}
                         render={props => isAuthenticated ? <Settings /> : getRedirectToLogin(props)} />
+                    <Route
+                        path={`/${NavPath.FoodManage}`}
+                        render={props => isAuthenticated ? <FoodManage /> : getRedirectToLogin(props)} />
                     <Route
                         exact
                         path={'/' + NavPath.SignUp}

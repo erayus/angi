@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react';
 import { MDBBtn, MDBContainer } from 'mdb-react-ui-kit'
 import { useHistory } from 'react-router-dom';
 import { useStore } from '../../store/root-store';
@@ -22,13 +23,21 @@ const Settings = () => {
                 }}>
                 Refresh
             </MDBBtn> */}
-            {userStore.isAuthenticated &&
+
+            <Button colorScheme={'green'} size="lg" className='my-2 w-100'
+                onClick={() => history.replace(NavPath.FoodManage)
+                }>
+                Manage Food Storage
+            </Button>
+
+            {
+                userStore.isAuthenticated &&
                 <MDBBtn rounded size="lg" className='my-2 w-100' color='danger'
                     onClick={logOutHandler}>
                     Logout
                 </MDBBtn>
             }
-        </MDBContainer>
+        </MDBContainer >
     )
 }
 

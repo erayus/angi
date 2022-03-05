@@ -6,12 +6,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { store, StoreContext } from './store/root-store';
+import { ChakraProvider, CSSReset } from '@chakra-ui/react';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <StoreContext.Provider value={store}>
-        <App />
+        <ChakraProvider>
+          <CSSReset />
+          <App />
+        </ChakraProvider>
       </StoreContext.Provider>
     </BrowserRouter>
   </React.StrictMode>,
