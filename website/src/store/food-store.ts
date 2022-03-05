@@ -170,7 +170,7 @@ export default class FoodStore {
         const menuFood: Food[] = [];
         const defaultFoodCategories = this.getFoodCategoriesQuantities();
         this.allFood = this.allFood ?? (await this.retrieveAllFood());
-
+        console.log(toJS(this.allFood));
         defaultFoodCategories.forEach((foodCategory) => {
             const newFood = this.getRandomFoodForCategory(
                 this.allFood!,
@@ -179,6 +179,7 @@ export default class FoodStore {
             );
             menuFood.push(...newFood);
         });
+        console.log({ menuFood });
 
         this.menu = {
             menuId: this.userStore.userId!,
@@ -407,8 +408,9 @@ export default class FoodStore {
 
         food.foodIngredients.forEach((foodIngredient) => {
             const ingredient = this.getIngredientById(foodIngredient.id);
+
             if (!ingredient) {
-                alert(`Can't find the ingredient!${foodIngredient.id}`);
+                // alert(`Can't find the ingredient! ${foodIngredient.id}`);
                 return;
             }
             foodProjection.ingredients.push({
@@ -477,14 +479,16 @@ export default class FoodStore {
     };
 
     userHasMenu = (): boolean => {
-        if (localStorage.getItem(this.userStore.userId!) == null) {
+        const userMenu = localStorage.getItem(this.userStore.userId!);
+
+        if (!userMenu) {
             return false;
         }
 
-        const userMenu = JSON.parse(
-            localStorage.getItem(this.userStore.userId!)!
-        );
-        return userMenu !== undefined;
+        if (JSON.parse(userMenu)['food'].length === 0) {
+            return false;
+        }
+        return true;
     };
 
     getListOfCheckedIngredientIds = (): string[] => {
@@ -518,28 +522,26 @@ export default class FoodStore {
         const userMenu = JSON.parse(
             localStorage.getItem(this.userStore.userId!)!
         );
-
-        if (!userMenu || !userMenu['food_categories_quantities']) {
-            //TODO: constant the key
-            const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] =
-                [
-                    {
-                        category: 'main',
-                        quantity: 7,
-                    },
-                    {
-                        category: 'soup',
-                        quantity: 7,
-                    },
-                    {
-                        category: 'dessert',
-                        quantity: 4,
-                    },
-                ];
-            return defaultUserFoodCategoryQuantity;
+        if (userMenu && userMenu['food_categories_quantities']) {
+            return userMenu['food_categories_quantities'];
         }
 
-        return userMenu['food_categories_quantities'];
+        //TODO: constant the key
+        const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] = [
+            {
+                category: 'main',
+                quantity: 7,
+            },
+            {
+                category: 'soup',
+                quantity: 7,
+            },
+            {
+                category: 'dessert',
+                quantity: 4,
+            },
+        ];
+        return defaultUserFoodCategoryQuantity;
     };
 
     saveQuantityForFoodCategory = (

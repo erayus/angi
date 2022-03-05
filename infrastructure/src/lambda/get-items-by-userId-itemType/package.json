@@ -1,5 +1,5 @@
 {
-  "name": "get-all-item",
+  "name": "get-items-by-userid-itemtype",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",

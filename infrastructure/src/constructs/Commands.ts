@@ -44,19 +44,19 @@ export default class Commnads extends cdk.Construct {
             description: 'Shared files',
         });
 
-        const getAllFoodFunc = new lambdaNode.NodejsFunction(
+        const getItemsByUserIdItemTypeFunc = new lambdaNode.NodejsFunction(
             this,
-            'Get-All-Food-Function',
+            'Get-Items-By-UserId-ItemType-Function',
             {
                 functionName: NameGenerator.generateConstructName(
                     scope,
-                    'get-all-food-function'
+                    'get-items-by-userId-itemType-function'
                 ),
                 runtime: lambda.Runtime.NODEJS_12_X,
                 // name of the exported function
-                handler: 'getAllFoodHandler',
+                handler: 'getItemsByUserIdItemTypeHandler',
                 // file to use as entry point for our Lambda function
-                entry: './src/lambda/get-all-food/get-all-food.ts',
+                entry: './src/lambda/get-items-by-userId-itemType/get-items-by-userId-itemType.ts',
                 environment: {
                     TABLE_NAME: importedTable.tableName,
                     ENVIRONMENT: ConfigProvider.Context(this).Environment,
@@ -68,7 +68,7 @@ export default class Commnads extends cdk.Construct {
                 layers: [schemasLayer, sharedLayer],
             }
         );
-        importedTable.grantReadData(getAllFoodFunc);
+        importedTable.grantReadData(getItemsByUserIdItemTypeFunc);
 
         const importItemFunc = new lambdaNode.NodejsFunction(
             this,
@@ -153,14 +153,16 @@ export default class Commnads extends cdk.Construct {
         importItemApiEndpoint.addMethod('POST', importFoodIntegration);
         addCorsOptions(importItemApiEndpoint);
 
-        const getAllFoodApiEndpoint = api.root.addResource(
-            ApiPath.GET_ALL_FOOD
+        const getItemsByUserIdAndItemTypeApiEndpoint = api.root.addResource(
+            ApiPath.GET_ITEMS_BY_USERID_ITEMTYPE
         );
-        const getAllFoodIntegration = new apigateway.LambdaIntegration(
-            getAllFoodFunc
+        const getItemsByUserIdAndItemTypeIntegration =
+            new apigateway.LambdaIntegration(getItemsByUserIdItemTypeFunc);
+        getItemsByUserIdAndItemTypeApiEndpoint.addMethod(
+            'GET',
+            getItemsByUserIdAndItemTypeIntegration
         );
-        getAllFoodApiEndpoint.addMethod('GET', getAllFoodIntegration);
-        addCorsOptions(getAllFoodApiEndpoint);
+        addCorsOptions(getItemsByUserIdAndItemTypeApiEndpoint);
 
         const getPresignedUrlApiEndpoint = api.root.addResource(
             ApiPath.GET_PRESIGNED_URL

@@ -1,6 +1,7 @@
-import { Food } from './../../../../website/src/models/Food';
+import { Food } from '../../../../website/src/models/Food';
 import * as AWS from 'aws-sdk';
 import { Environment } from '/opt/nodejs/constants';
+import { APIGatewayProxyEventV2 } from 'aws-lambda/trigger/api-gateway-proxy';
 
 const dynClient = new AWS.DynamoDB.DocumentClient({
     apiVersion: '2012-08-10',
@@ -10,37 +11,56 @@ const dynClient = new AWS.DynamoDB.DocumentClient({
 const tableName = process.env.TABLE_NAME;
 const env = process.env.ENVIRONMENT;
 
-export async function getAllFoodHandler() {
+export async function getItemsByUserIdItemTypeHandler(
+    event: APIGatewayProxyEventV2
+) {
     if (!tableName) {
         return {
             statusCode: 500,
             body: "The function doesn't have proper environment variables.",
         };
     }
+    console.info({ event });
 
-    const params: AWS.DynamoDB.DocumentClient.ScanInput = {
+    const itemType = event.queryStringParameters
+        ? event.queryStringParameters['type']
+        : null;
+
+    if (!itemType) {
+        return { statusCode: 400, body: 'Missing type in query parameters' };
+    }
+
+    const userId = 1; // TODO: get from headers
+    const params: AWS.DynamoDB.DocumentClient.QueryInput = {
         TableName: tableName,
+        KeyConditionExpression: '#pk = :pkey and begins_with(#sk, :skey)',
+        ExpressionAttributeValues: {
+            ':pkey': `user#${userId}`,
+            ':skey': `${itemType}`,
+        },
+        ExpressionAttributeNames: {
+            '#pk': 'pk',
+            '#sk': 'sk',
+        },
+        ScanIndexForward: true,
     };
 
     try {
-        const scanResults: any = [];
+        const queryResult: any = [];
         let items;
         do {
-            items = await dynClient.scan(params).promise();
-            items.Items?.forEach((item: any) => scanResults.push(item));
+            items = await dynClient.query(params).promise();
+            items.Items?.forEach((item: any) => queryResult.push(item));
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey !== 'undefined');
 
-        console.log(scanResults);
+        console.log(queryResult);
 
-        const menuFood: Food[] = scanResults.map((item: any) => {
+        const menuFood: Food[] = queryResult.map((item: any) => {
+            const { pk, sk, type, ...itemBody } = item;
             return {
-                foodId: item.sk.split('#')[1], //sk: food#1
-                foodName: item.foodName,
-                foodCategory: item.foodCategory,
-                imgUrl: item.imgUrl,
-                foodIngredients: item.foodIngredients,
-                isPublic: item.isPublic,
+                id: item.sk.split('#')[1], //sk: food#1
+                ...itemBody,
             };
         });
 
@@ -59,7 +79,7 @@ export async function getAllFoodHandler() {
         };
     } catch (e) {
         return {
-            statusCode: 400,
+            statusCode: 500,
             body: JSON.stringify(e),
         };
     }
