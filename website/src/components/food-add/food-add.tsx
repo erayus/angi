@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 import { ReactNode, useRef } from 'react'
 import { useForm, UseFormRegisterReturn } from 'react-hook-form'
 import { FiFile } from 'react-icons/fi'
 import { AiOutlineReload } from 'react-icons/ai'
-
+import axiosApi from '../../utils/axios-api'
 import {
     Button,
     Icon,
@@ -11,10 +11,9 @@ import {
     FormControl,
     FormLabel,
     FormErrorMessage,
-    FormHelperText,
-    Input,
     Image
 } from '@chakra-ui/react'
+import { GetPresignedUrlResponse } from '../../models/GetPresignedUrlResponse'
 
 type Props = {}
 type FormValues = {
@@ -58,8 +57,16 @@ const FoodAdd = (props: Props) => {
         return true
     }
 
-    const onSubmit = (data: any) => {
-        console.log('On Submit: ', data)
+    const onSubmit = async (data: FormValues) => {
+        // Get img
+        const img = data.file_[0];
+        // Get upload url
+        const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
+        const { uploadURL, imageUrl } = res.data as GetPresignedUrlResponse;
+        // Upload to S3
+        const s3Response = await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
+        console.log(s3Response);
+
     }
 
     return (
@@ -76,7 +83,6 @@ const FoodAdd = (props: Props) => {
                         accept={'image/*'}
                         multiple
                         register={register('file_', { validate: validateFiles })}
-                    // handleSelectedImage={onSelectImage}
                     >
                         <Button leftIcon={<Icon as={!previewImages || previewImages.length === 0 ? FiFile : AiOutlineReload} />}>
                             {!previewImages || previewImages.length === 0 ? 'Upload' : 'Select another image'}

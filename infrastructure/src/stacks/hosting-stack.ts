@@ -24,6 +24,7 @@ export class HostingStack extends cdk.Stack {
             publicReadAccess: true,
             cors: [
                 {
+                    allowedHeaders: ['*'],
                     allowedMethods: [
                         HttpMethods.GET,
                         HttpMethods.POST,

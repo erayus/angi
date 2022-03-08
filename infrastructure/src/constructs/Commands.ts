@@ -119,11 +119,13 @@ export default class Commnads extends cdk.Construct {
                     '/../lambda/get-presigned-url/get-presigned-url.ts',
                 environment: {
                     S3_BUCKET_NAME: imgBucketName,
+                    ENVIRONMENT: ConfigProvider.Context(this).Environment,
                 },
                 bundling: {
                     minify: false,
                     externalModules: ['aws-sdk'],
                 },
+                layers: [sharedLayer],
             }
         );
 

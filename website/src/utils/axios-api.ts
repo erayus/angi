@@ -30,7 +30,7 @@ class AxiosApi {
         return axios.post(`${urlAction}`, data, config);
     }
 
-    static put(urlAction: ApiPath, data = {}, additionalConfig = {}) {
+    static put(urlAction: string, data = {}, additionalConfig = {}) {
         const config = {
             ...this.apiConfig,
             ...additionalConfig,
@@ -62,8 +62,17 @@ const Food = {
         ),
 };
 
+const FoodImageUploader = {
+    getImgUploadUrl: () => AxiosApi.get(`${ApiPath.GET_PRESIGNED_URL}`),
+    uploadImage: (image: File, uploadURL: string) =>
+        AxiosApi.put(uploadURL, image, {
+            headers: { 'Content-Type': 'image/jpeg' },
+        }),
+};
+
 const axiosApi = {
     Food,
+    FoodImageUploader,
 };
 
 export default axiosApi;
