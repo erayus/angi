@@ -11,8 +11,8 @@ if (!bucketName) {
 
 export async function getPresignedUrlHandler(event: APIGatewayProxyEventV2) {
     try {
-        const randomID = Math.random() * 10000000;
-        const key = `${randomID}.jpg`;
+        const randomID = Math.round(Math.random() * 10000000000);
+        const key = `${randomID}.jpeg`;
         // if (!event.body) {
         //     throw Error(`Event must have a body.`);
         // }
