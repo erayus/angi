@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState, useRef } from 'react'
 import { useForm, UseFormRegisterReturn } from 'react-hook-form'
-import { FiFile } from 'react-icons/fi'
+import { FiFile } from 'react-icons/fi';
+import { BsFillTrashFill } from 'react-icons/bs';
 import { AiOutlineReload } from 'react-icons/ai'
 import {
     Button,
@@ -128,6 +129,11 @@ const FoodAdd = (props: Props) => {
     const getIngredientName = (id: string): string => {
         return ingredientTable.find(ing => ing.id === id)!.ingredientName;
     }
+    const removeAddedIngredient = (id: string): void => {
+        const currentAddedIngredients = getValues("foodIngredients_") ?? [];
+        const newAddedIngredients = currentAddedIngredients.filter(ing => ing.id !== id);
+        setValue("foodIngredients_", [...newAddedIngredients]);
+    }
 
     return (
         <Box>
@@ -167,7 +173,10 @@ const FoodAdd = (props: Props) => {
                     watchSelectedIngredients.map(ing => (
                         <Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} justifyContent="space-between">
                             <Text>{getIngredientName(ing.id)}</Text>
-                            <Badge px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity}</Badge>
+                            <Box>
+                                <Badge mr={2} px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity}</Badge>
+                                <Icon as={BsFillTrashFill} color='red.500' onClick={() => removeAddedIngredient(ing.id)} />
+                            </Box>
                         </Box>
                     ))
                     : 'Please use the form below to add ingredients for your new food'}
