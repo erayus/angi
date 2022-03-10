@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
-import { ReactNode, useRef } from 'react'
+import { ReactNode, useEffect, useState, useRef } from 'react'
 import { useForm, UseFormRegisterReturn } from 'react-hook-form'
 import { FiFile } from 'react-icons/fi'
 import { AiOutlineReload } from 'react-icons/ai'
-import axiosApi from '../../utils/axios-api'
 import {
     Button,
     Icon,
@@ -11,26 +9,54 @@ import {
     FormControl,
     FormLabel,
     FormErrorMessage,
-    Image
+    Image,
+    Input,
+    Textarea,
+    Grid,
+    GridItem,
+    Box,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    Flex,
+    Text,
+    Badge
 } from '@chakra-ui/react'
-import { GetPresignedUrlResponse } from '../../models/GetPresignedUrlResponse'
+import { IFoodIngredient } from '../../models/Food'
+import { CreatableSelect, GroupBase, OptionBase, SelectInstance } from 'chakra-react-select'
+import { ingredientTable } from '../../utils/ingredientTable'
 
+type FormFoodIngredient = IFoodIngredient & { isNewIngredient: boolean }
 type Props = {}
 type FormValues = {
-    file_: FileList
+    foodName_: string,
+    foodImg_: FileList,
+    foodDescription_: string,
+    foodIngredients_: FormFoodIngredient[],
+}
+interface IngredientOption extends OptionBase {
+    label: string;
+    value: string;
 }
 
 const FoodAdd = (props: Props) => {
-    const { register, handleSubmit, formState: { errors }, watch } = useForm<FormValues>()
+    const { register, handleSubmit, getValues, setValue, formState: { errors }, watch } = useForm<FormValues>()
     const [previewImages, setPreviewImages] = useState<string[]>();
-    const watchImages = watch("file_", undefined); // you can supply default value as second argument
+    const watchImages = watch("foodImg_", undefined); // you can supply default value as second argument
+
+    const [selectedIngQuantity, setSelectedIngQuantity] = useState<number>(1);
+    const [ingredientOptions, setIngredientOptions] = useState<IngredientOption[]>();
+    const watchSelectedIngredients = watch("foodIngredients_", []); // you can supply default value as second argument
+    const ingredientSelectRef = useRef<any>();
+    const ingQuantityInputRef = useRef<any>();
 
     useEffect(() => {
         if (!watchImages) {
             // setPreviewImages(undefined)
             return
         }
-        console.log(watchImages);
         const previewImgObjUrls: string[] = [];
         for (let img of watchImages) {
             const objectUrl = URL.createObjectURL(img)
@@ -42,10 +68,20 @@ const FoodAdd = (props: Props) => {
         return () => { previewImgObjUrls.forEach(objectUrl => URL.revokeObjectURL(objectUrl)) }
     }, [watchImages])
 
+    useEffect(() => {
+        const ingOptions = ingredientTable.map(ing => {
+            return {
+                label: ing.ingredientName,
+                value: ing.id
+            }
+        });
+        setIngredientOptions(ingOptions);
+    }, [])
 
-    const validateFiles = (value: FileList) => {
+
+    const validateFoodImage = (value: FileList) => {
         if (value.length < 1) {
-            return 'Files is required'
+            return 'Food Image Is Required'
         }
         for (const file of Array.from(value)) {
             const fsMb = file.size / (1024 * 1024)
@@ -58,31 +94,58 @@ const FoodAdd = (props: Props) => {
     }
 
     const onSubmit = async (data: FormValues) => {
+        console.log('FormData: ', { data })
         // Get img
-        const img = data.file_[0];
+        const img = data.foodImg_[0];
         // Get upload url
-        const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
-        const { uploadURL, imageUrl } = res.data as GetPresignedUrlResponse;
-        // Upload to S3
-        const s3Response = await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
-        console.log(s3Response);
+        // const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
+        // const {uploadURL, imageUrl} = res.data as GetPresignedUrlResponse;
+        // // Upload to S3
+        // const s3Response = await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
+        // console.log(s3Response);
+    }
+    register('foodIngredients_', { required: true })
 
+    const onAddedIngredient = () => {
+        console.log(ingredientSelectRef);
+        console.log(ingQuantityInputRef);
+        if (!ingredientSelectRef.current.props.value) {
+            return; //TODO: display error message at the ingredient adding form
+        }
+        const newIngredient: FormFoodIngredient = {
+            id: ingredientSelectRef.current.props.value.value,
+            ingredientQuantity: selectedIngQuantity,
+            isNewIngredient: ingredientSelectRef.current.props.value?.__isNew__ ?? false
+        }
+        const currentSelectedIngredients = getValues("foodIngredients_") ?? [];
+        setValue("foodIngredients_", [...currentSelectedIngredients, newIngredient])
+
+        //Reset values
+        // setSelectedIngredientOption(null);
+        ingredientSelectRef.current.clearValue();
+        setSelectedIngQuantity(1)
+    }
+    const getIngredientName = (id: string): string => {
+        return ingredientTable.find(ing => ing.id === id)!.ingredientName;
     }
 
     return (
-        <>
+        <Box>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <FormControl isInvalid={!!errors.file_} isRequired>
-                    <FormLabel>{'File input'}</FormLabel>
+                <FormControl isRequired>
+                    <FormLabel htmlFor='food-name'>Food Name</FormLabel>
+                    <Input id='food-name' placeholder='Example Food' {...register("foodName_")} />
+                </FormControl>
 
+                <FormControl isInvalid={!!errors.foodImg_} isRequired>
+                    <FormLabel>Food Image</FormLabel>
                     {previewImages && previewImages.map(img => (
                         <Image key={img} src={img} />
                     ))}
-
                     <FileUpload
                         accept={'image/*'}
                         multiple
-                        register={register('file_', { validate: validateFiles })}
+                        register={register('foodImg_', { validate: validateFoodImage })}
                     >
                         <Button leftIcon={<Icon as={!previewImages || previewImages.length === 0 ? FiFile : AiOutlineReload} />}>
                             {!previewImages || previewImages.length === 0 ? 'Upload' : 'Select another image'}
@@ -90,13 +153,62 @@ const FoodAdd = (props: Props) => {
                     </FileUpload>
 
                     <FormErrorMessage>
-                        {errors.file_ && errors?.file_.message}
+                        {errors.foodImg_ && errors?.foodImg_.message}
                     </FormErrorMessage>
                 </FormControl>
 
+                <FormControl>
+                    <FormLabel htmlFor='food-desc'>Food Description</FormLabel>
+                    <Textarea id='food-desc' placeholder='This is how to cook my food' {...register("foodDescription_")} />
+                </FormControl>
+
+
+                {watchSelectedIngredients ?
+                    watchSelectedIngredients.map(ing => (
+                        <Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} justifyContent="space-between">
+                            <Text>{getIngredientName(ing.id)}</Text>
+                            <Badge px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity}</Badge>
+                        </Box>
+                    ))
+                    : 'Please use the form below to add ingredients for your new food'}
+                <Grid templateColumns="repeat(2, 1fr)" gap={3}>
+                    <FormControl as={GridItem}>
+                        <FormLabel htmlFor='food-ingredients'>Ingredient Name:</FormLabel>
+                        <CreatableSelect<
+                            IngredientOption,
+                            true,
+                            GroupBase<IngredientOption>
+                        >
+                            ref={ingredientSelectRef}
+                            name="food-ing"
+                            options={ingredientOptions}
+                            placeholder="Ingredient"
+                            closeMenuOnSelect={true}
+                            filterOption={(opt, inputValue) => {
+                                const currentAddedIngredientIds = getValues("foodIngredients_")?.map(ing => ing.id) ?? []; //TODO: consider initializing this outside for better performance
+                                if (!inputValue) {
+                                    return true && !currentAddedIngredientIds.includes(opt.value);
+                                }
+                                return opt.label.includes(inputValue) && !currentAddedIngredientIds.includes(opt.value);
+                            }}
+                        />
+                    </FormControl>
+                    <FormControl as={GridItem} >
+                        <FormLabel htmlFor='food-ingredients'>Ingredient Quantity:</FormLabel>
+                        <NumberInput min={1} onChange={e => setSelectedIngQuantity(+e)} value={selectedIngQuantity}>
+                            <NumberInputField />
+                            <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                            </NumberInputStepper> </NumberInput>
+                    </FormControl>
+                    <Button as={GridItem} variant="solid" colSpan={2} onClick={onAddedIngredient}>
+                        Add Ingredient
+                    </Button>
+                </Grid>
                 <Button type="submit" >Submit</Button>
             </form>
-        </>
+        </Box>
     )
 }
 
