@@ -23,11 +23,14 @@ import {
     NumberDecrementStepper,
     Flex,
     Text,
-    Badge
+    Badge,
 } from '@chakra-ui/react'
 import { IFoodIngredient } from '../../models/Food'
-import { CreatableSelect, GroupBase, OptionBase, SelectInstance } from 'chakra-react-select'
+import { CreatableSelect, GroupBase, OptionBase } from 'chakra-react-select'
 import { ingredientTable } from '../../utils/ingredientTable'
+import axiosApi from '../../utils/axios-api';
+import { GetPresignedUrlResponse } from '../../models/GetPresignedUrlResponse';
+
 
 type FormFoodIngredient = IFoodIngredient & { isNewIngredient: boolean }
 type Props = {}
@@ -50,7 +53,7 @@ const FoodAdd = (props: Props) => {
     const [selectedIngQuantity, setSelectedIngQuantity] = useState<number>(1);
     const [ingredientOptions, setIngredientOptions] = useState<IngredientOption[]>();
     const watchSelectedIngredients = watch("foodIngredients_", []); // you can supply default value as second argument
-    const ingredientSelectRef = useRef<any>();
+    const [selectedIngredientOption, setSelectedIngredientOption] = useState<any>();
     const ingQuantityInputRef = useRef<any>();
 
     useEffect(() => {
@@ -99,8 +102,8 @@ const FoodAdd = (props: Props) => {
         // Get img
         const img = data.foodImg_[0];
         // Get upload url
-        // const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
-        // const {uploadURL, imageUrl} = res.data as GetPresignedUrlResponse;
+        const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
+        const { uploadURL, imageUrl } = res.data as GetPresignedUrlResponse;
         // // Upload to S3
         // const s3Response = await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
         // console.log(s3Response);
@@ -108,22 +111,20 @@ const FoodAdd = (props: Props) => {
     register('foodIngredients_', { required: true })
 
     const onAddedIngredient = () => {
-        console.log(ingredientSelectRef);
-        console.log(ingQuantityInputRef);
-        if (!ingredientSelectRef.current.props.value) {
+        if (!selectedIngredientOption) {
+            console.log('Error');
             return; //TODO: display error message at the ingredient adding form
         }
         const newIngredient: FormFoodIngredient = {
-            id: ingredientSelectRef.current.props.value.value,
+            id: selectedIngredientOption.value,
             ingredientQuantity: selectedIngQuantity,
-            isNewIngredient: ingredientSelectRef.current.props.value?.__isNew__ ?? false
+            isNewIngredient: selectedIngredientOption.__isNew__ ?? false
         }
         const currentSelectedIngredients = getValues("foodIngredients_") ?? [];
         setValue("foodIngredients_", [...currentSelectedIngredients, newIngredient])
 
         //Reset values
-        // setSelectedIngredientOption(null);
-        ingredientSelectRef.current.clearValue();
+        setSelectedIngredientOption(null);
         setSelectedIngQuantity(1)
     }
     const getIngredientName = (id: string): string => {
@@ -138,12 +139,12 @@ const FoodAdd = (props: Props) => {
     return (
         <Box>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <FormControl isRequired>
+                <FormControl isRequired mt={3}>
                     <FormLabel htmlFor='food-name'>Food Name</FormLabel>
                     <Input id='food-name' placeholder='Example Food' {...register("foodName_")} />
                 </FormControl>
 
-                <FormControl isInvalid={!!errors.foodImg_} isRequired>
+                <FormControl isInvalid={!!errors.foodImg_} isRequired mt={3}>
                     <FormLabel>Food Image</FormLabel>
                     {previewImages && previewImages.map(img => (
                         <Image key={img} src={img} />
@@ -163,12 +164,12 @@ const FoodAdd = (props: Props) => {
                     </FormErrorMessage>
                 </FormControl>
 
-                <FormControl>
+                <FormControl mt={3}>
                     <FormLabel htmlFor='food-desc'>Food Description</FormLabel>
                     <Textarea id='food-desc' placeholder='This is how to cook my food' {...register("foodDescription_")} />
                 </FormControl>
 
-
+                <FormLabel mt={3}>Food Ingredients: </FormLabel>
                 {watchSelectedIngredients ?
                     watchSelectedIngredients.map(ing => (
                         <Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} justifyContent="space-between">
@@ -188,7 +189,8 @@ const FoodAdd = (props: Props) => {
                             true,
                             GroupBase<IngredientOption>
                         >
-                            ref={ingredientSelectRef}
+                            onChange={opt => setSelectedIngredientOption(opt)}
+                            value={selectedIngredientOption}
                             name="food-ing"
                             options={ingredientOptions}
                             placeholder="Ingredient"
@@ -211,9 +213,20 @@ const FoodAdd = (props: Props) => {
                                 <NumberDecrementStepper />
                             </NumberInputStepper> </NumberInput>
                     </FormControl>
-                    <Button as={GridItem} variant="solid" colSpan={2} onClick={onAddedIngredient}>
-                        Add Ingredient
-                    </Button>
+                    <Box
+                        as={GridItem}
+                        colSpan={2}
+                    >
+                        <Button
+                            width="100%"
+                            colorScheme='green'
+                            isDisabled={!selectedIngredientOption}
+                            variant="solid"
+                            onClick={onAddedIngredient}>
+                            Add Ingredient
+                        </Button>
+                    </Box>
+
                 </Grid>
                 <Button type="submit" >Submit</Button>
             </form>
