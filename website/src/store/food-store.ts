@@ -529,6 +529,10 @@ export default class FoodStore {
         //TODO: constant the key
         const defaultUserFoodCategoryQuantity: IUserFoodCategoryQuantity[] = [
             {
+                category: 'entree',
+                quantity: 7,
+            },
+            {
                 category: 'main',
                 quantity: 7,
             },

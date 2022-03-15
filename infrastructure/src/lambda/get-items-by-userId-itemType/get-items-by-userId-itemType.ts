@@ -72,7 +72,7 @@ export async function getItemsByUserIdItemTypeHandler(
                     env === Environment.DEV
                         ? 'http://localhost:3000'
                         : 'https://smartmenu.erayus.com', // Required for CORS support to work,
-                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+                'Access-Control-Allow-Methods': 'OPTIONS,GET',
                 // "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
             },
             body: JSON.stringify(menuFood),

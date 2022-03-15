@@ -24,18 +24,22 @@ import {
     Flex,
     Text,
     Badge,
+    Select,
 } from '@chakra-ui/react'
-import { IFoodIngredient } from '../../models/Food'
+import { Food, IFoodIngredient, FoodCategory } from '../../models/Food';
 import { CreatableSelect, GroupBase, OptionBase } from 'chakra-react-select'
 import { ingredientTable } from '../../utils/ingredientTable'
 import axiosApi from '../../utils/axios-api';
 import { GetPresignedUrlResponse } from '../../models/GetPresignedUrlResponse';
+import { AddItemRequestPayload } from '../../models/RequestPayload';
+import _ from 'lodash';
 
 
 type FormFoodIngredient = IFoodIngredient & { isNewIngredient: boolean }
 type Props = {}
 type FormValues = {
     foodName_: string,
+    foodCategory_: FoodCategory,
     foodImg_: FileList,
     foodDescription_: string,
     foodIngredients_: FormFoodIngredient[],
@@ -54,7 +58,6 @@ const FoodAdd = (props: Props) => {
     const [ingredientOptions, setIngredientOptions] = useState<IngredientOption[]>();
     const watchSelectedIngredients = watch("foodIngredients_", []); // you can supply default value as second argument
     const [selectedIngredientOption, setSelectedIngredientOption] = useState<any>();
-    const ingQuantityInputRef = useRef<any>();
 
     useEffect(() => {
         if (!watchImages) {
@@ -98,15 +101,41 @@ const FoodAdd = (props: Props) => {
     }
 
     const onSubmit = async (data: FormValues) => {
-        console.log('FormData: ', { data })
-        // Get img
-        const img = data.foodImg_[0];
-        // Get upload url
-        const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
-        const { uploadURL, imageUrl } = res.data as GetPresignedUrlResponse;
-        // // Upload to S3
-        // const s3Response = await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
-        // console.log(s3Response);
+        try {
+            // Get img
+            const img = data.foodImg_[0];
+            // Get upload url
+            const res = await axiosApi.FoodImageUploader.getImgUploadUrl();
+            const { uploadURL, imageUrl } = res.data as GetPresignedUrlResponse;
+            // // Upload to S3
+            await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
+
+            // Construct AddItemRequestPayload to save to dynamodb
+            const randomID = Math.round(Math.random() * 100000000000);
+            //TODO: loop through data.foodIngredients_ to check for and create new food ingredients
+            const foodIngredients: IFoodIngredient[] = data.foodIngredients_.map(formFoodIng => {
+                return {
+                    id: formFoodIng.id,
+                    ingredientQuantity: formFoodIng.ingredientQuantity
+                }
+            });
+            const addItemRequestPayload: AddItemRequestPayload<Food> = {
+                payloadType: 'food',
+                payloadBody: [{
+                    id: _.toString(randomID),
+                    foodName: data.foodName_,
+                    foodCategory: data.foodCategory_,
+                    foodDescription: data.foodDescription_,
+                    foodIngredients: foodIngredients,
+                    foodImgUrl: imageUrl,
+                    isPublic: true
+                }]
+            }
+            await axiosApi.Food.add(addItemRequestPayload);
+            console.log('success')
+        } catch (e) {
+            console.error({ e });
+        }
     }
     register('foodIngredients_', { required: true })
 
@@ -145,7 +174,7 @@ const FoodAdd = (props: Props) => {
                 </FormControl>
 
                 <FormControl isInvalid={!!errors.foodImg_} isRequired mt={3}>
-                    <FormLabel>Food Image</FormLabel>
+                    <FormLabel>Food Image:</FormLabel>
                     {previewImages && previewImages.map(img => (
                         <Image key={img} src={img} />
                     ))}
@@ -164,6 +193,16 @@ const FoodAdd = (props: Props) => {
                     </FormErrorMessage>
                 </FormControl>
 
+                <FormControl isRequired mt={3}>
+                    <FormLabel>Food Category: </FormLabel>
+                    <Select placeholder='Select food category' {...register("foodCategory_")}>
+                        <option value="entree">Entree</option>
+                        <option value="main">Main</option>
+                        <option value="soup">Soup</option>
+                        <option value="dessert">Dessert</option>
+                    </Select>
+                </FormControl>
+
                 <FormControl mt={3}>
                     <FormLabel htmlFor='food-desc'>Food Description</FormLabel>
                     <Textarea id='food-desc' placeholder='This is how to cook my food' {...register("foodDescription_")} />
@@ -172,7 +211,7 @@ const FoodAdd = (props: Props) => {
                 <FormLabel mt={3}>Food Ingredients: </FormLabel>
                 {watchSelectedIngredients ?
                     watchSelectedIngredients.map(ing => (
-                        <Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} justifyContent="space-between">
+                        <Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} my={2} justifyContent="space-between">
                             <Text>{getIngredientName(ing.id)}</Text>
                             <Box>
                                 <Badge mr={2} px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity}</Badge>

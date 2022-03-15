@@ -1,5 +1,5 @@
-export type RequestItemType = 'food' | 'ingredient' | 'requestPayload';
-export type RequestPayload = {
-    payloadType: RequestItemType;
-    payloadBody: any | any[];
+export type AddItemRequestItemType = 'food' | 'ingredient' | 'requestPayload';
+export type AddItemRequestPayload<T> = {
+    payloadType: AddItemRequestItemType;
+    payloadBody: T | T[];
 };

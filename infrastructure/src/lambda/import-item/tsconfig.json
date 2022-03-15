@@ -4,6 +4,7 @@
     "paths": {
       "/opt/nodejs/foodSchema.json": ["../../layers/schemas/nodejs/foodSchema.json"],
       "/opt/nodejs/ingredientSchema.json": ["../../layers/schemas/nodejs/ingredientSchema.json"],
+      "/opt/nodejs/constants": ["../../layers/shared/nodejs/constants"],
     },
     /* Basic Options */
     "incremental": true,                   /* Enable incremental compilation */

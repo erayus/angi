@@ -86,6 +86,7 @@ export default class Commnads extends cdk.Construct {
                 environment: {
                     TABLE_NAME: importedTable.tableName,
                     PARTITION_KEY: tablePartitionKey,
+                    ENVIRONMENT: ConfigProvider.Context(this).Environment,
                 },
                 bundling: {
                     minify: false,
@@ -192,7 +193,7 @@ export function addCorsOptions(apiResource: apigateway.IResource) {
                     statusCode: '200',
                     responseParameters: {
                         'method.response.header.Access-Control-Allow-Headers':
-                            "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                            "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,User-Id'",
                         'method.response.header.Access-Control-Allow-Origin':
                             "'*'",
                         'method.response.header.Access-Control-Allow-Credentials':
