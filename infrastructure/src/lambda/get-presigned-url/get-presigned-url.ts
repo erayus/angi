@@ -16,22 +16,9 @@ export async function getPresignedUrlHandler(event: APIGatewayProxyEventV2) {
     try {
         const randomID = Math.round(Math.random() * 10000000000);
         const key = `${randomID}.jpeg`;
-        // if (!event.body) {
-        //     throw Error(`Event must have a body.`);
-        // }
-
-        // const key = JSON.parse(event.body)['object_key'];
-        // if (!key) {
-        //     throw Error('S3 object key missing');
-        // }
 
         const action = 'putObject'; //JSON.parse(event.body)['action'];
-        // if (
-        //     action !== 'putObject'
-        //     // && action !== 'getObject' //TODO: consider making reading img private
-        // ) {
-        //     throw Error('Action not allowed');
-        // }
+
         const uploadURL = await s3.getSignedUrl(action, {
             Bucket: bucketName,
             Key: key,

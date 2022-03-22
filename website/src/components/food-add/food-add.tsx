@@ -33,9 +33,9 @@ import axiosApi from '../../utils/axios-api';
 import { GetPresignedUrlResponse } from '../../models/GetPresignedUrlResponse';
 import { AddItemRequestPayload } from '../../models/RequestPayload';
 import _ from 'lodash';
+import { Ingredient } from '../../models/Ingredient';
 
-
-type FormFoodIngredient = IFoodIngredient & { isNewIngredient: boolean }
+type FormFoodIngredient = IFoodIngredient & { ingredientName: string, isNewIngredient: boolean }
 type Props = {}
 type FormValues = {
     foodName_: string,
@@ -113,6 +113,19 @@ const FoodAdd = (props: Props) => {
             // Construct AddItemRequestPayload to save to dynamodb
             const randomID = Math.round(Math.random() * 100000000000);
             //TODO: loop through data.foodIngredients_ to check for and create new food ingredients
+            const newIngredients: Ingredient[] = data.foodIngredients_.filter(ing => ing.isNewIngredient).map(ing => {
+                return {
+                    id: ing.id,
+                    ingredientName: ing.ingredientName,
+                    ingredientCategory: '', //TODO
+                } as Ingredient
+            });
+            const addIngredientRequestPayload: AddItemRequestPayload<Ingredient> = {
+                payloadType: 'ingredient',
+                payloadBody: newIngredients
+            };
+            await axiosApi.Ingredient.add(addIngredientRequestPayload);
+
             const foodIngredients: IFoodIngredient[] = data.foodIngredients_.map(formFoodIng => {
                 return {
                     id: formFoodIng.id,
@@ -144,21 +157,24 @@ const FoodAdd = (props: Props) => {
             console.log('Error');
             return; //TODO: display error message at the ingredient adding form
         }
-        const newIngredient: FormFoodIngredient = {
-            id: selectedIngredientOption.value,
+        const isNewIngredient = selectedIngredientOption.__isNew__ ?? false;
+        const addedIngredient: FormFoodIngredient = {
+            id: isNewIngredient ? _.toString(Math.round(Math.random() * 100000000000)) : selectedIngredientOption.value,
             ingredientQuantity: selectedIngQuantity,
-            isNewIngredient: selectedIngredientOption.__isNew__ ?? false
+            ingredientName: selectedIngredientOption.label,
+            isNewIngredient: isNewIngredient
         }
+        console.log({ newIngredient: addedIngredient })
         const currentSelectedIngredients = getValues("foodIngredients_") ?? [];
-        setValue("foodIngredients_", [...currentSelectedIngredients, newIngredient])
+        setValue("foodIngredients_", [...currentSelectedIngredients, addedIngredient])
 
         //Reset values
         setSelectedIngredientOption(null);
         setSelectedIngQuantity(1)
     }
-    const getIngredientName = (id: string): string => {
-        return ingredientTable.find(ing => ing.id === id)!.ingredientName;
-    }
+    // const getIngredientName = (id: string): string => {
+    //     return ingredientTable.find(ing => ing.id === id)!.ingredientName;
+    // }
     const removeAddedIngredient = (id: string): void => {
         const currentAddedIngredients = getValues("foodIngredients_") ?? [];
         const newAddedIngredients = currentAddedIngredients.filter(ing => ing.id !== id);
@@ -212,7 +228,7 @@ const FoodAdd = (props: Props) => {
                 {watchSelectedIngredients ?
                     watchSelectedIngredients.map(ing => (
                         <Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} my={2} justifyContent="space-between">
-                            <Text>{getIngredientName(ing.id)}</Text>
+                            <Text>{ing.ingredientName}</Text>
                             <Box>
                                 <Badge mr={2} px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity}</Badge>
                                 <Icon as={BsFillTrashFill} color='red.500' onClick={() => removeAddedIngredient(ing.id)} />

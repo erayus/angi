@@ -2,7 +2,8 @@ import axios, { CancelTokenSource } from 'axios';
 import config from '../config';
 import { ApiPath } from '../models/api-path';
 import { AddItemRequestPayload } from '../models/RequestPayload';
-import { Food as foodType } from '../models/Food';
+import { Food as FoodType } from '../models/Food';
+import { Ingredient as IngredientType } from '../models/Ingredient';
 
 axios.defaults.baseURL = config.getApiBaseUrl();
 
@@ -69,8 +70,20 @@ const Food = {
             `${ApiPath.GET_ITEMS_BY_USERID_ITEMTYPE}/?type=food`,
             config
         ),
-    add: async (data: AddItemRequestPayload<foodType>, config: any = {}) =>
+    add: async (data: AddItemRequestPayload<FoodType>, config: any = {}) =>
         await AxiosApi.post(`${ApiPath.IMPORT_ITEM}`, data, config),
+};
+
+const Ingredient = {
+    list: (config: any = {}) =>
+        AxiosApi.get(
+            `${ApiPath.GET_ITEMS_BY_USERID_ITEMTYPE}/?type=ingredient`,
+            config
+        ),
+    add: async (
+        data: AddItemRequestPayload<IngredientType>,
+        config: any = {}
+    ) => await AxiosApi.post(`${ApiPath.IMPORT_ITEM}`, data, config),
 };
 
 const FoodImageUploader = {
@@ -83,6 +96,7 @@ const FoodImageUploader = {
 
 const axiosApi = {
     Food,
+    Ingredient,
     FoodImageUploader,
 };
 
