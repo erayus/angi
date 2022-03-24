@@ -13,14 +13,7 @@ import {
 	Image,
 	Input,
 	Textarea,
-	Grid,
-	GridItem,
 	Box,
-	NumberInput,
-	NumberInputField,
-	NumberInputStepper,
-	NumberIncrementStepper,
-	NumberDecrementStepper,
 	Flex,
 	Text,
 	Badge,
@@ -35,7 +28,7 @@ import _ from 'lodash';
 import { Ingredient } from '../../models/Ingredient';
 import AddIngredientModal from '../add-ingredient-modal/add-ingredient-modal';
 
-export type FormFoodIngredient = IFoodIngredient & { ingredientName: string, isNewIngredient: boolean }
+export type FormFoodIngredient = IFoodIngredient & Ingredient & { isNewIngredient: boolean }
 export interface IngredientOption extends OptionBase {
 	label: string;
 	value: string;
@@ -137,22 +130,10 @@ const FoodAdd = (props: Props) => {
 	}
 	register('foodIngredients_', { required: true })
 
-	const onAddedIngredientHandler = (selectedIngredientOption: any, selectedIngQuantity: number, selectedIngCategory: string, selectedIngUnit: string) => {
-		if (!selectedIngredientOption) {
-			console.log('Error');
-			return; //TODO: display error message at the ingredient adding form
-		}
-		const isNewIngredient = selectedIngredientOption.__isNew__ ?? false;
-		const addedIngredient: FormFoodIngredient = {
-			id: isNewIngredient ? _.toString(Math.round(Math.random() * 100000000000)) : selectedIngredientOption.value,
-			ingredientQuantity: selectedIngQuantity,
-			ingredientName: selectedIngredientOption.label,
-			isNewIngredient: isNewIngredient
-		}
-		console.log({ newIngredient: addedIngredient })
+	const onAddedIngredientHandler = (formFoodIngredient: FormFoodIngredient) => {
 		const currentSelectedIngredients = getValues("foodIngredients_") ?? [];
-		console.log({ currentSelectedIngredients });
-		setValue("foodIngredients_", [...currentSelectedIngredients, addedIngredient])
+		console.log({ formFoodIngredient });
+		setValue("foodIngredients_", [...currentSelectedIngredients, formFoodIngredient])
 	}
 
 	const removeAddedIngredient = (id: string): void => {

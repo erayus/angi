@@ -3,12 +3,13 @@ import { CreatableSelect, GroupBase } from 'chakra-react-select';
 import { observer } from 'mobx-react-lite';
 import { ingredientTable } from '../../utils/ingredientTable'
 import React, { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
 
-import { IngredientOption } from '../food-add/food-add';
+import { FormFoodIngredient, IngredientOption } from '../food-add/food-add';
 
 type IProps = {
   currentAddedIngredientIds: string[],
-  onAddedIngredient: (selectedIngredientOption: any, selectedIngQuantity: number, selectedIngCategory: string, selectedIngUnit: string) => void;
+  onAddedIngredient: (addedIngredient: FormFoodIngredient) => void;
 }
 
 const AddIngredientModal: React.FC<IProps> = (props) => {
@@ -32,9 +33,19 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
   const addIngredient = () => {
     var selectedIngCategory = selectedIngCategoryRef?.current?.value ?? '';
     var selectedIngUnit = selectedIngUnitRef?.current?.value ?? '';
+    const isNewIngredient = selectedIngredientOption.__isNew__ ?? false;
+
+    const addedIngredient: FormFoodIngredient = {
+      id: isNewIngredient ? _.toString(Math.round(Math.random() * 100000000000)) : selectedIngredientOption.value,
+      ingredientQuantity: selectedIngQuantity,
+      ingredientName: selectedIngredientOption.label,
+      ingredientCategory: selectedIngCategory,
+      ingredientUnit: selectedIngUnit,
+      isNewIngredient: isNewIngredient
+    }
 
     // TODO: Create an object (addedIngredient) that contains all properties of an Ingredient
-    props.onAddedIngredient(selectedIngredientOption, selectedIngQuantity, selectedIngCategory, selectedIngUnit);
+    props.onAddedIngredient(addedIngredient);
 
     if (selectedIngCategory || selectedIngUnit) {
       selectedIngCategoryRef!.current.value = '';
