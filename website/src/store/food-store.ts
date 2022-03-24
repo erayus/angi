@@ -167,7 +167,6 @@ export default class FoodStore {
 
     private loadIngredients = async () => {
         this.allIngredients = await axiosApi.Ingredient.list();
-        console.log(toJS(this.allIngredients));
     };
 
     private loadNewMenu = async () => {
