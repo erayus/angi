@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useStore } from '../../store/root-store';
 import { observer } from 'mobx-react-lite';
 import colors from '../../constants/colors/colors';
-import { IFoodProjection } from '../../store/food-store';
+import { FoodProjection } from '../../store/food-store';
 import Loader from '../../components/loader/loader';
 
 type IProps = {
@@ -19,7 +19,7 @@ type Params = {
 const FoodDetail: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const { foodStore } = useStore();
     const targetFoodId = match.params.foodId;
-    const [targetFood, setTargetFood] = useState<IFoodProjection | null>();
+    const [targetFood, setTargetFood] = useState<FoodProjection | null>();
     const { loadingFood } = foodStore;
 
 

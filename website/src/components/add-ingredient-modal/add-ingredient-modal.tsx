@@ -1,11 +1,13 @@
 import { Box, Button, FormControl, FormLabel, Grid, GridItem, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, useDisclosure } from '@chakra-ui/react';
 import { CreatableSelect, GroupBase } from 'chakra-react-select';
 import { observer } from 'mobx-react-lite';
-import { ingredientTable } from '../../utils/ingredientTable'
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 
 import { FormFoodIngredient, IngredientOption } from '../food-add/food-add';
+import { useQuery } from 'react-query';
+import { Ingredient } from '../../models/Ingredient';
+import axiosApi from '../../utils/axios-api';
 
 type IProps = {
   currentAddedIngredientIds: string[],
@@ -19,16 +21,28 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
   const [selectedIngQuantity, setSelectedIngQuantity] = useState<number>(1);
   const selectedIngCategoryRef = useRef<any>();
   const selectedIngUnitRef = useRef<any>();
+  const { isLoading, error, data } = useQuery<Ingredient[]>("ingredient", async () => (await axiosApi.Ingredient.list()));
 
+  if (isLoading) {
+    console.log('loading')
+  }
+
+  if (error) {
+    console.log((error as Error).message)
+  }
   useEffect(() => {
-    const ingOptions = ingredientTable.map(ing => {
+    console.log({ data });
+    if (!data) {
+      return;
+    }
+    const ingOptions = data.map(ing => {
       return {
         label: ing.ingredientName,
         value: ing.id
       }
     });
     setIngredientOptions(ingOptions);
-  }, [])
+  }, [data])
 
   const addIngredient = () => {
     var selectedIngCategory = selectedIngCategoryRef?.current?.value ?? '';

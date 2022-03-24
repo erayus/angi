@@ -75,11 +75,13 @@ const Food = {
 };
 
 const Ingredient = {
-    list: (config: any = {}) =>
-        AxiosApi.get(
+    list: async (config: any = {}) => {
+        const { data } = await AxiosApi.get(
             `${ApiPath.GET_ITEMS_BY_USERID_ITEMTYPE}/?type=ingredient`,
             config
-        ),
+        );
+        return data;
+    },
     add: async (
         data: AddItemRequestPayload<IngredientType>,
         config: any = {}

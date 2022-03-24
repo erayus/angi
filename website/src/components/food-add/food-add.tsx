@@ -88,7 +88,6 @@ const FoodAdd = (props: Props) => {
 			const { uploadURL, imageUrl } = res.data as GetPresignedUrlResponse;
 			await axiosApi.FoodImageUploader.uploadImage(img, uploadURL);
 
-
 			const newIngredients: Ingredient[] = data.foodIngredients_.filter(ing => ing.isNewIngredient).map(ing => {
 				return {
 					id: ing.id,
@@ -143,7 +142,7 @@ const FoodAdd = (props: Props) => {
 	}
 
 	return (
-		<Box>
+		<Box p={4}>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<FormControl isRequired mt={3}>
 					<FormLabel htmlFor='food-name'>Food Name</FormLabel>

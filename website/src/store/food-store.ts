@@ -6,14 +6,13 @@ import {
     IUserFoodCategoryQuantity,
 } from '../models/Food';
 import { Ingredient, IIngredientCategory, IUnit } from '../models/Ingredient';
-import { ingredientTable } from '../utils/ingredientTable';
 import axiosApi from '../utils/axios-api';
 import UserStore from './user-store';
 import { isTimeToRenewFood, generateRenewDate } from '../utils/renewTime';
 import { Menu } from '../models/Menu';
 const clone = require('rfdc/default');
 
-export type IFoodProjection = {
+export type FoodProjection = {
     id: string;
     name: string;
     category: FoodCategory;
@@ -46,7 +45,7 @@ export default class FoodStore {
     setNewFoodToActionOnId = (id: string) => {
         this.newFoodToActionOnId = id;
     };
-    foodAvailableForUpdate: IFoodProjection[] = [];
+    foodAvailableForUpdate: FoodProjection[] = [];
     error: any;
     loadingFood: boolean = false;
     isFoodAvailableForChangeLoading = false;
@@ -69,6 +68,10 @@ export default class FoodStore {
 
     get toBuyList(): ToBuyIngredient[] {
         let allIngredientsThisWeek: IFoodIngredient[] = [];
+        if (!this.menu) {
+            return [];
+        }
+
         this.menu!.food!.forEach((food) => {
             allIngredientsThisWeek = [
                 ...allIngredientsThisWeek.slice(),
@@ -122,7 +125,7 @@ export default class FoodStore {
     initializeFoodThisWeek = async () => {
         try {
             this.loadingFood = true;
-            this.loadIngredients(); //TODO shouldn't need this after all ingredients are added to the database
+            await this.loadIngredients(); //TODO shouldn't need this after all ingredients are added to the database
 
             if (!this.userHasMenu()) {
                 this.loadNewMenu();
@@ -163,7 +166,8 @@ export default class FoodStore {
     };
 
     private loadIngredients = async () => {
-        this.allIngredients = ingredientTable;
+        this.allIngredients = await axiosApi.Ingredient.list();
+        console.log(toJS(this.allIngredients));
     };
 
     private loadNewMenu = async () => {
@@ -291,7 +295,7 @@ export default class FoodStore {
 
     getFoodProjectionById = async (
         id: string
-    ): Promise<IFoodProjection | null> => {
+    ): Promise<FoodProjection | null> => {
         try {
             this.loadingFood = true;
 
@@ -397,8 +401,8 @@ export default class FoodStore {
     };
 
     //TODO: error handling this method
-    convertFoodToFoodProjection = (food: Food): IFoodProjection => {
-        let foodProjection: IFoodProjection = {
+    convertFoodToFoodProjection = (food: Food): FoodProjection => {
+        let foodProjection: FoodProjection = {
             id: food.id,
             name: food.foodName,
             category: food.foodCategory,

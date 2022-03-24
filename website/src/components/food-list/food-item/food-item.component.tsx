@@ -7,9 +7,9 @@ import { FoodListOptionalProps } from '../food-list.component';
 import { useStore } from '../../../store/root-store';
 import { observer } from 'mobx-react-lite';
 import { NavPath } from '../../../utils/nav-path';
-import { IFoodProjection } from '../../../store/food-store';
+import { FoodProjection } from '../../../store/food-store';
 
-type IProps = FoodListOptionalProps & IFoodProjection;
+type IProps = FoodListOptionalProps & FoodProjection;
 
 const FoodItem: React.FC<IProps> = ({
   id,
@@ -19,7 +19,8 @@ const FoodItem: React.FC<IProps> = ({
   ingredients,
   enableIngredientChipsDisplay,
   enableViewDetails,
-  enableFoodAction: enableFoodChange,
+  enableFoodRemove,
+  enableFoodChange,
   onFoodChangeBtnClicked,
   onFoodRemoveBtnClicked,
 }) => {
@@ -110,7 +111,7 @@ const FoodItem: React.FC<IProps> = ({
             {enableIngredientChipsDisplay && displayNoOfExtraIngredients}
             {enableViewDetails && displayViewDetailsBtn}
             {enableFoodChange && displayFoodChangeBtn}
-            {enableFoodChange && displayFoodRemoveBtn}
+            {enableFoodRemove && displayFoodRemoveBtn}
           </MDBCardBody>
         </MDBCol>
       </MDBRow>

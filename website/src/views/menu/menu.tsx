@@ -90,7 +90,8 @@ const Menu = () => {
                             key={foodCategory.category}
                             foodList={foodThisWeekUnderCategory}
                             enableViewDetails
-                            enableFoodAction
+                            enableFoodChange
+                            enableFoodRemove
                             onFoodChangeBtnClicked={onFoodChangeBtnClickedHandler}
                             onFoodRemoveBtnClicked={onFoodRemoveBtnClickedHandler}
                         />

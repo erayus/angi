@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch, useHistory } from 'react-router-dom';
 import Menu from './views/menu/menu';
 import FoodDetail from './views/food-detail/foodDetail';
 import './App.styles.scss';
@@ -14,11 +14,13 @@ import SignUp from './components/sign-up/sign-up.component';
 import Login from './components/log-in/log-in.component';
 import Loader from './components/loader/loader';
 import FoodManage from './views/food-manage/food-manage';
+import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
+import FoodAdd from './components/food-add/food-add';
 
 const App: React.FC = () => {
     const { foodStore, userStore } = useStore();
     const { userLoading, loadAuthenticatedUser, isAuthenticated } = userStore;
-
+    const history = useHistory();
     useEffect(() => {
         // userStore.authenticate("Raymond", "123");
         loadAuthenticatedUser();
@@ -49,12 +51,11 @@ const App: React.FC = () => {
     return !userLoading ? (
         <React.Fragment>
             <Header />
-            {/* {appStore.showToBuyListButton
-                ? <MDBBtn className="to-buy-btn" size='lg' floating tag='a' onClick={() => history.push('/to-buy-list')}>
-                    <MDBIcon fas icon="cart-arrow-down" />
-                </MDBBtn>
-                : null
-            } */}
+
+            <MDBBtn className="to-buy-btn" size='lg' floating tag='a' onClick={() => history.push('/to-buy-list')}>
+                <MDBIcon fas icon="cart-arrow-down" />
+            </MDBBtn>
+
             <div className="main" >
                 <Switch>
                     <Route
@@ -69,8 +70,12 @@ const App: React.FC = () => {
                         path={`/${NavPath.Settings}`}
                         render={props => isAuthenticated ? <Settings /> : getRedirectToLogin(props)} />
                     <Route
+                        exact
                         path={`/${NavPath.FoodManage}`}
                         render={props => isAuthenticated ? <FoodManage /> : getRedirectToLogin(props)} />
+                    <Route
+                        path={`/${NavPath.FoodAdd}`}
+                        render={props => isAuthenticated ? <FoodAdd /> : getRedirectToLogin(props)} />
                     <Route
                         exact
                         path={'/' + NavPath.SignUp}

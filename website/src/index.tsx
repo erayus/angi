@@ -7,6 +7,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { store, StoreContext } from './store/root-store';
 import { ChakraProvider, CSSReset } from '@chakra-ui/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>
@@ -14,7 +16,9 @@ ReactDOM.render(
       <StoreContext.Provider value={store}>
         <ChakraProvider>
           <CSSReset />
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </ChakraProvider>
       </StoreContext.Provider>
     </BrowserRouter>

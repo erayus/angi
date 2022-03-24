@@ -4,6 +4,7 @@ export enum NavPath {
     FoodDetails = 'food-details',
     Settings = 'settings',
     FoodManage = 'food-manage',
+    FoodAdd = 'food-manage/food-add',
     SignUp = 'signup',
     Login = 'login',
 }

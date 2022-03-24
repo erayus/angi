@@ -1,13 +1,10 @@
-#nav-footer{
+#nav-footer {
     position: fixed;
     bottom: 0px;
     height: 50px;
     width: 100vw;
     z-index: 100;
     background-color: white;
-    box-shadow: 0px -1px 10px -5px grey ;
+    box-shadow: 0px -1px 10px -5px grey;
     --mdb-gutter-x: 0;
-    .nav-footer-item{
-        height: 100%;
-    }
 }

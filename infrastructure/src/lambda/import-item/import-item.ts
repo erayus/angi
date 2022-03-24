@@ -115,13 +115,7 @@ export async function importItemHandler(event: APIGatewayProxyEventV2) {
             };
 
             try {
-                const result = await dynClient.batchWrite(params).promise();
-                return GenerateResponse(
-                    200,
-                    env,
-                    'POST',
-                    JSON.stringify(result)
-                );
+                await dynClient.batchWrite(params).promise();
             } catch (e) {
                 console.error(e);
                 return GenerateResponse(
@@ -132,6 +126,7 @@ export async function importItemHandler(event: APIGatewayProxyEventV2) {
                 );
             }
         }
+        return GenerateResponse(200, env, 'POST', JSON.stringify('Success'));
     } catch (e) {
         console.error(e);
         const body =

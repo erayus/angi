@@ -15,6 +15,7 @@ const Header = () => {
     const location = useLocation();
     const history = useHistory();
 
+
     useEffect(() => {
         let backBtnFlag = false;
 
@@ -25,6 +26,11 @@ const Header = () => {
             setHeaderTitle('Food Details')
         } else if (location.pathname.includes(NavPath.ToBuyList)) {
             setHeaderTitle('To Buy List')
+        } else if (location.pathname.includes(NavPath.FoodAdd)) {
+            backBtnFlag = true;
+            setHeaderTitle('Food Add')
+        } else if (location.pathname.includes(NavPath.FoodManage)) {
+            setHeaderTitle('Food Manage')
         }
         else {
             setHeaderTitle('Smart Menu')
