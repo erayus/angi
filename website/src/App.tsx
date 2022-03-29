@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Redirect, Route, RouteComponentProps, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch, useHistory, useLocation } from 'react-router-dom';
 import Menu from './views/menu/menu';
 import FoodDetail from './views/food-detail/foodDetail';
 import './App.styles.scss';
@@ -21,10 +21,10 @@ const App: React.FC = () => {
     const { foodStore, userStore } = useStore();
     const { userLoading, loadAuthenticatedUser, isAuthenticated } = userStore;
     const history = useHistory();
+    const location = useLocation();
+
     useEffect(() => {
-        // userStore.authenticate("Raymond", "123");
         loadAuthenticatedUser();
-        // debugger;
     }, []);
 
     useEffect(() => {
@@ -46,15 +46,30 @@ const App: React.FC = () => {
             }}
         />
     );
+    const displayAddToListButton = () => {
+        const whiteList = [
+            NavPath.Menu.toString(),
+            NavPath.FoodManage.toString(),
+            NavPath.FoodDetails.toString(),
+            NavPath.Settings.toString()
+        ];
+
+        if (whiteList.some(allowPath => location.pathname.includes(allowPath))) {
+            return (
+                <MDBBtn className="to-buy-btn" size='lg' floating tag='a' onClick={() => history.push('/to-buy-list')}>
+                    <MDBIcon fas icon="cart-arrow-down" />
+                </MDBBtn>
+            )
+        }
+        return (null);
+    }
 
 
     return !userLoading ? (
         <React.Fragment>
             <Header />
 
-            <MDBBtn className="to-buy-btn" size='lg' floating tag='a' onClick={() => history.push('/to-buy-list')}>
-                <MDBIcon fas icon="cart-arrow-down" />
-            </MDBBtn>
+            {displayAddToListButton()}
 
             <div className="main" >
                 <Switch>
