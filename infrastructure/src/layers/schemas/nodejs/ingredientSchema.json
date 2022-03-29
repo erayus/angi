@@ -7,7 +7,7 @@
     "ingredientName": {
       "type": "string"
     },
-    "ingredientCategory": {
+    "category": {
       "$ref": "#/definitions/IIngredientCategory"
     },
     "ingredientImgUrl": {
@@ -36,8 +36,8 @@
     }
   },
   "required": [
+    "category",
     "id",
-    "ingredientCategory",
     "ingredientName"
   ],
   "definitions": {

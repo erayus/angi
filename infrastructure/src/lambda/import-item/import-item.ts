@@ -92,8 +92,8 @@ export async function importItemHandler(event: APIGatewayProxyEventV2) {
             return {
                 PutRequest: {
                     Item: {
-                        pk: `user#${userId}`,
-                        sk: `${payload.payloadType}#${id}`,
+                        pk: `${payload.payloadType}#${id}`,
+                        sk: `user#${userId}`,
                         type: `${payload.payloadType}`,
                         ...rest,
                     },

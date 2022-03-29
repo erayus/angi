@@ -5,21 +5,63 @@ import FoodList from '../../components/food-list/food-list.component';
 import { Food } from '../../models/Food';
 import { NavPath } from '../../utils/nav-path';
 import axiosApi from '../../utils/axios-api';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useStore } from '../../store/root-store';
 import { FoodProjection } from '../../store/food-store';
+import { DeleteItemRequestPayload } from '../../models/RequestPayload';
 
 type Props = {}
 
 const FoodManage: React.FC<Props> = (props: Props) => {
     const history = useHistory();
+    const queryClient = useQueryClient();
     const [foodProjection, setFoodProjection] = useState<FoodProjection[]>([]);
     const { foodStore } = useStore();
-    const { isLoading, error, data } = useQuery<Food[]>("food", async () => {
+    const { isLoading, error, data } = useQuery<Food[]>("userFood", async () => {
         const { data } = await axiosApi.Food.list();
         return data;
     }
     );
+    const deleteFunc = useMutation(
+        async (id: string) => {
+            const data: DeleteItemRequestPayload = {
+                itemType: 'food',
+                itemIds: [id]
+            };
+
+            await axiosApi
+                .Food.delete(data)
+                .then(res => {
+                    return res.data;
+                });
+        },
+
+        {
+            onMutate: editedValue => {
+                const previousValue: Food[] | undefined = queryClient.getQueryData("userFood");
+                if (!previousValue) {
+                    return;
+                }
+                const updatedValue = [...previousValue];
+                const removeDeleted = updatedValue.filter(
+                    eachValue => eachValue.id !== editedValue
+                );
+
+                queryClient.setQueryData("userFood", removeDeleted);
+
+                return () => queryClient.setQueryData("userFood", previousValue);
+            },
+
+            onError: (error, editedValue, rollback) => {
+                console.error(error);
+            },
+
+            onSettled: (data, error, editedValue) => {
+                queryClient.removeQueries(["userFood", editedValue]);
+                queryClient.refetchQueries("userFood");
+            }
+        }
+    )
 
     useEffect(() => {
         if (!data) {
@@ -29,8 +71,8 @@ const FoodManage: React.FC<Props> = (props: Props) => {
         setFoodProjection(foodProjection);
     }, [data])
 
-    const onFoodRemoveBtnClickedHandler = () => {
-
+    const onFoodRemoveBtnClickedHandler = (foodId: string) => {
+        deleteFunc.mutate(foodId);
     }
 
     if (isLoading) return (<Heading>"Loading..."</Heading>);

@@ -53,7 +53,7 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
       id: isNewIngredient ? _.toString(Math.round(Math.random() * 100000000000)) : selectedIngredientOption.value,
       ingredientQuantity: selectedIngQuantity,
       ingredientName: selectedIngredientOption.label,
-      ingredientCategory: selectedIngCategory,
+      category: selectedIngCategory,
       ingredientUnit: selectedIngUnit,
       isNewIngredient: isNewIngredient
     }

@@ -20,7 +20,6 @@ export async function getItemsByUserIdItemTypeHandler(
             body: "The function doesn't have proper environment variables.",
         };
     }
-    console.info({ event });
 
     const itemType = event.queryStringParameters
         ? event.queryStringParameters['type']
@@ -33,14 +32,16 @@ export async function getItemsByUserIdItemTypeHandler(
     const userId = 1; // TODO: get from headers
     const params: AWS.DynamoDB.DocumentClient.QueryInput = {
         TableName: tableName,
-        KeyConditionExpression: '#pk = :pkey and begins_with(#sk, :skey)',
-        ExpressionAttributeValues: {
-            ':pkey': `user#${userId}`,
-            ':skey': `${itemType}`,
-        },
+        IndexName: 'userItemTypeIndex', //TODO: get this from environment variable
+        KeyConditionExpression:
+            '#hashKey = :hashKey and begins_with(#type, :type)',
         ExpressionAttributeNames: {
-            '#pk': 'pk',
-            '#sk': 'sk',
+            '#hashKey': 'sk',
+            '#type': 'type',
+        },
+        ExpressionAttributeValues: {
+            ':hashKey': `user#${userId}`,
+            ':type': `${itemType}`,
         },
         ScanIndexForward: true,
     };
@@ -54,14 +55,18 @@ export async function getItemsByUserIdItemTypeHandler(
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey !== 'undefined');
 
-        console.log(queryResult);
-
         const menuFood: Food[] = queryResult.map((item: any) => {
             const { pk, sk, type, ...itemBody } = item;
             return {
-                id: item.sk.split('#')[1], //sk: food#1
+                id: pk.split('#')[1], //sk: food#1
+                foodName: item.foodName,
+                foodImgUrl: item.imgUrl,
+                category: item.category,
+                foodDescription: item.foodDescription,
+                foodIngredients: item.foodIngredients,
+                isPublic: item.isPublic,
                 ...itemBody,
-            };
+            } as Food;
         });
 
         return {
@@ -78,6 +83,7 @@ export async function getItemsByUserIdItemTypeHandler(
             body: JSON.stringify(menuFood),
         };
     } catch (e) {
+        console.error(e);
         return {
             statusCode: 500,
             body: JSON.stringify(e),

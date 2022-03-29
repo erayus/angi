@@ -1,7 +1,10 @@
 import axios, { CancelTokenSource } from 'axios';
 import config from '../config';
 import { ApiPath } from '../models/api-path';
-import { AddItemRequestPayload } from '../models/RequestPayload';
+import {
+    AddItemRequestPayload,
+    DeleteItemRequestPayload,
+} from '../models/RequestPayload';
 import { Food as FoodType } from '../models/Food';
 import { Ingredient as IngredientType } from '../models/Ingredient';
 
@@ -72,6 +75,8 @@ const Food = {
         ),
     add: async (data: AddItemRequestPayload<FoodType>, config: any = {}) =>
         await AxiosApi.post(`${ApiPath.IMPORT_ITEM}`, data, config),
+    delete: async (data: DeleteItemRequestPayload, config: any = {}) =>
+        await AxiosApi.post(`${ApiPath.DELETE_ITEM}`, data, config),
 };
 
 const Ingredient = {

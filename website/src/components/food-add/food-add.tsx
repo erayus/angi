@@ -92,7 +92,7 @@ const FoodAdd = (props: Props) => {
 				return {
 					id: ing.id,
 					ingredientName: ing.ingredientName,
-					ingredientCategory: '', //TODO
+					category: '', //TODO
 				} as Ingredient
 			});
 			if (newIngredients.length > 0) {
@@ -114,7 +114,7 @@ const FoodAdd = (props: Props) => {
 				payloadBody: [{
 					id: _.toString(Math.round(Math.random() * 100000000000)),
 					foodName: data.foodName_,
-					foodCategory: data.foodCategory_,
+					category: data.foodCategory_,
 					foodDescription: data.foodDescription_,
 					foodIngredients: foodIngredients,
 					foodImgUrl: imageUrl,

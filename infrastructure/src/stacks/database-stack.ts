@@ -3,6 +3,7 @@ import * as dynamodb from '@aws-cdk/aws-dynamodb';
 
 import { ConfigProvider } from '../utils/config-provider';
 import { NameGenerator } from '../utils/name-generator';
+import { ProjectionType } from '@aws-cdk/aws-dynamodb';
 
 export const tablePartitionKey = 'pk';
 export const tableSortKey = 'sk';
@@ -30,6 +31,18 @@ export class DatabaseStack extends cdk.Stack {
             removalPolicy: isDevelopment
                 ? cdk.RemovalPolicy.DESTROY
                 : cdk.RemovalPolicy.RETAIN,
+        });
+        table.addGlobalSecondaryIndex({
+            indexName: 'userItemTypeIndex',
+            partitionKey: {
+                name: tableSortKey,
+                type: dynamodb.AttributeType.STRING,
+            },
+            sortKey: {
+                name: 'type',
+                type: dynamodb.AttributeType.STRING,
+            },
+            projectionType: ProjectionType.ALL,
         });
 
         new cdk.CfnOutput(this, `Output-FoodTableName`, {

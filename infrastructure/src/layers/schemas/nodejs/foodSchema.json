@@ -7,7 +7,7 @@
     "foodName": {
       "type": "string"
     },
-    "foodCategory": {
+    "category": {
       "$ref": "#/definitions/FoodCategory"
     },
     "foodImgUrl": {
@@ -39,7 +39,7 @@
     }
   },
   "required": [
-    "foodCategory",
+    "category",
     "foodIngredients",
     "foodName",
     "id",

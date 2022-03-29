@@ -20,10 +20,13 @@ export default class Commnads extends cdk.Construct {
         const tableName = cdk.Fn.importValue(
             NameGenerator.generateConstructName(scope, 'table-name')
         );
-        const importedTable = dynamodb.Table.fromTableName(
+        const importedTable = dynamodb.Table.fromTableAttributes(
             this,
             'Imported-Table',
-            tableName
+            {
+                tableName,
+                globalIndexes: ['userItemTypeIndex'],
+            }
         );
 
         const schemasLayer = new lambda.LayerVersion(this, 'Schema-Layer', {
@@ -69,6 +72,32 @@ export default class Commnads extends cdk.Construct {
             }
         );
         importedTable.grantReadData(getItemsByUserIdItemTypeFunc);
+
+        const deleteItemFunc = new lambdaNode.NodejsFunction(
+            this,
+            'Delete-Item-Function',
+            {
+                functionName: NameGenerator.generateConstructName(
+                    scope,
+                    'delete-item-function'
+                ),
+                runtime: lambda.Runtime.NODEJS_12_X,
+                // name of the exported function
+                handler: 'deleteItemHandler',
+                // file to use as entry point for our Lambda function
+                entry: './src/lambda/delete-item/delete-item.ts',
+                environment: {
+                    TABLE_NAME: importedTable.tableName,
+                    ENVIRONMENT: ConfigProvider.Context(this).Environment,
+                },
+                bundling: {
+                    minify: false,
+                    externalModules: ['aws-sdk'],
+                },
+                layers: [schemasLayer, sharedLayer],
+            }
+        );
+        importedTable.grantWriteData(deleteItemFunc);
 
         const importItemFunc = new lambdaNode.NodejsFunction(
             this,
@@ -166,6 +195,13 @@ export default class Commnads extends cdk.Construct {
             getItemsByUserIdAndItemTypeIntegration
         );
         addCorsOptions(getItemsByUserIdAndItemTypeApiEndpoint);
+
+        const deleteItemApiEndpoint = api.root.addResource(ApiPath.DELETE_ITEM);
+        const deleteItemIntegration = new apigateway.LambdaIntegration(
+            deleteItemFunc
+        );
+        deleteItemApiEndpoint.addMethod('POST', deleteItemIntegration);
+        addCorsOptions(deleteItemApiEndpoint);
 
         const getPresignedUrlApiEndpoint = api.root.addResource(
             ApiPath.GET_PRESIGNED_URL

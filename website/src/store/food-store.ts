@@ -98,7 +98,7 @@ export default class FoodStore {
                         const toBuyIngredient = {
                             id: cur.id,
                             name: curIng?.ingredientName ?? 'No name',
-                            category: curIng?.ingredientCategory ?? '',
+                            category: curIng?.category ?? '',
                             quantity:
                                 Math.round(cur.ingredientQuantity * 10) / 10,
                             ingredientUnit: curIng?.ingredientUnit ?? '',
@@ -204,7 +204,7 @@ export default class FoodStore {
         const foodThisWeekWithoutUpdatingFood =
             this.menu !== null
                 ? this.menu!.food!.filter(
-                      (curFood) => curFood.foodCategory !== category
+                      (curFood) => curFood.category !== category
                   )
                 : [];
 
@@ -245,14 +245,9 @@ export default class FoodStore {
         const foodUnderTargetCategory = this.allFood.filter(
             (eachFoodInAllFood) => {
                 if (targetFood) {
-                    return (
-                        eachFoodInAllFood.foodCategory ===
-                        targetFood.foodCategory
-                    );
+                    return eachFoodInAllFood.category === targetFood.category;
                 } else {
-                    return (
-                        eachFoodInAllFood.foodCategory === targetFoodCategory
-                    );
+                    return eachFoodInAllFood.category === targetFoodCategory;
                 }
             }
         );
@@ -341,7 +336,7 @@ export default class FoodStore {
         quantityToShow: number
     ): Food[] => {
         let foodUnderGivenCategory = allFood.filter(
-            (food) => food.foodCategory === category
+            (food) => food.category === category
         );
 
         if (quantityToShow > foodUnderGivenCategory.length) {
@@ -404,7 +399,7 @@ export default class FoodStore {
         let foodProjection: FoodProjection = {
             id: food.id,
             name: food.foodName,
-            category: food.foodCategory,
+            category: food.category,
             imgUrl: food.foodImgUrl,
             ingredients: [],
         };
@@ -419,7 +414,7 @@ export default class FoodStore {
             foodProjection.ingredients.push({
                 id: ingredient!.id,
                 name: ingredient!.ingredientName,
-                category: ingredient!.ingredientCategory,
+                category: ingredient!.category,
                 quantity: foodIngredient.ingredientQuantity,
                 ingredientUnit: ingredient!.ingredientUnit,
             });
