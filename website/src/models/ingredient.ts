@@ -1,10 +1,10 @@
 export type Ingredient = {
     id: string;
     ingredientName: string;
-    category: IIngredientCategory;
+    category: string | IIngredientCategory;
     ingredientImgUrl?: string;
     ingredientDescription?: string;
-    ingredientUnit?: IUnit;
+    ingredientUnit?: string | IUnit;
 };
 
 export type IIngredientCategory =

@@ -27,6 +27,7 @@ import { AddItemRequestPayload } from '../../models/RequestPayload';
 import _ from 'lodash';
 import { Ingredient } from '../../models/Ingredient';
 import AddIngredientModal from '../add-ingredient-modal/add-ingredient-modal';
+import { useHistory } from 'react-router-dom';
 
 export type FormFoodIngredient = IFoodIngredient & Ingredient & { isNewIngredient: boolean }
 export interface IngredientOption extends OptionBase {
@@ -47,8 +48,9 @@ const FoodAdd = (props: Props) => {
 	const { register, handleSubmit, getValues, setValue, formState: { errors }, watch } = useForm<FormValues>()
 	const [previewImages, setPreviewImages] = useState<string[]>();
 	const watchImages = watch("foodImg_", undefined); // you can supply default value as second argument
-
 	const watchAddedIngredients = watch("foodIngredients_", []); // you can supply default value as second argument
+
+	const history = useHistory();
 
 	useEffect(() => {
 		if (!watchImages) {
@@ -122,6 +124,7 @@ const FoodAdd = (props: Props) => {
 				}]
 			}
 			await axiosApi.Food.add(addItemRequestPayload);
+			history.goBack()
 			console.log('success')
 		} catch (e) {
 			console.error({ e });

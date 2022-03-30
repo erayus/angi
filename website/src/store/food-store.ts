@@ -19,9 +19,9 @@ export type FoodProjection = {
     imgUrl?: string;
     ingredients: {
         id: string;
-        category: IIngredientCategory;
+        category: IIngredientCategory | string;
         name: string;
-        ingredientUnit?: IUnit;
+        ingredientUnit?: IUnit | string;
         quantity: number;
     }[];
 };
@@ -29,9 +29,9 @@ export type FoodProjection = {
 export type ToBuyIngredient = {
     id: string;
     name: string;
-    category: IIngredientCategory;
+    category: IIngredientCategory | string;
     quantity: number;
-    ingredientUnit: IUnit;
+    ingredientUnit: IUnit | string;
     isChecked: boolean;
 };
 export default class FoodStore {
