@@ -197,7 +197,7 @@ const FoodAdd = (props: Props) => {
 					))
 					: 'Please use the form below to add ingredients for your new food'}
 				<AddIngredientModal
-					currentAddedIngredientIds={watchAddedIngredients?.map(ing => ing.id)}
+					currentAddedIngredientIds={watchAddedIngredients ? watchAddedIngredients.map(ing => ing.id) : []}
 					onAddedIngredient={onAddedIngredientHandler}
 				/>
 				<Button mt={5} type="submit" width="100%" colorScheme="green" >Submit</Button>
