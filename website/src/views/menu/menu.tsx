@@ -68,11 +68,7 @@ const Menu = () => {
     }
 
     const onFoodRemoveBtnClickedHandler = async (foodId: string) => {
-        const deletingFood = await foodStore.getFoodProjectionById(foodId);
-
-        if (window.confirm(`Are you sure you want to delete ${deletingFood?.name}?`)) {
-            foodStore.removeFood(foodId);
-        }
+        foodStore.removeFood(foodId);
     }
 
     const foodToDisplay = !loading && foodStore.menu?.foodCategoriesQuantities?.map(foodCategory => {

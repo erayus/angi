@@ -51,9 +51,12 @@ class AxiosApi {
         return axios.put(`${urlAction}`, data, config);
     }
 
-    static delete(urlAction: ApiPath, data = {}, additionalConfig = {}) {
+    static delete(urlAction: string, data = {}, additionalConfig = {}) {
         const config = {
             ...this.apiConfig,
+            headers: {
+                'User-Id': '1', //TODO
+            },
             data: { ...data },
             ...additionalConfig,
         };
@@ -76,7 +79,7 @@ const Food = {
     add: async (data: AddItemRequestPayload<FoodType>, config: any = {}) =>
         await AxiosApi.post(`${ApiPath.IMPORT_ITEM}`, data, config),
     delete: async (data: DeleteItemRequestPayload, config: any = {}) =>
-        await AxiosApi.post(`${ApiPath.DELETE_ITEM}`, data, config),
+        await AxiosApi.delete(`${ApiPath.DELETE_ITEM}`, data, config),
 };
 
 const Ingredient = {

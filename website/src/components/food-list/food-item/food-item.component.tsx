@@ -8,6 +8,8 @@ import { useStore } from '../../../store/root-store';
 import { observer } from 'mobx-react-lite';
 import { NavPath } from '../../../utils/nav-path';
 import { FoodProjection } from '../../../store/food-store';
+import AlertDialogButton from '../../alert-dialog-button/alert-dialog-button';
+import { Button, Heading } from '@chakra-ui/react';
 
 type IProps = FoodListOptionalProps & FoodProjection;
 
@@ -58,37 +60,37 @@ const FoodItem: React.FC<IProps> = ({
   );
 
   const displayViewDetailsBtn = (
-    <MDBBtn
+    <Button
       className="view-detail-btn px-3"
-      color="success"
-      rounded
+      colorScheme="green"
       onClick={() => history.push(`/${NavPath.FoodDetails}/${id}`)}>
       Details
-    </MDBBtn> //TODO: centralize pathname
+    </Button> //TODO: centralize pathname
   );
 
   const displayFoodChangeBtn = (
-    <MDBBtn
+    <Button
       className="change-modal-btn mx-1"
-      floating
       size="md"
-      rounded
       onClick={() => onFoodChangeBtnClicked ? onFoodChangeBtnClicked!(id) : null}
     >
       <MDBIcon fas icon="sync" />
-    </MDBBtn>
+    </Button>
   );
   const displayFoodRemoveBtn = (
-    <MDBBtn
+    <AlertDialogButton
       className="remove-btn mx-1"
       color="danger"
-      floating
       size="md"
-      rounded
-      onClick={() => onFoodRemoveBtnClicked ? onFoodRemoveBtnClicked!(id) : null}
+      alertHeader='Delete Food'
+      colorScheme='red'
+      alertBody='Are you sure you want to delete this food?'
+      actionButtonText='Delete'
+      onConfirmedHandler={() => onFoodRemoveBtnClicked ? onFoodRemoveBtnClicked!(id) : null}
     >
       <MDBIcon fas icon="trash-alt" />
-    </MDBBtn>
+    </AlertDialogButton>
+
   );
 
   return (
@@ -106,7 +108,7 @@ const FoodItem: React.FC<IProps> = ({
         </MDBCol>
         <MDBCol size="8" className='card-body-container'>
           <MDBCardBody className="card-body">
-            <MDBCardTitle>{name}</MDBCardTitle>
+            <Heading mb={4} size="md">{name}</Heading>
             {enableIngredientChipsDisplay && displayIngredientsChips}
             {enableIngredientChipsDisplay && displayNoOfExtraIngredients}
             {enableViewDetails && displayViewDetailsBtn}

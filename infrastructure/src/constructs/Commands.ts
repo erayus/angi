@@ -200,7 +200,7 @@ export default class Commnads extends cdk.Construct {
         const deleteItemIntegration = new apigateway.LambdaIntegration(
             deleteItemFunc
         );
-        deleteItemApiEndpoint.addMethod('POST', deleteItemIntegration);
+        deleteItemApiEndpoint.addMethod('DELETE', deleteItemIntegration);
         addCorsOptions(deleteItemApiEndpoint);
 
         const getPresignedUrlApiEndpoint = api.root.addResource(

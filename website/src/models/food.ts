@@ -1,7 +1,7 @@
 export type Food = {
     id: string;
     foodName: string;
-    foodCategory: FoodCategory;
+    category: FoodCategory;
     foodImgUrl?: string;
     foodDescription?: string;
     foodIngredients: IFoodIngredient[];
