@@ -77,7 +77,7 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
           <ModalCloseButton />
 
           <ModalBody>
-            <FormControl isRequired>
+            <FormControl mb={3} isRequired>
               <FormLabel htmlFor='food-ingredients'>Ingredient Name:</FormLabel>
               <CreatableSelect<
                 IngredientOption,
@@ -101,7 +101,7 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
 
               {selectedIngredient &&
                 <FormControl as={GridItem} isRequired>
-                  <FormLabel htmlFor='food-ingredients'>Ingredient Quantity:</FormLabel>
+                  <FormLabel htmlFor='food-ingredients'>Quantity:</FormLabel>
                   <NumberInput min={1}
                     value={selectedIngredient?.ingredientQuantity ?? 1}
                     onChange={e => setSelectedIngredient({ ...selectedIngredient, ingredientQuantity: +e })}>
@@ -122,10 +122,11 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
               } */}
 
               {selectedIngredient &&
-                <FormControl as={GridItem} isRequired>
-                  <FormLabel htmlFor='ingredient-unit'>Ingredient Unit:</FormLabel>
+                <FormControl as={GridItem} isRequired={selectedIngredient.isNewIngredient}>
+                  <FormLabel htmlFor='ingredient-unit'>Unit:</FormLabel>
                   <Input id='ingredient-unit' placeholder='ex: gram'
                     value={selectedIngredient.ingredientUnit}
+                    isDisabled={!selectedIngredient.isNewIngredient}
                     onChange={e => setSelectedIngredient({ ...selectedIngredient, ingredientUnit: e.currentTarget.value })} />
                 </FormControl>
               }
@@ -134,7 +135,6 @@ const AddIngredientModal: React.FC<IProps> = (props) => {
                 as={GridItem}
                 colSpan={2}
               >
-
               </Box>
 
             </Grid>

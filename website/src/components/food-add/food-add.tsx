@@ -134,7 +134,6 @@ const FoodAdd = (props: Props) => {
 
 	const onAddedIngredientHandler = (formFoodIngredient: FormFoodIngredient) => {
 		const currentSelectedIngredients = getValues("foodIngredients_") ?? [];
-		console.log({ formFoodIngredient });
 		setValue("foodIngredients_", [...currentSelectedIngredients, formFoodIngredient])
 	}
 
@@ -193,7 +192,7 @@ const FoodAdd = (props: Props) => {
 						<Box key={ing.id} as={Flex} borderWidth='1.5px' borderRadius='lg' p={2} my={1} justifyContent="space-between">
 							<Text>{ing.ingredientName}</Text>
 							<Box>
-								<Badge mr={2} px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity}</Badge>
+								<Badge mr={2} px={2} borderRadius='md' colorScheme='green'>{ing.ingredientQuantity} {ing.ingredientUnit}</Badge>
 								<Icon as={BsFillTrashFill} color='red.500' onClick={() => removeAddedIngredient(ing.id)} />
 							</Box>
 						</Box>
