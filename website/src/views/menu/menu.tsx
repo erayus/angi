@@ -3,19 +3,27 @@ import { observer } from 'mobx-react-lite';
 import FoodList from '../../components/food-list/food-list.component';
 import { useStore } from '../../store/root-store';
 import './menu.styles.scss';
-import { FoodCategory } from '../../models/Food';
+import { Food, FoodCategory, IUserFoodCategoryQuantity } from '../../models/Food';
 import { MDBIcon, MDBModal, MDBBtn } from 'mdb-react-ui-kit';
 import FoodActionModal from '../../components/food-change-modal/food-change-modal.compenent';
 import Loader from '../../components/loader/loader';
 import startCase from 'lodash/startCase';
+import useMenu from '../../hooks/menu/useMenu';
+import useAddMenu from '../../hooks/menu/useAddMenu';
+import { FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
+import { Redirect } from 'react-router-dom';
+import { NavPath } from '../../utils/nav-path';
 
 
 const Menu = () => {
     const { foodStore } = useStore();
-    const { menuProjection, loadingFood: loading, error } = foodStore;
+    const { menuProjection, loadingFood: loadingFood, errorFood } = foodStore;
     const [foodChangeModalState, setFoodChangeModalState] = useState(false);
     const [foodAddModalState, setFoodAddModalState] = useState(false);
     const [foodToBeChangedId, setTargetFoodToBeChangedId] = useState('');
+    const { data: menu, error, isLoading } = useMenu();
+
     useEffect(() => {
         return () => {
             foodStore.saveMenu();
@@ -71,7 +79,7 @@ const Menu = () => {
         foodStore.removeFood(foodId);
     }
 
-    const foodToDisplay = !loading && foodStore.menu?.foodCategoriesQuantities?.map(foodCategory => {
+    const foodToDisplay = !loadingFood && foodStore.menu?.foodCategoriesQuantity?.map(foodCategory => {
         const foodThisWeekUnderCategory = menuProjection ? menuProjection.filter(food => food.category === foodCategory.category) : [];
         return (
             <div key={foodCategory.category} className="mb-4">
@@ -109,18 +117,29 @@ const Menu = () => {
     }
     )
 
+
     const errorView = (
         <div className='d-flex flex-column align-items-center mt-5 text-center' style={{ height: '100vh' }} >
             <MDBIcon className='my-2' fas icon='exclamation-triangle' size='4x' style={{ color: '#FFA900' }} />
-            <h4>{error}</h4>
+            <h4>{errorFood}</h4>
         </div>
     )
 
     return (
-        <div className="food-list-container">
-            {loading && !error && <Loader />}
-            {!loading && error && errorView}
-            {!loading && !error && foodToDisplay}
+        <div className="menu">
+            {
+                !menu &&
+                <Redirect
+                    to={{
+                        pathname: `${NavPath.MenuCreate}`,
+                    }}
+                />
+            }
+
+            {loadingFood && !errorFood && <Loader />}
+            {!loadingFood && errorFood && errorView}
+            {!loadingFood && !errorFood && foodToDisplay}
+
             <MDBModal
                 staticBackdrop={true}
                 show={foodChangeModalState}>
@@ -146,5 +165,6 @@ const Menu = () => {
         </div>
     )
 }
+
 
 export default observer(Menu);

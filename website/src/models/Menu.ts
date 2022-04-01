@@ -5,7 +5,7 @@ export type Menu = {
     menuId: string;
     food: Food[];
     renewDateTimestamp: number;
-    foodCategoriesQuantities: IUserFoodCategoryQuantity[];
-    toBuyList: ToBuyIngredient[];
-    listOfCheckedIngredientIds: string[];
+    renewPeriod: number;
+    foodCategoriesQuantity: IUserFoodCategoryQuantity[];
+    checkedIngredientIds: string[];
 };

@@ -55,18 +55,12 @@ export async function getItemsByUserIdItemTypeHandler(
             params.ExclusiveStartKey = items.LastEvaluatedKey;
         } while (typeof items.LastEvaluatedKey !== 'undefined');
 
-        const menuFood: Food[] = queryResult.map((item: any) => {
+        const itemsResult: any[] = queryResult.map((item: any) => {
             const { pk, sk, type, ...itemBody } = item;
             return {
                 id: pk.split('#')[1], //sk: food#1
-                foodName: item.foodName,
-                foodImgUrl: item.imgUrl,
-                category: item.category,
-                foodDescription: item.foodDescription,
-                foodIngredients: item.foodIngredients,
-                isPublic: item.isPublic,
                 ...itemBody,
-            } as Food;
+            };
         });
 
         return {
@@ -80,7 +74,7 @@ export async function getItemsByUserIdItemTypeHandler(
                 'Access-Control-Allow-Methods': 'OPTIONS,GET',
                 // "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
             },
-            body: JSON.stringify(menuFood),
+            body: JSON.stringify(itemsResult),
         };
     } catch (e) {
         console.error(e);

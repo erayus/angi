@@ -46,7 +46,7 @@ export default class FoodStore {
         this.newFoodToActionOnId = id;
     };
     foodAvailableForUpdate: FoodProjection[] = [];
-    error: any;
+    errorFood: any;
     loadingFood: boolean = false;
     isFoodAvailableForChangeLoading = false;
 
@@ -102,11 +102,9 @@ export default class FoodStore {
                             quantity:
                                 Math.round(cur.ingredientQuantity * 10) / 10,
                             ingredientUnit: curIng?.ingredientUnit ?? '',
-                            isChecked:
-                                this.menu!.listOfCheckedIngredientIds!.some(
-                                    (checkedIngId) =>
-                                        checkedIngId === curIng!.id
-                                ),
+                            isChecked: this.menu!.checkedIngredientIds!.some(
+                                (checkedIngId) => checkedIngId === curIng!.id
+                            ),
                         };
                         accIngredients.push(toBuyIngredient);
                     } else {
@@ -148,7 +146,7 @@ export default class FoodStore {
         } catch (e: any) {
             this.loadingFood = false;
             console.error(e);
-            this.error = e.message;
+            this.errorFood = e.message;
         }
     };
 
@@ -173,7 +171,6 @@ export default class FoodStore {
         const menuFood: Food[] = [];
         const defaultFoodCategories = this.getFoodCategoriesQuantities();
         this.allFood = this.allFood ?? (await this.retrieveAllFood());
-        console.log(toJS(this.allFood));
         defaultFoodCategories.forEach((foodCategory) => {
             const newFood = this.getRandomFoodForCategory(
                 this.allFood!,
@@ -187,16 +184,16 @@ export default class FoodStore {
         this.menu = {
             menuId: this.userStore.userId!,
             food: menuFood,
-            foodCategoriesQuantities: defaultFoodCategories,
+            foodCategoriesQuantity: defaultFoodCategories,
+            renewPeriod: this.renewPeriod,
             renewDateTimestamp: generateRenewDate(this.renewPeriod),
-            toBuyList: [],
-            listOfCheckedIngredientIds: [],
+            checkedIngredientIds: [],
         };
         this.saveMenu();
     };
 
     private resetListOfCheckedIngredients = () => {
-        this.menu!.listOfCheckedIngredientIds = [];
+        this.menu!.checkedIngredientIds = [];
         this.saveListOfCheckedIngredientIds([]);
     };
 
@@ -301,7 +298,7 @@ export default class FoodStore {
             this.loadingFood = false;
             return this.convertFoodToFoodProjection(food!);
         } catch (e) {
-            this.error = e;
+            this.errorFood = e;
             this.loadingFood = false;
             return null;
         }
@@ -423,17 +420,14 @@ export default class FoodStore {
     };
 
     toggleIngredientState = (ingredientId: string) => {
-        const index =
-            this.menu!.listOfCheckedIngredientIds!.indexOf(ingredientId);
+        const index = this.menu!.checkedIngredientIds!.indexOf(ingredientId);
         if (index >= 0) {
-            this.menu!.listOfCheckedIngredientIds!.splice(index, 1);
+            this.menu!.checkedIngredientIds!.splice(index, 1);
         } else {
-            this.menu!.listOfCheckedIngredientIds!.push(ingredientId);
+            this.menu!.checkedIngredientIds!.push(ingredientId);
         }
 
-        this.saveListOfCheckedIngredientIds(
-            this.menu!.listOfCheckedIngredientIds!
-        );
+        this.saveListOfCheckedIngredientIds(this.menu!.checkedIngredientIds!);
     };
 
     removeFood = (foodId: string) => {

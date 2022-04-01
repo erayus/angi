@@ -7,6 +7,7 @@ import {
 } from '../models/RequestPayload';
 import { Food as FoodType } from '../models/Food';
 import { Ingredient as IngredientType } from '../models/Ingredient';
+import { Menu as MenuType } from '../models/Menu';
 
 axios.defaults.baseURL = config.getApiBaseUrl();
 
@@ -70,6 +71,16 @@ class AxiosApi {
     isCancel = (value: any) => axios.isCancel(value);
 }
 
+const Menu = {
+    get: (config: any = {}) =>
+        AxiosApi.get(
+            `${ApiPath.GET_ITEMS_BY_USERID_ITEMTYPE}/?type=menu`,
+            config
+        ),
+    add: async (data: AddItemRequestPayload<MenuType>, config: any = {}) =>
+        await AxiosApi.post(`${ApiPath.IMPORT_ITEM}`, data, config),
+};
+
 const Food = {
     list: (config: any = {}) =>
         AxiosApi.get(
@@ -105,6 +116,7 @@ const FoodImageUploader = {
 };
 
 const axiosApi = {
+    Menu,
     Food,
     Ingredient,
     FoodImageUploader,

@@ -7,6 +7,7 @@ export enum NavPath {
     FoodAdd = 'food-manage/food-add',
     SignUp = 'signup',
     Login = 'login',
+    MenuCreate = 'menu-create',
 }
 
 export type NavItem = {

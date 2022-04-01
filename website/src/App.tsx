@@ -16,6 +16,7 @@ import Loader from './components/loader/loader';
 import FoodManage from './views/food-manage/food-manage';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import FoodAdd from './components/food-add/food-add';
+import MenuCreate from './views/menu-create/menu-create';
 
 const App: React.FC = () => {
     const { foodStore, userStore } = useStore();
@@ -49,8 +50,8 @@ const App: React.FC = () => {
     const displayAddToListButton = () => {
         const whiteList = [
             NavPath.Menu.toString(),
-            NavPath.FoodManage.toString(),
             NavPath.FoodDetails.toString(),
+            NavPath.FoodManage.toString(),
             NavPath.Settings.toString()
         ];
 
@@ -73,6 +74,10 @@ const App: React.FC = () => {
 
             <div className="main" >
                 <Switch>
+                    <Route
+                        exact
+                        path={'/' + NavPath.MenuCreate}
+                        render={props => isAuthenticated ? <MenuCreate /> : getRedirectToLogin(props)} />
                     <Route
                         exact
                         path={'/' + NavPath.Menu}

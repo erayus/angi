@@ -47,6 +47,11 @@ const generateSchema = async (
             typeName: 'Ingredient',
             exportSchemaName: 'ingredientSchema',
         },
+        {
+            fileName: 'Menu.ts',
+            typeName: 'Menu',
+            exportSchemaName: 'menuSchema',
+        },
     ];
 
     for (let record of interfaceRecords) {

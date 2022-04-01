@@ -8,7 +8,7 @@
       "type": "string"
     },
     "category": {
-      "$ref": "#/definitions/IIngredientCategory"
+      "type": "string"
     },
     "ingredientImgUrl": {
       "type": "string"
@@ -17,21 +17,6 @@
       "type": "string"
     },
     "ingredientUnit": {
-      "enum": [
-        "",
-        "bó",
-        "bông",
-        "bịch",
-        "chai",
-        "con",
-        "củ",
-        "gram",
-        "gói",
-        "hộp",
-        "kg",
-        "lon",
-        "trái"
-      ],
       "type": "string"
     }
   },
@@ -40,24 +25,5 @@
     "id",
     "ingredientName"
   ],
-  "definitions": {
-    "IIngredientCategory": {
-      "enum": [
-        "",
-        "Củ",
-        "Gia vị",
-        "Gạo",
-        "Hành",
-        "Hải sản",
-        "Nấm",
-        "Quả",
-        "Rau",
-        "Rau cải",
-        "Thịt",
-        "Trái cây"
-      ],
-      "type": "string"
-    }
-  },
   "$schema": "http://json-schema.org/draft-07/schema#"
 }
