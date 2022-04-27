@@ -127,14 +127,14 @@ const Menu = () => {
 
     return (
         <div className="menu">
-            {
+            {/* {
                 !menu &&
                 <Redirect
                     to={{
-                        pathname: `${NavPath.MenuCreate}`,
+                        pathname: `/onboarding/${NavPath.MenuCreate}`,
                     }}
                 />
-            }
+            } */}
 
             {loadingFood && !errorFood && <Loader />}
             {!loadingFood && errorFood && errorView}

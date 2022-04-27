@@ -80,8 +80,6 @@ const FoodManage: React.FC<Props> = (props: Props) => {
 
     return (
         <Box p={4}>
-            <Button w="100%" onClick={() => history.push(`/${NavPath.FoodAdd}`)} >Add Food</Button>
-
             {foodProjection.length > 0 ? <FoodList
                 foodList={foodProjection}
                 enableViewDetails

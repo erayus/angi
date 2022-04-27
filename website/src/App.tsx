@@ -17,6 +17,7 @@ import FoodManage from './views/food-manage/food-manage';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import FoodAdd from './components/food-add/food-add';
 import MenuCreate from './views/menu-create/menu-create';
+import Onboarding from './views/onboarding/onboarding';
 
 const App: React.FC = () => {
     const { foodStore, userStore } = useStore();
@@ -30,6 +31,9 @@ const App: React.FC = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
+            if(!foodStore.userHasMenu()) {
+                history.replace('/onboarding')
+            }
             foodStore.initializeFoodThisWeek();
         }
     }, [foodStore, isAuthenticated])
@@ -54,8 +58,8 @@ const App: React.FC = () => {
             NavPath.FoodManage.toString(),
             NavPath.Settings.toString()
         ];
-
-        if (whiteList.some(allowPath => location.pathname.includes(allowPath))) {
+        console.log(location.pathname);
+        if (whiteList.some(allowPath => location.pathname.match(`^/${allowPath}$`))) {
             return (
                 <MDBBtn className="to-buy-btn" size='lg' floating tag='a' onClick={() => history.push('/to-buy-list')}>
                     <MDBIcon fas icon="cart-arrow-down" />
@@ -68,16 +72,16 @@ const App: React.FC = () => {
 
     return !userLoading ? (
         <React.Fragment>
-            <Header />
 
             {displayAddToListButton()}
 
             <div className="main" >
+                <Header />
                 <Switch>
+
                     <Route
-                        exact
-                        path={'/' + NavPath.MenuCreate}
-                        render={props => isAuthenticated ? <MenuCreate /> : getRedirectToLogin(props)} />
+                        path={'/onboarding'}
+                        render={props => isAuthenticated ? <Onboarding /> : getRedirectToLogin(props)} />
                     <Route
                         exact
                         path={'/' + NavPath.Menu}
@@ -119,7 +123,7 @@ const App: React.FC = () => {
                     <Redirect from="/" to={NavPath.Menu} />
                 </Switch>
             </div>
-            {isAuthenticated ? <NavFooter /> : null}
+            {isAuthenticated && foodStore.userHasMenu() ? <NavFooter /> : null}
         </React.Fragment>
     ) : <Loader />
 }

@@ -1,7 +1,8 @@
-import { Box, FormControl, FormLabel, Grid, Input, GridItem, Flex } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Grid, Input, GridItem, Flex, Button } from '@chakra-ui/react';
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Redirect } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
+import FoodAddOptionsModal from '../../components/food-add-options-modal/food-add-options-modal';
 import FoodAdd from '../../components/food-add/food-add';
 import useAddMenu from '../../hooks/menu/useAddMenu'
 import useMenu from '../../hooks/menu/useMenu'
@@ -43,6 +44,7 @@ const categoryQuantitiesFormData:any = {
 }
 
 const MenuCreate = (props: Props) => {
+    const history = useHistory();
     const { register, handleSubmit, getValues, setValue, formState: { errors }, watch } = useForm<MenuCreationFormValues>()
     const { mutate } = useAddMenu();
     const { data: menu, error: errorLoadingMenu, isLoading: isLoadingMenu } = useMenu();
@@ -75,9 +77,7 @@ const MenuCreate = (props: Props) => {
                 <Box flex={2}>Dessert:</Box>
                 <Input flex={2} type="number" id='dessert-quantity' placeholder='1' {...register("dessertQuantity_")} />
             </FormControl>
-
-            <FormLabel mt={3}>Food In Storage:</FormLabel>
-            <FoodManage/>
+            <Button isFullWidth onClick={() => history.goBack()}>Back</Button>
         </form>
     )
 
