@@ -33,6 +33,7 @@ const validate = (
             break;
         case 'menu':
             validateFunc = ajv.compile(menuSchema);
+            break;
         default:
             return { result: false };
     }

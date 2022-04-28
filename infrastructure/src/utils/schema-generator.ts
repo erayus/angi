@@ -27,11 +27,11 @@ const generateSchema = async (
     );
 
     const basePathToSchemasLayer = './src/layers/schemas/nodejs/';
-    const foodSchema = await TJS.generateSchema(program, typeName, settings);
-    const foodSchemaString = JSON.stringify(foodSchema, null, 2);
+    const schema = await TJS.generateSchema(program, typeName, settings);
+    const schemaString = JSON.stringify(schema, null, 2);
     await fs.writeFileSync(
         resolve(basePathToSchemasLayer, `${exportSchemaName}.json`),
-        foodSchemaString
+        schemaString
     );
 };
 

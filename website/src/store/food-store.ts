@@ -187,7 +187,7 @@ export default class FoodStore {
 
 
         this.menu = {
-            menuId: this.userStore.userId!,
+            id: this.userStore.userId!,
             food: menuFood,
             foodCategoriesQuantity: defaultFoodCategoryQuantities,
             renewPeriod: this.renewPeriod,

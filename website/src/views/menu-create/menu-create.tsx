@@ -39,23 +39,23 @@ const MenuCreate = (props: Props) => {
         const foodCategoryQuantities: IUserFoodCategoryQuantity[] = [
             {
                 category: 'entree',
-                quantity: data.entreeQuantity_,
+                quantity: +data.entreeQuantity_,
             },
             {
                 category: 'main',
-                quantity: data.mainQuantity_,
+                quantity: +data.mainQuantity_,
             },
             {
                 category: 'soup',
-                quantity: data.soupQuantity_,
+                quantity: +data.soupQuantity_,
             },
             {
                 category: 'dessert',
-                quantity: data.dessertQuantity_,
+                quantity: +data.dessertQuantity_,
             },
         ];
         const menu: Menu = {
-            menuId: Math.round(Math.random() * 10000000000).toString(),
+            id: Math.round(Math.random() * 10000000000).toString(),
             foodCategoriesQuantity: foodCategoryQuantities,
             food: foodStore.generateMenuFood(userFood!, foodCategoryQuantities),
             renewPeriod: +data.renewPeriod_,
