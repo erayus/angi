@@ -167,24 +167,29 @@ export default class FoodStore {
         this.allIngredients = await axiosApi.Ingredient.list();
     };
 
-    private loadNewMenu = async () => {
+    generateMenuFood = (userFood: Food[], defaultFoodCategoryQuantities: IUserFoodCategoryQuantity[]) : Food[] => {
         const menuFood: Food[] = [];
-        const defaultFoodCategories = this.getFoodCategoriesQuantities();
-        this.allFood = this.allFood ?? (await this.retrieveAllFood());
-        defaultFoodCategories.forEach((foodCategory) => {
+        defaultFoodCategoryQuantities.forEach((foodCategory) => {
             const newFood = this.getRandomFoodForCategory(
-                this.allFood!,
+                userFood,
                 foodCategory.category,
                 foodCategory.quantity
             );
             menuFood.push(...newFood);
         });
-        console.log({ menuFood });
+        return menuFood;
+    }
+
+    private loadNewMenu = async () => {
+        const defaultFoodCategoryQuantities = this.getFoodCategoriesQuantities();
+        this.allFood = this.allFood ?? (await this.retrieveAllFood());
+        const menuFood: Food[] = this.generateMenuFood(this.allFood, defaultFoodCategoryQuantities);
+
 
         this.menu = {
             menuId: this.userStore.userId!,
             food: menuFood,
-            foodCategoriesQuantity: defaultFoodCategories,
+            foodCategoriesQuantity: defaultFoodCategoryQuantities,
             renewPeriod: this.renewPeriod,
             renewDateTimestamp: generateRenewDate(this.renewPeriod),
             checkedIngredientIds: [],

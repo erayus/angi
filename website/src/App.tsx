@@ -13,7 +13,7 @@ import { useStore } from './store/root-store';
 import SignUp from './components/sign-up/sign-up.component';
 import Login from './components/log-in/log-in.component';
 import Loader from './components/loader/loader';
-import FoodManage from './views/food-manage/food-manage';
+import FoodStorage from './views/food-storage/food-storage';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import FoodAdd from './components/food-add/food-add';
 import MenuCreate from './views/menu-create/menu-create';
@@ -31,13 +31,16 @@ const App: React.FC = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            if(!foodStore.userHasMenu()) {
-                history.replace('/onboarding')
-            }
+
             foodStore.initializeFoodThisWeek();
         }
     }, [foodStore, isAuthenticated])
 
+    useEffect(() => {
+        if(!foodStore.userHasMenu()) {
+            history.replace('/onboarding');
+        }
+    },[])
     /**
  * Returns a redirect to login page with the current path in its state
  * User will be redirected to current path after loging in
@@ -47,7 +50,7 @@ const App: React.FC = () => {
             push
             to={{
                 pathname: NavPath.Login,
-                state: { fromPathName: props.location.pathname }
+                state: { fromPath: props.location.pathname }
             }}
         />
     );
@@ -96,7 +99,7 @@ const App: React.FC = () => {
                     <Route
                         exact
                         path={`/${NavPath.FoodManage}`}
-                        render={props => isAuthenticated ? <FoodManage /> : getRedirectToLogin(props)} />
+                        render={props => isAuthenticated ? <FoodStorage /> : getRedirectToLogin(props)} />
                     <Route
                         path={`/${NavPath.FoodAdd}`}
                         render={props => isAuthenticated ? <FoodAdd /> : getRedirectToLogin(props)} />

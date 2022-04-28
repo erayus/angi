@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "properties": {
+    "menuId": {
+      "type": "string"
+    },
+    "food": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "foodName": {
+            "type": "string"
+          },
+          "category": {
+            "$ref": "#/definitions/FoodCategory"
+          },
+          "foodImgUrl": {
+            "type": "string"
+          },
+          "foodDescription": {
+            "type": "string"
+          },
+          "foodIngredients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "ingredientQuantity": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "ingredientQuantity"
+              ]
+            }
+          },
+          "isPublic": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "category",
+          "foodIngredients",
+          "foodName",
+          "id",
+          "isPublic"
+        ]
+      }
+    },
+    "renewDateTimestamp": {
+      "type": "number"
+    },
+    "renewPeriod": {
+      "type": "number"
+    },
+    "foodCategoriesQuantity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "$ref": "#/definitions/FoodCategory"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "category",
+          "quantity"
+        ]
+      }
+    },
+    "checkedIngredientIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "checkedIngredientIds",
+    "food",
+    "foodCategoriesQuantity",
+    "menuId",
+    "renewDateTimestamp",
+    "renewPeriod"
+  ],
+  "definitions": {
+    "FoodCategory": {
+      "enum": [
+        "dessert",
+        "entree",
+        "main",
+        "soup"
+      ],
+      "type": "string"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

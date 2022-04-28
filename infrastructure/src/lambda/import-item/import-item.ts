@@ -3,6 +3,7 @@ import * as AWS from 'aws-sdk';
 import Ajv from 'ajv';
 import * as foodSchema from '/opt/nodejs/foodSchema.json';
 import * as ingredientSchema from '/opt/nodejs/ingredientSchema.json';
+import * as menuSchema from '/opt/nodejs/menuSchema.json';
 import { Food } from '../../../../website/src/models/Food';
 import { GenerateResponse } from '/opt/nodejs/constants';
 import { AddItemRequestItemType } from '../../../../website/src/models/RequestPayload';
@@ -30,6 +31,8 @@ const validate = (
         case 'ingredient':
             validateFunc = ajv.compile(ingredientSchema);
             break;
+        case 'menu':
+            validateFunc = ajv.compile(menuSchema);
         default:
             return { result: false };
     }
